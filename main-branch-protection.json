@@ -1,0 +1,36 @@
+{
+  "bypass_actors": [],
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": ["refs/heads/main"]
+    }
+  },
+  "enforcement": "active",
+  "name": "main-branch",
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    },
+    {
+      "type": "required_linear_history"
+    },
+    {
+      "parameters": {
+        "allowed_merge_methods": ["rebase", "squash"],
+        "automatic_copilot_code_review_enabled": true,
+        "dismiss_stale_reviews_on_push": false,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_approving_review_count": 0,
+        "required_review_thread_resolution": true
+      },
+      "type": "pull_request"
+    }
+  ],
+  "source_type": "Repository",
+  "target": "branch"
+}
