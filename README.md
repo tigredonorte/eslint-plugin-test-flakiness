@@ -1,357 +1,321 @@
-# 🚀 Complete Setup & Deployment Guide
+# eslint-plugin-test-flakiness
 
-This guide covers the complete setup for `eslint-plugin-test-flakiness` with Husky, Commitizen, and automated releases.
+> ESLint plugin to detect and prevent flaky test patterns
 
-## 📋 Prerequisites
+[![npm version](https://img.shields.io/npm/v/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-1. **pnpm installed globally**
+Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
 
-   ```bash
-   npm install -g pnpm@10.15.1
-   ```
+## 🎯 Features
 
-2. **GitHub Repository**
-   - Create at: https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness
+- **🔍 Comprehensive Detection**: Identifies 15+ types of flaky patterns
+- **🔧 Auto-fixable**: Many rules include automatic fixes
+- **🎮 Framework Support**: Works with Jest, Vitest, Testing Library, Playwright, Cypress
+- **📊 Risk-based**: Rules categorized by flakiness risk (high/medium/low)
+- **⚡ Fast**: Runs at lint-time, no runtime overhead
+- **🛠️ Configurable**: Tune rules to match your team's needs
 
-3. **NPM Account**
-   - Register at: https://www.npmjs.com
-   - Verify email address
+## 📦 Installation
 
-## 🔧 Initial Setup
-
-### 1. Clone and Install
-
-```bash
-# Clone your repository
-git clone https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness.git
-cd eslint-plugin-test-flakiness
-
-# Copy all the plugin files here
-
-# Install dependencies (will enforce pnpm)
-pnpm install
-
-# Install additional dependencies you added
-pnpm add -D lint-staged prettier @semantic-release/git conventional-changelog-conventionalcommits
-
-# Setup Husky
-pnpm prepare
-```
-
-### 2. Fix Missing Dependencies
+> **Note:** This project uses pnpm 10.15.1 for package management. Install it with `npm install -g pnpm@10.15.1`
 
 ```bash
-# The 'requireindex' is needed for loading rules
-pnpm add requireindex
-
-# Make Husky hooks executable
-chmod +x .husky/pre-commit
-chmod +x .husky/commit-msg
+pnpm add -D eslint-plugin-test-flakiness
 ```
 
-### 3. Update Repository URL
+or with npm/yarn (though pnpm is recommended):
 
-Edit `package.json`:
+```bash
+npm install --save-dev eslint-plugin-test-flakiness
+# or
+yarn add -D eslint-plugin-test-flakiness
+```
+
+## 🚀 Quick Start
+
+### Flat Config (ESLint 9+)
+
+```javascript
+// eslint.config.js
+import testFlakiness from "eslint-plugin-test-flakiness";
+
+export default [
+  {
+    plugins: {
+      "test-flakiness": testFlakiness,
+    },
+    rules: {
+      ...testFlakiness.configs.recommended.rules,
+    },
+  },
+];
+```
+
+### Legacy Config (.eslintrc)
 
 ```json
 {
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness.git"
+  "plugins": ["test-flakiness"],
+  "extends": ["plugin:test-flakiness/recommended"]
+}
+```
+
+## 📋 Available Configurations
+
+### `recommended`
+
+Balanced configuration for most projects. Enables high-risk rules as errors and medium-risk as warnings.
+
+```json
+{
+  "extends": ["plugin:test-flakiness/recommended"]
+}
+```
+
+### `strict`
+
+Zero-tolerance for flaky patterns. All rules enabled as errors.
+
+```json
+{
+  "extends": ["plugin:test-flakiness/strict"]
+}
+```
+
+### `all`
+
+Enables all available rules as errors. Use with caution.
+
+```json
+{
+  "extends": ["plugin:test-flakiness/all"]
+}
+```
+
+## 📐 Rules
+
+### High Risk (🔴)
+
+| Rule                      | Description                                              | Auto-fix |
+| ------------------------- | -------------------------------------------------------- | -------- |
+| `no-hard-coded-timeout`   | Disallow hard-coded timeouts like `setTimeout(fn, 1000)` | ✅       |
+| `await-async-events`      | Enforce awaiting user events and async operations        | ✅       |
+| `no-immediate-assertions` | Prevent assertions immediately after state changes       | ✅       |
+| `no-unconditional-wait`   | Disallow unconditional waits                             | ✅       |
+| `no-promise-race`         | Avoid Promise.race in tests                              | ❌       |
+
+### Medium Risk (🟡)
+
+| Rule                       | Description                                        | Auto-fix |
+| -------------------------- | -------------------------------------------------- | -------- |
+| `no-index-queries`         | Prevent DOM queries by index (`:nth-child`, `[0]`) | ❌       |
+| `no-animation-waits`       | Avoid waiting for animations                       | ❌       |
+| `no-global-state-mutation` | Prevent global state mutations                     | ❌       |
+| `no-unmocked-network`      | Ensure network calls are mocked                    | ❌       |
+| `no-unmocked-fs`           | Ensure file system operations are mocked           | ❌       |
+| `no-database-operations`   | Prevent direct database operations in tests        | ❌       |
+| `no-element-removal-check` | Avoid checking for element removal                 | ✅       |
+
+### Low Risk (🟢)
+
+| Rule                    | Description                             | Auto-fix |
+| ----------------------- | --------------------------------------- | -------- |
+| `no-random-data`        | Avoid non-deterministic data generation | ❌       |
+| `no-long-text-match`    | Prevent brittle long text matches       | ❌       |
+| `no-viewport-dependent` | Avoid viewport-dependent assertions     | ❌       |
+| `no-focus-check`        | Prevent focus-dependent assertions      | ❌       |
+
+### Special Rules
+
+| Rule           | Description                        | Auto-fix |
+| -------------- | ---------------------------------- | -------- |
+| `no-test-only` | Prevent `.only` in committed tests | ✅       |
+
+## 🔧 Rule Configuration
+
+Each rule can be configured individually:
+
+```javascript
+{
+  "rules": {
+    "test-flakiness/no-hard-coded-timeout": ["error", {
+      "maxTimeout": 500,        // Allow timeouts under 500ms
+      "allowInSetup": true      // Allow in beforeEach/afterEach
+    }],
+
+    "test-flakiness/await-async-events": ["error", {
+      "customAsyncMethods": ["myAsyncHelper", "customEvent"]
+    }]
   }
 }
 ```
 
-## 🔑 Authentication Setup
+## 💡 Examples
 
-### 1. Generate NPM Token
-
-1. Login to [npmjs.com](https://www.npmjs.com)
-2. Go to **Account Settings** → **Access Tokens**
-3. Click **"Generate New Token"**
-4. Choose **"Automation"** type
-5. Copy token (starts with `npm_`)
-
-### 2. Add GitHub Secret
-
-1. Go to your GitHub repo
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **"New repository secret"**
-4. Name: `NPM_TOKEN`
-5. Value: Your npm token
-
-## 🎯 Development Workflow
-
-### Using Commitizen (Recommended)
-
-```bash
-# Stage your changes
-git add .
-
-# Use Commitizen for commits (interactive prompt)
-pnpm commit
-
-# Or use the shorter alias
-npm run commit
-```
-
-### Manual Conventional Commits
-
-```bash
-# If you prefer manual commits, follow the convention:
-git commit -m "feat: add new rule for detecting async issues"
-git commit -m "fix: resolve false positive in timeout detection"
-git commit -m "docs: update README with examples"
-```
-
-### Commit Types & Version Bumps
-
-| Type       | Version Bump          | When to Use              |
-| ---------- | --------------------- | ------------------------ |
-| `feat`     | Minor (1.0.0 → 1.1.0) | New features/rules       |
-| `fix`      | Patch (1.0.0 → 1.0.1) | Bug fixes                |
-| `perf`     | Patch                 | Performance improvements |
-| `docs`     | No release\*          | Documentation only       |
-| `style`    | No release            | Code style changes       |
-| `refactor` | No release            | Code refactoring         |
-| `test`     | No release            | Test additions/changes   |
-| `chore`    | No release            | Maintenance tasks        |
-| `ci`       | No release            | CI/CD changes            |
-| `build`    | No release            | Build system changes     |
-| `revert`   | Patch                 | Reverting commits        |
-
-\*docs changes to README will trigger a patch release
-
-### Breaking Changes
-
-For major version bumps (1.0.0 → 2.0.0):
-
-```bash
-# Option 1: In commit message
-git commit -m "feat!: change rule configuration format
-
-BREAKING CHANGE: The configuration structure has been completely redesigned"
-
-# Option 2: Using Commitizen (it will prompt for breaking changes)
-pnpm commit
-# Answer "y" when asked about breaking changes
-```
-
-## 🚢 First Release
-
-### 1. Prepare for First Release
-
-```bash
-# Update version to 0.0.0-development for semantic-release
-# Edit package.json:
-"version": "0.0.0-development"
-
-# Commit everything
-git add .
-git commit -m "feat: initial release of eslint-plugin-test-flakiness
-
-BREAKING CHANGE: First release with comprehensive flaky test detection rules"
-```
-
-### 2. Push to Trigger Release
-
-```bash
-# Push to main branch
-git push -u origin main
-```
-
-### 3. Monitor the Release
-
-1. **GitHub Actions**: Check the Actions tab for workflow progress
-2. **NPM Package**: Will appear at `npmjs.com/package/eslint-plugin-test-flakiness`
-3. **GitHub Releases**: Automatic release with changelog
-
-## 🔄 Ongoing Development
-
-### Daily Workflow
-
-```bash
-# 1. Create feature branch
-git checkout -b feat/new-rule
-
-# 2. Make changes
-# ... edit files ...
-
-# 3. Test locally
-pnpm test
-pnpm lint
-
-# 4. Commit with Commitizen
-pnpm commit
-
-# 5. Push branch
-git push origin feat/new-rule
-
-# 6. Create PR to main
-# After PR is merged, semantic-release will handle versioning
-```
-
-### Adding New Rules
-
-1. Create rule file:
-
-```bash
-touch lib/rules/new-rule-name.js
-```
-
-2. Update configs:
+### ❌ Bad: Hard-coded timeout
 
 ```javascript
-// lib/configs/recommended.js
-'test-flakiness/new-rule-name': 'warn'
+it("should show notification", async () => {
+  showNotification();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  expect(notification).toBeVisible();
+});
 ```
 
-3. Commit:
+### ✅ Good: Using waitFor
 
-```bash
-pnpm commit
-# Type: feat
-# Scope: rules
-# Message: add new-rule-name to detect X pattern
+```javascript
+it("should show notification", async () => {
+  showNotification();
+  await waitFor(
+    () => {
+      expect(notification).toBeVisible();
+    },
+    { timeout: 2000 },
+  );
+});
 ```
 
-## 🧪 Testing
+### ❌ Bad: Missing await
 
-### Run Tests Locally
-
-```bash
-# Run all tests
-pnpm test
-
-# Run with coverage
-pnpm test -- --coverage
-
-# Run in watch mode
-pnpm test -- --watch
+```javascript
+it("should update on click", () => {
+  userEvent.click(button); // Missing await!
+  expect(screen.getByText("Updated")).toBeInTheDocument();
+});
 ```
 
-### Test the Plugin Locally
+### ✅ Good: Properly awaited
 
-```bash
-# In the plugin directory
-pnpm link --global
-
-# In a test project
-pnpm link --global eslint-plugin-test-flakiness
-
-# Create .eslintrc.js
-module.exports = {
-  plugins: ['test-flakiness'],
-  extends: ['plugin:test-flakiness/recommended']
-};
-
-# Run ESLint
-npx eslint "**/*.test.js"
+```javascript
+it("should update on click", async () => {
+  await userEvent.click(button);
+  expect(await screen.findByText("Updated")).toBeInTheDocument();
+});
 ```
 
-## 📊 CI/CD Pipeline
+### ❌ Bad: Index-based query
 
-The GitHub Action will:
-
-1. **Trigger** on push to `main`
-2. **Install** dependencies with pnpm
-3. **Run** linter and tests
-4. **Analyze** commits since last release
-5. **Determine** version bump
-6. **Update** version in package.json
-7. **Generate** CHANGELOG.md
-8. **Publish** to NPM with provenance
-9. **Create** GitHub release
-10. **Commit** changes back to repo
-
-## 🐛 Troubleshooting
-
-### Common Issues & Solutions
-
-#### 1. "Please use pnpm" error
-
-```bash
-# Ensure you're using pnpm
-npm install -g pnpm@10.15.1
-pnpm install
+```javascript
+const thirdItem = container.querySelectorAll(".item")[2];
+const lastButton = screen.getAllByRole("button")[buttons.length - 1];
 ```
 
-#### 2. Husky hooks not running
+### ✅ Good: Specific query
 
-```bash
-# Reinstall Husky
-pnpm prepare
-chmod +x .husky/*
+```javascript
+const specificItem = screen.getByTestId("item-3");
+const submitButton = screen.getByRole("button", { name: /submit/i });
 ```
 
-#### 3. Commitlint failing
+## 🤝 Integration with CI/CD
 
-```bash
-# Check your commit message format
-# Must follow: type(scope): description
-# Example: feat(rules): add new timeout detection
+### GitHub Actions
+
+```yaml
+name: Lint
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npx eslint . --ext .test.js,.test.ts
 ```
 
-#### 4. No release created
+### Pre-commit Hook
 
-- Check commit messages follow conventional format
-- Ensure commits are to `main` branch
-- Verify NPM_TOKEN is set correctly
-
-#### 5. NPM publish fails
-
-```bash
-# Check package name availability
-npm view eslint-plugin-test-flakiness
-
-# If taken, update package.json with a scoped name:
-"name": "@yourusername/eslint-plugin-test-flakiness"
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "eslint --ext .test.js,.test.ts"
+    }
+  }
+}
 ```
 
-## 📈 Post-Release
+### Custom Script for Analysis
 
-### Verify Installation
+```javascript
+// analyze-flakiness.js
+const {
+  analyzeFileContent,
+} = require("eslint-plugin-test-flakiness/lib/analyzer");
+const fs = require("fs");
 
-```bash
-# Install from NPM
-npm info eslint-plugin-test-flakiness
-pnpm add -D eslint-plugin-test-flakiness
+const content = fs.readFileSync("my-test.spec.js", "utf8");
+const analysis = analyzeFileContent(content, "my-test.spec.js");
 
-# Test it works
-npx eslint --plugin test-flakiness --rule 'test-flakiness/no-hard-coded-timeout: error' test.js
+if (analysis.riskLevel === "high") {
+  console.error("High flakiness risk detected!");
+  process.exit(1);
+}
 ```
 
-### Update README Badges
+## 🎯 Philosophy
 
-Add to your README.md:
+This plugin follows these principles:
 
-```markdown
-[![npm version](https://img.shields.io/npm/v/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
-[![GitHub Actions](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/workflows/Semantic%20Release/badge.svg)](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/actions)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-```
+1. **Prevention over Detection**: Catch issues at lint-time, not runtime
+2. **Actionable Feedback**: Every error includes why it's a problem and how to fix it
+3. **Progressive Enhancement**: Start with recommended, move to strict as your tests improve
+4. **Framework Agnostic**: Core patterns apply regardless of test framework
 
-## 🎉 Success Checklist
+## 🔬 How It Works
 
-- [ ] pnpm 10.15.1 installed
-- [ ] Repository created on GitHub
-- [ ] NPM account created and verified
-- [ ] NPM_TOKEN added to GitHub secrets
-- [ ] Dependencies installed with pnpm
-- [ ] Husky hooks configured
-- [ ] First commit with BREAKING CHANGE pushed
-- [ ] GitHub Action runs successfully
-- [ ] Package published to NPM
-- [ ] Test installation works
+The plugin uses AST (Abstract Syntax Tree) analysis to detect patterns that commonly cause test flakiness:
+
+- **Timing Issues**: Hard-coded delays, missing awaits
+- **Structural Fragility**: Index-based queries, order dependencies
+- **State Management**: Global mutations, missing cleanup
+- **Network/IO**: Unmocked external calls
+- **Non-determinism**: Random data, time-based logic
 
 ## 📚 Resources
 
-- [Semantic Release Documentation](https://semantic-release.gitbook.io/)
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [Commitizen Documentation](http://commitizen.github.io/cz-cli/)
-- [pnpm Documentation](https://pnpm.io/)
-- [ESLint Plugin Developer Guide](https://eslint.org/docs/developer-guide/working-with-plugins)
+- [Writing Reliable Tests](https://testing-library.com/docs/guide-disappearance)
+- [Common Testing Mistakes](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library)
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- [Cypress Anti-patterns](https://docs.cypress.io/guides/references/best-practices)
+
+## 🤔 FAQ
+
+**Q: Is this plugin performance-intensive?**
+A: No, it runs during ESLint's normal AST traversal with minimal overhead.
+
+**Q: Can I use this with TypeScript?**
+A: Yes! It works with `.ts` and `.tsx` test files automatically.
+
+**Q: Does it work with all test frameworks?**
+A: It detects patterns common across frameworks. Some rules are framework-specific but will only activate when relevant.
+
+**Q: How do I handle false positives?**
+A: You can disable rules inline with `// eslint-disable-next-line test-flakiness/rule-name` or configure rules to be less strict.
+
+## 🐛 Reporting Issues
+
+Found a bug or have a feature request? Please [open an issue](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/issues).
+
+## 📄 License
+
+MIT © [Your Name]
+
+## 🙏 Contributing
+
+Contributions are welcome! Please read our [contributing guide](docs/CONTRIBUTING.md) for details.
+
+### 📖 Additional Documentation
+
+- [Deployment Guide](docs/DEPLOYMENT.md) - Complete setup for publishing and CI/CD
+- [Commit Guidelines](docs/COMMIT_GUIDELINES.md) - Conventional commit format and examples
 
 ---
 
-**Questions?** Open an issue on GitHub or check the [FAQ](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/wiki/FAQ)
+<div align="center">
+Made with ❤️ to reduce test flakiness everywhere
+</div>
