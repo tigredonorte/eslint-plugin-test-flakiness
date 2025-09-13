@@ -1,0 +1,58 @@
+{
+  "name": "eslint-plugin-test-flakiness",
+  "version": "1.0.0",
+  "description": "ESLint plugin to detect flaky test patterns and suggest fixes",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin",
+    "test",
+    "testing",
+    "flaky",
+    "flakiness",
+    "test-quality",
+    "jest",
+    "vitest",
+    "cypress",
+    "playwright",
+    "testing-library"
+  ],
+  "author": "",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint .",
+    "prepare": "husky",
+    "commit": "cz"
+  },
+  "peerDependencies": {
+    "eslint": ">=7.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/eslint": "^8.44.0",
+    "@types/node": "^20.0.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.50.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/eslint-plugin-test-flakiness"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
