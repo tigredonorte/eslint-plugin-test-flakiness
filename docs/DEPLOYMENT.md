@@ -11,7 +11,7 @@ This guide covers the complete setup for `eslint-plugin-test-flakiness` with Hus
    ```
 
 2. **GitHub Repository**
-   - Create at: https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness
+   - Create at: https://github.com/tigredonorte/eslint-plugin-test-flakiness
 
 3. **NPM Account**
    - Register at: https://www.npmjs.com
@@ -23,7 +23,7 @@ This guide covers the complete setup for `eslint-plugin-test-flakiness` with Hus
 
 ```bash
 # Clone your repository
-git clone https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness.git
+git clone https://github.com/tigredonorte/eslint-plugin-test-flakiness.git
 cd eslint-plugin-test-flakiness
 
 # Copy all the plugin files here
@@ -57,7 +57,7 @@ Edit `package.json`:
 {
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness.git"
+    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git"
   }
 }
 ```
@@ -327,7 +327,7 @@ Add to your README.md:
 
 ```markdown
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
-[![GitHub Actions](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/workflows/Semantic%20Release/badge.svg)](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/actions)
+[![GitHub Actions](https://github.com/tigredonorte/eslint-plugin-test-flakiness/workflows/Semantic%20Release/badge.svg)](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 ```
 
@@ -354,4 +354,4 @@ Add to your README.md:
 
 ---
 
-**Questions?** Open an issue on GitHub or check the [FAQ](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/wiki/FAQ)
+**Questions?** Open an issue on GitHub or check the [FAQ](https://github.com/tigredonorte/eslint-plugin-test-flakiness/wiki/FAQ)

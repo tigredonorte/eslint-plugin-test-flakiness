@@ -299,7 +299,7 @@ A: You can disable rules inline with `// eslint-disable-next-line test-flakiness
 
 ## 🐛 Reporting Issues
 
-Found a bug or have a feature request? Please [open an issue](https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness/issues).
+Found a bug or have a feature request? Please [open an issue](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues).
 
 ## 📄 License
 

@@ -17,7 +17,7 @@ Thank you for your interest in contributing to eslint-plugin-test-flakiness! Thi
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/eslint-plugin-test-flakiness.git
+   git clone https://github.com/tigredonorte/eslint-plugin-test-flakiness.git
    cd eslint-plugin-test-flakiness
    ```
 3. Install dependencies:

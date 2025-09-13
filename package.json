@@ -68,12 +68,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/eslint-plugin-test-flakiness.git"
+    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/eslint-plugin-test-flakiness/issues"
+    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues"
   },
-  "homepage": "https://github.com/yourusername/eslint-plugin-test-flakiness#readme",
+  "homepage": "https://github.com/tigredonorte/eslint-plugin-test-flakiness#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
