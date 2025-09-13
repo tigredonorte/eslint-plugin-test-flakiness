@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-test-flakiness",
-  "version": "0.0.0-development",
+  "version": "0.0.1-development",
   "description": "ESLint plugin to detect flaky test patterns and suggest fixes",
   "keywords": [
     "eslint",
