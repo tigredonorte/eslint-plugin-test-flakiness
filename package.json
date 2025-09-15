@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-test-flakiness",
-  "version": "1.0.0",
+  "version": "0.0.1-development",
   "description": "ESLint plugin to detect flaky test patterns and suggest fixes",
   "keywords": [
     "eslint",
@@ -17,45 +17,78 @@
     "playwright",
     "testing-library"
   ],
-  "author": "",
+  "author": "Thompson Filgueiras <tigredonorte@users.noreply.github.com>",
   "license": "MIT",
   "main": "lib/index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "npm run lint && npm run test",
+    "ci": "npm run lint && npm run test:ci",
+    "ci:local": "./scripts/ci-local.sh",
+    "prepare": "husky",
+    "commit": "cz",
+    "semantic-release": "semantic-release"
+  },
   "files": [
     "lib"
   ],
-  "scripts": {
-    "test": "jest",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky",
-    "commit": "cz"
-  },
   "peerDependencies": {
     "eslint": ">=7.0.0"
+  },
+  "dependencies": {
+    "requireindex": "^1.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.35.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/eslint": "^8.44.0",
     "@types/node": "^20.0.0",
     "commitizen": "^4.3.1",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.50.0",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.5",
+    "semantic-release": "^24.2.8"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=14.0.0",
+    "pnpm": ">=9.0.0",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/eslint-plugin-test-flakiness"
+    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git"
   },
+  "bugs": {
+    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues"
+  },
+  "homepage": "https://github.com/tigredonorte/eslint-plugin-test-flakiness#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "packageManager": "pnpm@10.15.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
