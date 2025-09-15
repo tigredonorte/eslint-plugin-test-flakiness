@@ -42,6 +42,7 @@
     "eslint": ">=7.0.0"
   },
   "dependencies": {
+    "cypress": "^15.2.0",
     "requireindex": "^1.2.0"
   },
   "devDependencies": {

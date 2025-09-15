@@ -1,4 +1,6 @@
 import js from '@eslint/js';
+import testFlakiness from './lib/index.js';
+
 export default [
   js.configs.recommended,
   {
@@ -18,6 +20,13 @@ export default [
         module: 'writable',
         require: 'readonly',
         global: 'readonly',
+        // Browser/Timer globals
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
         // Jest globals
         describe: 'readonly',
         it: 'readonly',
@@ -28,13 +37,21 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         jest: 'readonly',
+        // Testing library globals
+        screen: 'readonly',
+        // Cypress globals
+        cy: 'readonly',
       },
+    },
+    plugins: {
+      'test-flakiness': testFlakiness,
     },
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
+      'test-flakiness/no-hard-coded-timeout': 'error',
     },
   },
   {
