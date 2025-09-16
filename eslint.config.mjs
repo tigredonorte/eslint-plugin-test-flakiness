@@ -47,11 +47,18 @@ export default [
       'test-flakiness': testFlakiness,
     },
     rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       'no-console': 'off',
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
       'test-flakiness/no-hard-coded-timeout': 'error',
+    },
+  },
+  {
+    // Disable the no-hard-coded-timeout rule for its own test file
+    files: ['tests/lib/rules/no-hard-coded-timeout.test.js'],
+    rules: {
+      'test-flakiness/no-hard-coded-timeout': 'off',
     },
   },
   {

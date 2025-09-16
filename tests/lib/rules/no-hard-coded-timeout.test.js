@@ -1,5 +1,3 @@
-// disable for this file, otherwise it will auto-fix the tests that should contain the hard-coded timeouts
-/* eslint-disable test-flakiness/no-hard-coded-timeout */
 /**
  * @fileoverview Tests for no-hard-coded-timeout rule
  * @author eslint-plugin-test-flakiness
@@ -10,7 +8,7 @@ const rule = require('../../../lib/rules/no-hard-coded-timeout');
 const { RuleTester } = require('eslint');
 
 const ruleTester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2021,
     sourceType: 'module'
   }
