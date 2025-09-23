@@ -77,6 +77,9 @@ importers:
       semantic-release:
         specifier: ^24.2.8
         version: 24.2.8(typescript@5.9.2)
+      semver:
+        specifier: ^7.7.2
+        version: 7.7.2
 
 packages:
   "@babel/code-frame@7.27.1":
