@@ -46,6 +46,8 @@
     "requireindex": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.35.0",
@@ -77,7 +79,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git"
+    "url": "git+https://github.com/tigredonorte/eslint-plugin-test-flakiness.git"
   },
   "bugs": {
     "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues"
