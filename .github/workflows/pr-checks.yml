@@ -113,7 +113,9 @@ jobs:
             });
             const botComments = comments.data.filter(
               comment => comment.user.type === 'Bot' &&
-              comment.body.includes('Coverage after merging')
+              (comment.body.includes('Coverage after merging') ||
+               comment.body.includes('Coverage Report') ||
+               comment.body.includes('lcov-reporter-action'))
             );
             for (const comment of botComments) {
               await github.rest.issues.deleteComment({
