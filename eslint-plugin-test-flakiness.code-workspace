@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "lib",
+			"path": "./lib"
+		},
+		{
+			"name": "tests",
+			"path": "./tests"
+		},
+		{
+			"name": "root",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
