@@ -229,7 +229,7 @@ ruleTester.run('no-random-data', rule, {
       options: [{ allowedMethods: ['v4'] }]
     },
 
-    // Math.random() used for seeding (lines 84-87)
+    // Math.random() used for seeding
     {
       code: 'randomSeed.seed(Math.random())',
       filename: 'Seeding.test.js'
