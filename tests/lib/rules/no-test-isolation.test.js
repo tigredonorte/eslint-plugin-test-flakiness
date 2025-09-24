@@ -149,13 +149,13 @@ ruleTester.run('no-test-isolation', rule, {
       filename: 'AfterAllCleanup.test.js'
     },
 
-    // Increment/decrement in hook (line 401)
+    // Increment/decrement operations in hooks should be allowed
     {
       code: 'let counter = 0; beforeEach(() => { counter++; });',
       filename: 'IncrementHook.test.js'
     },
 
-    // Unsupported hook type (line 119)
+    // Custom hooks (not standard test hooks) should be ignored
     {
       code: 'customHook(() => { global.setup = true; });',
       filename: 'CustomHook.test.js'
@@ -480,7 +480,7 @@ ruleTester.run('no-test-isolation', rule, {
       }]
     },
 
-    // Shared state in describe without setup initialization (lines 348-352)
+    // Detects assignment to shared state in describe block without setup initialization
     {
       code: 'describe("test", () => { let shared; it("test", () => { shared = 1; }); });',
       filename: 'DescribeSharedState.test.js',
@@ -490,7 +490,7 @@ ruleTester.run('no-test-isolation', rule, {
       }]
     },
 
-    // Multiple errors to test sorting (line 179)
+    // Multiple errors should be reported and sorted correctly
     {
       code: `
         let x, y;
