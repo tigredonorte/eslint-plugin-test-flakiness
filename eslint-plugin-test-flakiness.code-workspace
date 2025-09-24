@@ -11,6 +11,9 @@
 		{
 			"name": "root",
 			"path": "."
+		},
+		{
+			"path": "../eslint-plugin-test-flakiness-no-focus-check"
 		}
 	],
 	"settings": {}
