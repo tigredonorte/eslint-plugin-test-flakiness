@@ -235,7 +235,7 @@ ruleTester.run('no-random-data', rule, {
       filename: 'Seeding.test.js'
     },
 
-    // Date.now() in setup hook with allowInSetup (line 129, 214)
+    // Date.now() in setup hook with allowInSetup
     {
       code: `
         beforeEach(() => {
@@ -451,7 +451,7 @@ ruleTester.run('no-random-data', rule, {
       ]
     },
 
-    // UUID v4 usage (line 198)
+    // UUID v4 usage
     {
       code: 'uuid.v4()',
       filename: 'UuidV4.test.js',
@@ -460,7 +460,7 @@ ruleTester.run('no-random-data', rule, {
       }]
     },
 
-    // UUID v1 usage (line 198)
+    // UUID v1 usage
     {
       code: 'uuid.v1()',
       filename: 'UuidV1.test.js',
