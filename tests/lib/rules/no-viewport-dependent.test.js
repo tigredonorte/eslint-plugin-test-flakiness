@@ -120,7 +120,7 @@ ruleTester.run('no-viewport-dependent', rule, {
         describe('Mobile viewport', () => {
           test('handles small screens', () => {
             const isMobile = window.innerWidth < 768;
-            screen.width > 375;
+            expect(screen.width).toBeGreaterThan(375);
           });
         });
       `,
@@ -210,7 +210,6 @@ ruleTester.run('no-viewport-dependent', rule, {
       code: 'target.scrollWidth',
       filename: 'TargetScroll.test.js'
     },
-
 
     // Non-window/screen destructuring (should be valid)
     {
