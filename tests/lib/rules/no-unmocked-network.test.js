@@ -445,11 +445,9 @@ ruleTester.run('no-unmocked-network', rule, {
 
     // Multiple violations
     {
-      code: `
-        fetch("/api/users");
-        axios.post("/api/data", data);
-        $.get("/api/info");
-      `,
+      code: `fetch("/api/users");
+axios.post("/api/data", data);
+$.get("/api/info");`,
       filename: 'Multiple.test.js',
       errors: [
         { messageId: 'mockNetwork', data: { method: 'fetch' } },

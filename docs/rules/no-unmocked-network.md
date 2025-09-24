@@ -135,7 +135,7 @@ const client = new Client({
 
 // Email service requests
 const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: { user: "test@gmail.com", pass: "password" },
 });
@@ -230,7 +230,7 @@ const nodemailer = require("nodemailer");
 const mockTransporter = {
   sendMail: jest.fn().mockResolvedValue({ messageId: "test-id" }),
 };
-nodemailer.createTransporter.mockReturnValue(mockTransporter);
+nodemailer.createTransport.mockReturnValue(mockTransporter);
 
 // Mock file upload services
 jest.mock("cloudinary");
