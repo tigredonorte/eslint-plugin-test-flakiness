@@ -1,5 +1,6 @@
 {
   "branches": ["main"],
+  "repositoryUrl": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git",
   "plugins": [
     ["@semantic-release/commit-analyzer", {
       "preset": "conventionalcommits",
@@ -36,7 +37,10 @@
       }
     }],
     "@semantic-release/changelog",
-    "@semantic-release/npm",
+    ["@semantic-release/npm", {
+      "npmPublish": true,
+      "tarballDir": "dist"
+    }],
     ["@semantic-release/github", {
       "assets": [
         {"path": "dist/**", "label": "Distribution files"}
