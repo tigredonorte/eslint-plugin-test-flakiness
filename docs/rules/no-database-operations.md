@@ -11,41 +11,41 @@ This rule helps identify and prevent direct database operations in test files th
 - Slow test execution due to actual database operations
 - Difficulty in maintaining test data consistency
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct database operations in tests
 it("should create a user", async () => {
-  const user = await UserModel.create({ name: "John" }); // ❌ Direct DB operation
+  const user = await UserModel.create({ name: "John" }); // Direct DB operation
   expect(user.name).toBe("John");
 });
 
 it("should update product", async () => {
-  await Product.update({ id: 1 }, { price: 99.99 }); // ❌ Direct DB operation
+  await Product.update({ id: 1 }, { price: 99.99 }); // Direct DB operation
   const product = await Product.findOne({ id: 1 });
   expect(product.price).toBe(99.99);
 });
 
 test("delete all records", async () => {
-  await db.query("DELETE FROM users"); // ❌ Raw SQL query
+  await db.query("DELETE FROM users"); // Raw SQL query
   const count = await User.count();
   expect(count).toBe(0);
 });
 
 it("should insert many documents", async () => {
-  await collection.insertMany(documents); // ❌ MongoDB operation
+  await collection.insertMany(documents); // MongoDB operation
   const results = await collection.find({}).toArray();
   expect(results).toHaveLength(documents.length);
 });
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Using mocks instead of real database operations
 it("should create a user", async () => {
   const mockUser = { id: 1, name: "John" };
-  jest.spyOn(UserModel, "create").mockResolvedValue(mockUser); // ✅ Mocked
+  jest.spyOn(UserModel, "create").mockResolvedValue(mockUser); // Mocked
 
   const user = await UserModel.create({ name: "John" });
   expect(user.name).toBe("John");
@@ -53,7 +53,7 @@ it("should create a user", async () => {
 
 // Using test data builders/factories
 it("should update product", async () => {
-  const product = buildProduct({ price: 99.99 }); // ✅ Test data builder
+  const product = buildProduct({ price: 99.99 }); // Test data builder
   jest.spyOn(Product, "update").mockResolvedValue(product);
 
   const result = await Product.update({ id: 1 }, { price: 99.99 });
@@ -62,20 +62,20 @@ it("should update product", async () => {
 
 // Using in-memory database for tests
 beforeAll(async () => {
-  await setupInMemoryDatabase(); // ✅ Isolated test database
+  await setupInMemoryDatabase(); // Isolated test database
 });
 
 // Database operations in hooks with transactions (when allowed)
 beforeEach(async () => {
   await db.transaction(async (trx) => {
-    // ✅ Wrapped in transaction
+    // Wrapped in transaction
     await trx("users").insert(testUsers);
   });
 });
 
 afterEach(async () => {
   await db.transaction(async (trx) => {
-    // ✅ Proper cleanup
+    // Proper cleanup
     await trx("users").del();
   });
 });

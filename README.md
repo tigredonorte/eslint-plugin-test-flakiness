@@ -7,16 +7,16 @@
 
 Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
 
-## 🎯 Features
+## Features
 
-- **🔍 Comprehensive Detection**: Identifies 15+ types of flaky patterns
-- **🔧 Auto-fixable**: Many rules include automatic fixes
-- **🎮 Framework Support**: Works with Jest, Vitest, Testing Library, Playwright, Cypress
-- **📊 Risk-based**: Rules categorized by flakiness risk (high/medium/low)
-- **⚡ Fast**: Runs at lint-time, no runtime overhead
-- **🛠️ Configurable**: Tune rules to match your team's needs
+- **Comprehensive Detection**: Identifies 15+ types of flaky patterns
+- **Auto-fixable**: Many rules include automatic fixes
+- **Framework Support**: Works with Jest, Vitest, Testing Library, Playwright, Cypress
+- **Risk-based**: Rules categorized by flakiness risk (high/medium/low)
+- **Fast**: Runs at lint-time, no runtime overhead
+- **Configurable**: Tune rules to match your team's needs
 
-## 📦 Installation
+## Installation
 
 > **Note:** This project uses pnpm 10.15.1 for package management. Install it with `npm install -g pnpm@10.15.1`
 
@@ -32,7 +32,7 @@ npm install --save-dev eslint-plugin-test-flakiness
 yarn add -D eslint-plugin-test-flakiness
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Flat Config (ESLint 9+)
 
@@ -61,7 +61,7 @@ export default [
 }
 ```
 
-## 📋 Available Configurations
+## Available Configurations
 
 ### `recommended`
 
@@ -93,9 +93,9 @@ Enables all available rules as errors. Use with caution.
 }
 ```
 
-## 📐 Rules
+## Rules
 
-### High Risk (🔴)
+### High Risk
 
 | Rule                      | Description                                              | Auto-fix |
 | ------------------------- | -------------------------------------------------------- | -------- |
@@ -105,7 +105,7 @@ Enables all available rules as errors. Use with caution.
 | `no-unconditional-wait`   | Disallow unconditional waits                             | ✅       |
 | `no-promise-race`         | Avoid Promise.race in tests                              | ❌       |
 
-### Medium Risk (🟡)
+### Medium Risk
 
 | Rule                       | Description                                        | Auto-fix |
 | -------------------------- | -------------------------------------------------- | -------- |
@@ -117,7 +117,7 @@ Enables all available rules as errors. Use with caution.
 | `no-database-operations`   | Prevent direct database operations in tests        | ❌       |
 | `no-element-removal-check` | Avoid checking for element removal                 | ✅       |
 
-### Low Risk (🟢)
+### Low Risk
 
 | Rule                    | Description                             | Auto-fix |
 | ----------------------- | --------------------------------------- | -------- |
@@ -132,7 +132,7 @@ Enables all available rules as errors. Use with caution.
 | -------------- | ---------------------------------- | -------- |
 | `no-test-only` | Prevent `.only` in committed tests | ✅       |
 
-## 🔧 Rule Configuration
+## Rule Configuration
 
 Each rule can be configured individually:
 
@@ -151,9 +151,9 @@ Each rule can be configured individually:
 }
 ```
 
-## 💡 Examples
+## Examples
 
-### ❌ Bad: Hard-coded timeout
+### Bad: Hard-coded timeout
 
 ```javascript
 it("should show notification", async () => {
@@ -163,7 +163,7 @@ it("should show notification", async () => {
 });
 ```
 
-### ✅ Good: Using waitFor
+### Good: Using waitFor
 
 ```javascript
 it("should show notification", async () => {
@@ -177,7 +177,7 @@ it("should show notification", async () => {
 });
 ```
 
-### ❌ Bad: Missing await
+### Bad: Missing await
 
 ```javascript
 it("should update on click", () => {
@@ -186,7 +186,7 @@ it("should update on click", () => {
 });
 ```
 
-### ✅ Good: Properly awaited
+### Good: Properly awaited
 
 ```javascript
 it("should update on click", async () => {
@@ -195,21 +195,21 @@ it("should update on click", async () => {
 });
 ```
 
-### ❌ Bad: Index-based query
+### Bad: Index-based query
 
 ```javascript
 const thirdItem = container.querySelectorAll(".item")[2];
 const lastButton = screen.getAllByRole("button")[buttons.length - 1];
 ```
 
-### ✅ Good: Specific query
+### Good: Specific query
 
 ```javascript
 const specificItem = screen.getByTestId("item-3");
 const submitButton = screen.getByRole("button", { name: /submit/i });
 ```
 
-## 🤝 Integration with CI/CD
+## Integration with CI/CD
 
 ### GitHub Actions
 
@@ -257,7 +257,7 @@ if (analysis.riskLevel === "high") {
 }
 ```
 
-## 🎯 Philosophy
+## Philosophy
 
 This plugin follows these principles:
 
@@ -266,7 +266,7 @@ This plugin follows these principles:
 3. **Progressive Enhancement**: Start with recommended, move to strict as your tests improve
 4. **Framework Agnostic**: Core patterns apply regardless of test framework
 
-## 🔬 How It Works
+## How It Works
 
 The plugin uses AST (Abstract Syntax Tree) analysis to detect patterns that commonly cause test flakiness:
 
@@ -276,14 +276,14 @@ The plugin uses AST (Abstract Syntax Tree) analysis to detect patterns that comm
 - **Network/IO**: Unmocked external calls
 - **Non-determinism**: Random data, time-based logic
 
-## 📚 Resources
+## Resources
 
 - [Writing Reliable Tests](https://testing-library.com/docs/guide-disappearance)
 - [Common Testing Mistakes](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library)
 - [Playwright Best Practices](https://playwright.dev/docs/best-practices)
 - [Cypress Anti-patterns](https://docs.cypress.io/guides/references/best-practices)
 
-## 🤔 FAQ
+## FAQ
 
 **Q: Is this plugin performance-intensive?**
 A: No, it runs during ESLint's normal AST traversal with minimal overhead.
@@ -297,19 +297,19 @@ A: It detects patterns common across frameworks. Some rules are framework-specif
 **Q: How do I handle false positives?**
 A: You can disable rules inline with `// eslint-disable-next-line test-flakiness/rule-name` or configure rules to be less strict.
 
-## 🐛 Reporting Issues
+## Reporting Issues
 
 Found a bug or have a feature request? Please [open an issue](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues).
 
-## 📄 License
+## License
 
 MIT © [Your Name]
 
-## 🙏 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [contributing guide](docs/CONTRIBUTING.md) for details.
 
-### 📖 Additional Documentation
+### Additional Documentation
 
 - [Deployment Guide](docs/DEPLOYMENT.md) - Complete setup for publishing and CI/CD
 - [Commit Guidelines](docs/COMMIT_GUIDELINES.md) - Conventional commit format and examples
@@ -317,5 +317,5 @@ Contributions are welcome! Please read our [contributing guide](docs/CONTRIBUTIN
 ---
 
 <div align="center">
-Made with ❤️ to reduce test flakiness everywhere
+Made with care to reduce test flakiness everywhere
 </div>

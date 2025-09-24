@@ -40,11 +40,11 @@ When set to `true`, allows network requests in integration test files.
 ```javascript
 // With allowInIntegration: true
 // In integration.test.js
-await fetch("https://api.example.com/data"); // ✅ Allowed
+await fetch("https://api.example.com/data"); // Allowed
 
 // With allowInIntegration: false (default)
 // In any test file
-await fetch("https://api.example.com/data"); // ❌ Not allowed
+await fetch("https://api.example.com/data"); // Not allowed
 ```
 
 ### `allowLocalhost` (default: `true`)
@@ -53,11 +53,11 @@ When set to `true`, allows requests to localhost and local development servers.
 
 ```javascript
 // With allowLocalhost: true (default)
-await fetch("http://localhost:3000/api"); // ✅ Allowed
-await fetch("http://127.0.0.1:8080/test"); // ✅ Allowed
+await fetch("http://localhost:3000/api"); // Allowed
+await fetch("http://127.0.0.1:8080/test"); // Allowed
 
 // With allowLocalhost: false
-await fetch("http://localhost:3000/api"); // ❌ Not allowed
+await fetch("http://localhost:3000/api"); // Not allowed
 ```
 
 ### `allowedDomains` (default: `[]`)
@@ -66,10 +66,10 @@ Array of domain names that are allowed for network requests.
 
 ```javascript
 // With allowedDomains: ["api.test.com"]
-await fetch("https://api.test.com/data"); // ✅ Allowed
+await fetch("https://api.test.com/data"); // Allowed
 
 // With allowedDomains: []
-await fetch("https://api.test.com/data"); // ❌ Not allowed
+await fetch("https://api.test.com/data"); // Not allowed
 ```
 
 ### `mockModules` (default: `["axios", "fetch", "request", "http", "https"]`)
@@ -78,8 +78,8 @@ Array of modules that should be mocked instead of making real requests.
 
 ```javascript
 // With default mockModules
-const axios = require("axios"); // ❌ Should be mocked
-await fetch("/api/data"); // ❌ Should be mocked
+const axios = require("axios"); // Should be mocked
+await fetch("/api/data"); // Should be mocked
 
 // Expected mocking
 jest.mock("axios");
@@ -87,7 +87,7 @@ jest.mock("axios");
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct fetch requests
@@ -151,7 +151,7 @@ const s3 = new AWS.S3();
 await s3.getObject({ Bucket: "bucket", Key: "key" }).promise();
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Mock fetch
