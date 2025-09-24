@@ -320,14 +320,13 @@ ruleTester.run('no-random-data', rule, {
         messageId: 'avoidUUID'
       }]
     },
-    // TODO: Debug why this specific test fails in Jest but works when run directly
-    // {
-    //   code: 'uuidv4()',
-    //   filename: 'UUIDv4.test.js',
-    //   errors: [{
-    //     messageId: 'avoidUUID'
-    //   }]
-    // },
+    {
+      code: 'uuidv4()',
+      filename: 'UUIDv4.test.js',
+      errors: [{
+        messageId: 'avoidUUID'
+      }]
+    },
     {
       code: 'generateUUID()',
       filename: 'GenerateUUID.test.js',
@@ -532,14 +531,13 @@ ruleTester.run('no-random-data', rule, {
         messageId: 'avoidDateNow'
       }]
     },
-    // TODO: Debug why this specific test fails in Jest but works when run directly
-    // {
-    //   code: 'uuidv4()',
-    //   filename: '__tests__/uuid.js',
-    //   errors: [{
-    //     messageId: 'avoidUUID'
-    //   }]
-    // },
+    {
+      code: 'uuidv4()',
+      filename: 'src/__tests__/uuid.js',
+      errors: [{
+        messageId: 'avoidUUID'
+      }]
+    },
 
     // Complex expressions
     {
