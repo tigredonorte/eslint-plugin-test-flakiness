@@ -90,7 +90,7 @@ ruleTester.run('no-viewport-dependent', rule, {
       filename: 'Debug.test.js'
     },
 
-    // Tests with allowViewportSetup: true and explicit viewport setting are considered valid.
+    // Note: Tests with allowViewportSetup: true and explicit viewport setting are considered valid.
     // This is expected behavior when the viewport is set in the test body.
     {
       code: `
