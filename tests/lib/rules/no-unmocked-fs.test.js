@@ -153,8 +153,6 @@ ruleTester.run('no-unmocked-fs', rule, {
       options: [{ allowInSetup: true }]
     },
 
-    // Test path operations in setup hook with allowInSetup - path.readFileSync doesn't exist, removed
-
     // Test Node fs functions in setup hook with allowInSetup
     {
       code: `
@@ -304,7 +302,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.readFile("file.txt", callback)',
       filename: 'ReadFile.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFile' }
       }]
     },
@@ -312,7 +310,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.readFileSync("file.txt")',
       filename: 'ReadFileSync.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -322,7 +320,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.writeFile("output.txt", data, callback)',
       filename: 'WriteFile.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFile' }
       }]
     },
@@ -330,7 +328,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.writeFileSync("output.txt", data)',
       filename: 'WriteFileSync.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFileSync' }
       }]
     },
@@ -340,7 +338,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'await fs.promises.readFile("file.txt")',
       filename: 'PromisesRead.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFile' }
       }]
     },
@@ -348,7 +346,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.promises.writeFile("output.txt", data)',
       filename: 'PromisesWrite.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFile' }
       }]
     },
@@ -568,7 +566,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'import { readFileSync } from "fs"; readFileSync("file.txt")',
       filename: 'ImportNamed.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -576,7 +574,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'const { writeFile } = require("fs"); writeFile("file.txt", data, cb)',
       filename: 'RequireDestructured.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFile' }
       }]
     },
@@ -590,8 +588,8 @@ ruleTester.run('no-unmocked-fs', rule, {
       `,
       filename: 'Multiple.test.js',
       errors: [
-        { messageId: 'mockFs', data: { method: 'readFileSync' } },
-        { messageId: 'mockFs', data: { method: 'writeFileSync' } },
+        { messageId: 'unmockedFs', data: { method: 'readFileSync' } },
+        { messageId: 'unmockedFs', data: { method: 'writeFileSync' } },
         { messageId: 'mockFs', data: { method: 'unlinkSync' } }
       ]
     },
@@ -601,7 +599,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'it("reads file", () => { const content = fs.readFileSync("file.txt"); })',
       filename: 'TestBlock.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -609,7 +607,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'test("writes file", async () => { await fs.promises.writeFile("out.txt", data); })',
       filename: 'AsyncTest.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFile' }
       }]
     },
@@ -619,7 +617,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.readFileSync("file.txt")',
       filename: 'Read.spec.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -627,7 +625,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fs.writeFileSync("output.txt", data)',
       filename: 'test/write.test.ts',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFileSync' }
       }]
     },
@@ -654,7 +652,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'beforeEach(() => { fs.writeFileSync("test.txt", "data"); })',
       filename: 'BeforeEachNotAllowed.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFileSync' }
       }]
     },
@@ -665,7 +663,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'TmpNotAllowed.test.js',
       options: [{ allowTempFiles: false }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFileSync' }
       }]
     },
@@ -674,7 +672,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'OsTmpDirNotAllowed.test.js',
       options: [{ allowTempFiles: false }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'writeFileSync' }
       }]
     },
@@ -685,7 +683,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'FsExtraNotAllowed.test.js',
       options: [{ allowedModules: ['glob'] }], // fs-extra not in allowed
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'fs-extra.readJson' }
       }]
     },
@@ -694,7 +692,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'GlobNotAllowed.test.js',
       options: [{ allowedModules: ['fs-extra'] }], // glob not in allowed
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'glob' }
       }]
     },
@@ -705,7 +703,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'CustomModulesNotMocked.test.js',
       options: [{ mockModules: ['custom-fs', 'my-fs'] }], // fs not in mockModules
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -715,7 +713,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'const fse = require("fs-extra"); fse.ensureDir("new-directory")',
       filename: 'FsExtraEnsureDir.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'fs-extra.ensureDir' }
       }]
     },
@@ -723,7 +721,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'const fsExtra = require("fs-extra"); fsExtra.copy("src", "dest")',
       filename: 'FsExtraCopy.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'fs-extra.copy' }
       }]
     },
@@ -733,7 +731,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'glob("**/*.js", callback)',
       filename: 'GlobPattern.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'glob' }
       }]
     },
@@ -741,7 +739,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'globSync("src/**/*.ts")',
       filename: 'GlobSyncPattern.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'globSync' }
       }]
     },
@@ -751,7 +749,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'fg.sync("**/*.js")',
       filename: 'FastGlob.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'fast-glob' }
       }]
     },
@@ -761,7 +759,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'rimraf("build")',
       filename: 'Rimraf.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'rimraf' }
       }]
     },
@@ -769,7 +767,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       code: 'rimraf.sync("dist")',
       filename: 'RimrafSync.test.js',
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'useMemfs',
         data: { method: 'rimraf' }
       }]
     },
@@ -780,7 +778,7 @@ ruleTester.run('no-unmocked-fs', rule, {
       filename: 'NotInSetup.test.js',
       options: [{ allowInSetup: true }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -796,7 +794,7 @@ ruleTester.run('no-unmocked-fs', rule, {
         allowedPaths: ['/var/data']
       }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -849,7 +847,7 @@ ruleTester.run('no-unmocked-fs', rule, {
         allowedPaths: ['/allowed']
       }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'readFileSync' }
       }]
     },
@@ -860,7 +858,7 @@ ruleTester.run('no-unmocked-fs', rule, {
         allowedModules: ['glob']  // fs-extra not allowed
       }],
       errors: [{
-        messageId: 'mockFs',
+        messageId: 'unmockedFs',
         data: { method: 'fs-extra.copy' }
       }]
     }

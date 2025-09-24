@@ -553,9 +553,8 @@ const realFile = fs.readFileSync('integration-test-file.txt');
 
 ## Related Rules
 
-- [no-global-state-mutation](./no-global-state-mutation.md) - Prevents global state changes
-- [no-test-isolation](./no-test-isolation.md) - Ensures test independence
-- [no-random-data](./no-random-data.md) - Prevents non-deterministic test data
+- [await-async-events](./await-async-events.md) - Ensures proper awaiting of async operations
+- [no-hard-coded-timeout](./no-hard-coded-timeout.md) - Prevents hard-coded timeouts that can cause flakiness
 
 ## Further Reading
 
