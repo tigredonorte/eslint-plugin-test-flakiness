@@ -120,7 +120,6 @@ ruleTester.run('no-long-text-match', rule, {
       filename: 'WithinTemplate.test.js'
     },
 
-
     // TestId queries when ignoreTestIds is enabled
     {
       code: 'getByTestId("this-is-a-very-long-test-id-that-should-be-ignored")',
@@ -360,7 +359,6 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-
     // Template literals in within() queries
     {
       code: 'within(container).getByText(`This is a very long template literal in a within query that should be flagged`)',
@@ -401,7 +399,6 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-
     // Template literals in member expressions (lines 199-204)
     {
       code: 'screen.getByText(`This is a very long template literal in member expression that should be flagged`)',
@@ -411,7 +408,6 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 80, maxLength: 50 }
       }]
     },
-
 
     // Text not in comment (should still be flagged)
     {
