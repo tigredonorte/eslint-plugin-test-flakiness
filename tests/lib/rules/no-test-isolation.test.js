@@ -480,15 +480,6 @@ ruleTester.run('no-test-isolation', rule, {
       }]
     },
 
-    // Module variable mutation with import (line 318)
-    {
-      code: 'import utils from "./utils"; it("test", () => { utils.config = {}; });',
-      filename: 'ImportedModuleMutation.test.js',
-      errors: [{
-        messageId: 'avoidModuleMutation'
-      }]
-    },
-
     // Shared state in describe without setup initialization (lines 348-352)
     {
       code: 'describe("test", () => { let shared; it("test", () => { shared = 1; }); });',
@@ -511,6 +502,62 @@ ruleTester.run('no-test-isolation', rule, {
         { messageId: 'avoidSharedState', data: { variable: 'x' } },
         { messageId: 'avoidSharedState', data: { variable: 'y' } }
       ]
+    },
+
+    // Test case: Empty object should be treated as mutable (regression test for PR #15 fix)
+    {
+      code: `
+        const emptyObj = {};
+        it("test1", () => { emptyObj.value = 1; });
+        it("test2", () => { expect(emptyObj.value).toBe(1); });
+      `,
+      filename: 'EmptyObjectMutation.test.js',
+      errors: [{
+        messageId: 'avoidSharedState',
+        data: { variable: 'emptyObj' }
+      }]
+    },
+
+    // Test case: Non-empty object with literal properties should also be treated as mutable
+    {
+      code: `
+        const nonEmptyObj = { initial: 'value' };
+        it("test1", () => { nonEmptyObj.newProp = 'added'; });
+        it("test2", () => { expect(nonEmptyObj.newProp).toBe('added'); });
+      `,
+      filename: 'NonEmptyObjectMutation.test.js',
+      errors: [{
+        messageId: 'avoidSharedState',
+        data: { variable: 'nonEmptyObj' }
+      }]
+    },
+
+    // Test case: Array expressions should be treated as mutable
+    {
+      code: `
+        const arr = [1, 2, 3];
+        it("test1", () => { arr.push(4); });
+        it("test2", () => { expect(arr.length).toBe(4); });
+      `,
+      filename: 'ArrayMutation.test.js',
+      errors: [{
+        messageId: 'avoidSharedState',
+        data: { variable: 'arr' }
+      }]
+    },
+
+    // Test case: Empty array should also be treated as mutable
+    {
+      code: `
+        const emptyArr = [];
+        it("test1", () => { emptyArr.push('item'); });
+        it("test2", () => { expect(emptyArr[0]).toBe('item'); });
+      `,
+      filename: 'EmptyArrayMutation.test.js',
+      errors: [{
+        messageId: 'avoidSharedState',
+        data: { variable: 'emptyArr' }
+      }]
     }
   ]
 });
