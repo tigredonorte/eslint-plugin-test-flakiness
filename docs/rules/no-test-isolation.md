@@ -38,12 +38,12 @@ When set to `true`, allows shared setup in `beforeAll`/`beforeEach` hooks.
 ```javascript
 // With allowSharedSetup: true (default)
 beforeAll(() => {
-  global.testDatabase = createTestDatabase(); // ✅ Allowed
+  global.testDatabase = createTestDatabase(); // Allowed
 });
 
 // With allowSharedSetup: false
 beforeAll(() => {
-  global.testDatabase = createTestDatabase(); // ❌ Not allowed
+  global.testDatabase = createTestDatabase(); // Not allowed
 });
 ```
 
@@ -54,12 +54,12 @@ When set to `true`, checks for global state modifications that could affect othe
 ```javascript
 // With checkGlobalState: true (default)
 test("should do something", () => {
-  global.config = { debug: true }; // ❌ Flagged
+  global.config = { debug: true }; // Flagged
 });
 
 // With checkGlobalState: false
 test("should do something", () => {
-  global.config = { debug: true }; // ✅ Ignored
+  global.config = { debug: true }; // Ignored
 });
 ```
 
@@ -69,15 +69,15 @@ Array of variable names that are allowed to be shared between tests.
 
 ```javascript
 // With allowedSharedVariables: ["testUtils"]
-let testUtils = createTestUtils(); // ✅ Allowed
+let testUtils = createTestUtils(); // Allowed
 
 // With allowedSharedVariables: []
-let sharedData = {}; // ❌ Not allowed
+let sharedData = {}; // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Shared variables between tests
@@ -163,7 +163,7 @@ test("expects incremented value", () => {
 });
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Each test is self-contained

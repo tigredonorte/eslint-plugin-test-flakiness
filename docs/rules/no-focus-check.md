@@ -35,15 +35,15 @@ When set to `true`, allows focus checks when wrapped in `waitFor()` or similar a
 
 ```javascript
 // With allowWithWaitFor: true (default)
-await waitFor(() => expect(element).toHaveFocus()); // ✅ Allowed
+await waitFor(() => expect(element).toHaveFocus()); // Allowed
 
 // With allowWithWaitFor: false
-await waitFor(() => expect(element).toHaveFocus()); // ❌ Not allowed
+await waitFor(() => expect(element).toHaveFocus()); // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct focus assertions
@@ -84,7 +84,7 @@ await page.locator("input").focus();
 await expect(page.locator("input")).toBeFocused();
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use waitFor with focus assertions

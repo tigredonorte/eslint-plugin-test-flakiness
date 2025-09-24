@@ -39,12 +39,12 @@ When set to `true`, allows random data generation in setup hooks if properly see
 // With allowInSetup: true
 beforeEach(() => {
   Math.seedrandom("fixed-seed");
-  const testData = generateRandomData(); // ✅ Allowed with seed
+  const testData = generateRandomData(); // Allowed with seed
 });
 
 // With allowInSetup: false (default)
 beforeEach(() => {
-  const testData = generateRandomData(); // ❌ Not allowed
+  const testData = generateRandomData(); // Not allowed
 });
 ```
 
@@ -56,11 +56,11 @@ When set to `true`, allows random data generation when a seed is provided.
 // With allowSeededRandom: true (default)
 const faker = require("faker");
 faker.seed(123);
-const name = faker.name.firstName(); // ✅ Allowed
+const name = faker.name.firstName(); // Allowed
 
 // With allowSeededRandom: false
 faker.seed(123);
-const name = faker.name.firstName(); // ❌ Not allowed
+const name = faker.name.firstName(); // Not allowed
 ```
 
 ### `allowedMethods` (default: `[]`)
@@ -69,15 +69,15 @@ Array of method names that are allowed to use random data.
 
 ```javascript
 // With allowedMethods: ["generateTestId"]
-const id = generateTestId(); // ✅ Allowed
+const id = generateTestId(); // Allowed
 
 // With allowedMethods: []
-const id = generateTestId(); // ❌ Not allowed if it uses random data
+const id = generateTestId(); // Not allowed if it uses random data
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Math.random() usage
@@ -132,7 +132,7 @@ const x = Math.random() * window.innerWidth;
 const y = Math.random() * window.innerHeight;
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use fixed test data

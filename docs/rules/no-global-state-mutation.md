@@ -36,18 +36,18 @@ When set to `true`, allows global state mutations in setup and teardown hooks (`
 ```javascript
 // With allowInHooks: true (default)
 beforeEach(() => {
-  window.location.href = "http://localhost"; // ✅ Allowed
+  window.location.href = "http://localhost"; // Allowed
 });
 
 // With allowInHooks: false
 beforeEach(() => {
-  window.location.href = "http://localhost"; // ❌ Not allowed
+  window.location.href = "http://localhost"; // Not allowed
 });
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct global object mutations
@@ -88,7 +88,7 @@ document.write("<div>Test content</div>");
 document.body.innerHTML = "<p>Test</p>";
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use proper setup/teardown hooks
