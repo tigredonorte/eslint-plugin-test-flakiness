@@ -1,8 +1,8 @@
-# 🚀 Complete Setup & Deployment Guide
+# Complete Setup & Deployment Guide
 
 This guide covers the complete setup for `eslint-plugin-test-flakiness` with Husky, Commitizen, and automated releases.
 
-## 📋 Prerequisites
+## Prerequisites
 
 1. **pnpm installed globally**
 
@@ -17,7 +17,7 @@ This guide covers the complete setup for `eslint-plugin-test-flakiness` with Hus
    - Register at: https://www.npmjs.com
    - Verify email address
 
-## 🔧 Initial Setup
+## Initial Setup
 
 ### 1. Clone and Install
 
@@ -62,7 +62,7 @@ Edit `package.json`:
 }
 ```
 
-## 🔑 Authentication Setup
+## Authentication Setup
 
 ### 1. Generate NPM Token
 
@@ -80,7 +80,7 @@ Edit `package.json`:
 4. Name: `NPM_TOKEN`
 5. Value: Your npm token
 
-## 🎯 Development Workflow
+## Development Workflow
 
 ### Using Commitizen (Recommended)
 
@@ -137,7 +137,7 @@ pnpm commit
 # Answer "y" when asked about breaking changes
 ```
 
-## 🚢 First Release
+## First Release
 
 ### 1. Prepare for First Release
 
@@ -166,7 +166,7 @@ git push -u origin main
 2. **NPM Package**: Will appear at `npmjs.com/package/eslint-plugin-test-flakiness`
 3. **GitHub Releases**: Automatic release with changelog
 
-## 🔄 Ongoing Development
+## Ongoing Development
 
 ### Daily Workflow
 
@@ -215,7 +215,7 @@ pnpm commit
 # Message: add new-rule-name to detect X pattern
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Run Tests Locally
 
@@ -249,7 +249,7 @@ module.exports = {
 npx eslint "**/*.test.js"
 ```
 
-## 📊 CI/CD Pipeline
+## CI/CD Pipeline
 
 The GitHub Action will:
 
@@ -264,7 +264,7 @@ The GitHub Action will:
 9. **Create** GitHub release
 10. **Commit** changes back to repo
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues & Solutions
 
@@ -308,7 +308,7 @@ npm view eslint-plugin-test-flakiness
 "name": "@yourusername/eslint-plugin-test-flakiness"
 ```
 
-## 📈 Post-Release
+## Post-Release
 
 ### Verify Installation
 
@@ -331,7 +331,7 @@ Add to your README.md:
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 ```
 
-## 🎉 Success Checklist
+## Success Checklist
 
 - [ ] pnpm 10.15.1 installed
 - [ ] Repository created on GitHub
@@ -344,7 +344,7 @@ Add to your README.md:
 - [ ] Package published to NPM
 - [ ] Test installation works
 
-## 📚 Resources
+## Resources
 
 - [Semantic Release Documentation](https://semantic-release.gitbook.io/)
 - [Conventional Commits](https://www.conventionalcommits.org/)

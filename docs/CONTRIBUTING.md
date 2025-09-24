@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to eslint-plugin-test-flakiness! This guide will help you get started.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -29,7 +29,7 @@ Thank you for your interest in contributing to eslint-plugin-test-flakiness! Thi
    pnpm prepare
    ```
 
-## 📝 Development Workflow
+## Development Workflow
 
 ### 1. Create a Feature Branch
 
@@ -160,7 +160,7 @@ git push origin feat/your-feature-name
 # Create a pull request on GitHub
 ```
 
-## 📋 Pull Request Guidelines
+## Pull Request Guidelines
 
 1. **Title**: Use a conventional commit format
    - Example: `feat(rules): add no-async-without-await rule`
@@ -175,7 +175,7 @@ git push origin feat/your-feature-name
 4. **Documentation**: Update README if needed
 5. **Commits**: Keep history clean (squash if needed)
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### Unit Tests
 
@@ -215,7 +215,7 @@ pnpm test -- --coverage
 open coverage/lcov-report/index.html
 ```
 
-## 🎯 Code Style
+## Code Style
 
 - Use 2 spaces for indentation
 - Use semicolons
@@ -223,14 +223,14 @@ open coverage/lcov-report/index.html
 - Add trailing commas in multiline objects/arrays
 - Follow ESLint rules (run `pnpm lint`)
 
-## 📚 Resources
+## Resources
 
 - [ESLint Developer Guide](https://eslint.org/docs/developer-guide/)
 - [Writing ESLint Rules](https://eslint.org/docs/developer-guide/working-with-rules)
 - [AST Explorer](https://astexplorer.net/) - Helpful for understanding AST structure
 - [ESTree Spec](https://github.com/estree/estree) - JavaScript AST specification
 
-## 🐛 Reporting Issues
+## Reporting Issues
 
 Before creating an issue:
 
@@ -246,14 +246,14 @@ Include in your issue:
 - Code example
 - Expected vs actual behavior
 
-## 💡 Suggesting Features
+## Suggesting Features
 
 1. Check if it's already suggested
 2. Open a discussion first for major features
 3. Explain the use case and benefits
 4. Consider if it fits the plugin's scope
 
-## 📊 Review Process
+## Review Process
 
 1. **Automated checks**: CI must pass
 2. **Code review**: Maintainers will review
@@ -261,7 +261,7 @@ Include in your issue:
 4. **Documentation**: Must be updated if needed
 5. **Merge**: Squash and merge to main
 
-## 🚀 Release Process
+## Release Process
 
 Releases are automated via semantic-release:
 
@@ -272,11 +272,11 @@ Releases are automated via semantic-release:
 5. GitHub release is created
 6. Changelog is updated
 
-## 📄 License
+## License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
 
-## 🙏 Recognition
+## Recognition
 
 Contributors are recognized in:
 
@@ -284,13 +284,13 @@ Contributors are recognized in:
 - Package.json contributors field
 - Release notes
 
-## 💬 Getting Help
+## Getting Help
 
 - Open a discussion for questions
 - Join our community chat (if available)
 - Check the FAQ in the wiki
 
-## ⚡ Quick Commands Reference
+## Quick Commands Reference
 
 ```bash
 # Install dependencies
@@ -312,4 +312,4 @@ pnpm build
 pnpm link --global
 ```
 
-Thank you for contributing! 🎉
+Thank you for contributing!

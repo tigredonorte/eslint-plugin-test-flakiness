@@ -41,10 +41,10 @@ const result = await Promise.race([
   new Promise((_, reject) =>
     setTimeout(() => reject(new Error("timeout")), 5000),
   ),
-]); // ✅ Allowed
+]); // Allowed
 
 // With allowWithTimeout: false (default)
-const result = await Promise.race([fetchData(), timeout(5000)]); // ❌ Not allowed
+const result = await Promise.race([fetchData(), timeout(5000)]); // Not allowed
 ```
 
 ### `allowInHelpers` (default: `true`)
@@ -54,18 +54,18 @@ When set to `true`, allows `Promise.race()` in test helper functions and utiliti
 ```javascript
 // With allowInHelpers: true (default)
 function createTimeoutHelper() {
-  return Promise.race([operation(), timeout()]); // ✅ Allowed in helper
+  return Promise.race([operation(), timeout()]); // Allowed in helper
 }
 
 // With allowInHelpers: false
 function createTimeoutHelper() {
-  return Promise.race([operation(), timeout()]); // ❌ Not allowed
+  return Promise.race([operation(), timeout()]); // Not allowed
 }
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Basic Promise.race usage
@@ -125,7 +125,7 @@ const content = await Promise.race([
 ]);
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use explicit timeout handling

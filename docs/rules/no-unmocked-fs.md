@@ -39,12 +39,12 @@ When set to `true`, allows filesystem operations in setup/teardown hooks.
 ```javascript
 // With allowInSetup: true
 beforeAll(() => {
-  fs.mkdirSync("test-fixtures"); // ✅ Allowed
+  fs.mkdirSync("test-fixtures"); // Allowed
 });
 
 // With allowInSetup: false (default)
 beforeAll(() => {
-  fs.mkdirSync("test-fixtures"); // ❌ Not allowed
+  fs.mkdirSync("test-fixtures"); // Not allowed
 });
 ```
 
@@ -55,11 +55,11 @@ When set to `true`, allows operations on temporary files and directories.
 ```javascript
 // With allowTempFiles: true (default)
 const tempFile = path.join(os.tmpdir(), "test-file.txt");
-fs.writeFileSync(tempFile, "test"); // ✅ Allowed
+fs.writeFileSync(tempFile, "test"); // Allowed
 
 // With allowTempFiles: false
 const tempFile = path.join(os.tmpdir(), "test-file.txt");
-fs.writeFileSync(tempFile, "test"); // ❌ Not allowed
+fs.writeFileSync(tempFile, "test"); // Not allowed
 ```
 
 ### `allowedModules` (default: `[]`)
@@ -69,11 +69,11 @@ Array of module names that are allowed to perform filesystem operations.
 ```javascript
 // With allowedModules: ["fs-extra"]
 const fsExtra = require("fs-extra");
-fsExtra.readJson("package.json"); // ✅ Allowed
+fsExtra.readJson("package.json"); // Allowed
 
 // With allowedModules: []
 const fsExtra = require("fs-extra");
-fsExtra.readJson("package.json"); // ❌ Not allowed
+fsExtra.readJson("package.json"); // Not allowed
 ```
 
 ### `mockModules` (default: `["fs", "fs/promises", "node:fs"]`)
@@ -82,8 +82,8 @@ Array of module names that should be mocked instead of used directly.
 
 ```javascript
 // With default mockModules
-const fs = require("fs"); // ❌ Should be mocked
-const fsPromises = require("fs/promises"); // ❌ Should be mocked
+const fs = require("fs"); // Should be mocked
+const fsPromises = require("fs/promises"); // Should be mocked
 
 // Expected mocking
 jest.mock("fs");
@@ -92,7 +92,7 @@ const fs = require("fs");
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct fs operations
@@ -148,7 +148,7 @@ const tar = require("tar");
 tar.extract({ file: "archive.tar.gz" });
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Mock filesystem operations

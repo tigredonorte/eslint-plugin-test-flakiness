@@ -8,7 +8,7 @@ This rule warns against patterns that check for element removal without proper w
 
 ## Examples
 
-### ❌ Invalid
+### Invalid
 
 ```javascript
 // Checking .not.toBeInTheDocument() without waitFor
@@ -31,7 +31,7 @@ await waitForElementToBeRemoved(() => screen.queryByText("Loading"), {
 });
 ```
 
-### ✅ Valid
+### Valid
 
 ```javascript
 // Using waitForElementToBeRemoved
@@ -74,27 +74,27 @@ Direct checks for element removal without proper waiting can fail intermittently
 1. **Direct null/undefined checks on query methods**
 
    ```javascript
-   // ❌ Bad - No waiting for removal
+   // Bad - No waiting for removal
    expect(queryByText("Loading")).toBeNull();
    ```
 
 2. **Using .not.toBeInTheDocument() without waiting**
 
    ```javascript
-   // ❌ Bad - Checks immediately
+   // Bad - Checks immediately
    expect(element).not.toBeInTheDocument();
    ```
 
 3. **Document.contains() negation**
 
    ```javascript
-   // ❌ Bad - No built-in waiting
+   // Bad - No built-in waiting
    !document.contains(element);
    ```
 
 4. **Insufficient timeout values**
    ```javascript
-   // ❌ Bad - Timeout too short
+   // Bad - Timeout too short
    await waitForElementToBeRemoved(() => element, { timeout: 100 });
    ```
 
@@ -103,14 +103,14 @@ Direct checks for element removal without proper waiting can fail intermittently
 1. **Use waitForElementToBeRemoved**
 
    ```javascript
-   // ✅ Good - Properly waits for removal
+   // Good - Properly waits for removal
    await waitForElementToBeRemoved(() => screen.queryByText("Loading"));
    ```
 
 2. **Wrap checks in waitFor**
 
    ```javascript
-   // ✅ Good - Retries until condition is met
+   // Good - Retries until condition is met
    await waitFor(() => {
      expect(element).not.toBeInTheDocument();
    });
@@ -119,13 +119,13 @@ Direct checks for element removal without proper waiting can fail intermittently
 3. **Use adequate timeouts**
 
    ```javascript
-   // ✅ Good - Sufficient timeout
+   // Good - Sufficient timeout
    await waitForElementToBeRemoved(() => element, { timeout: 5000 });
    ```
 
 4. **Consider positive conditions**
    ```javascript
-   // ✅ Good - Wait for what appears next
+   // Good - Wait for what appears next
    await waitFor(() => {
      expect(screen.getByText("Content loaded")).toBeInTheDocument();
    });

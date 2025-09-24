@@ -38,10 +38,10 @@ When set to `true`, allows the use of `requestAnimationFrame` in tests.
 
 ```javascript
 // With allowAnimationFrame: true
-requestAnimationFrame(callback); // ✅ Allowed
+requestAnimationFrame(callback); // Allowed
 
 // With allowAnimationFrame: false (default)
-requestAnimationFrame(callback); // ❌ Not allowed
+requestAnimationFrame(callback); // Not allowed
 ```
 
 ### `allowIfAnimationsDisabled` (default: `true`)
@@ -52,11 +52,11 @@ When set to `true`, animation waits are allowed if the test file appears to have
 // With allowIfAnimationsDisabled: true (default)
 // If the file contains animation-disabling code:
 const styles = `* { animation-duration: 0 !important; }`;
-waitForAnimation(); // ✅ Allowed
+waitForAnimation(); // Allowed
 
 // With allowIfAnimationsDisabled: false
 // Same file with animation-disabling code:
-waitForAnimation(); // ❌ Still not allowed
+waitForAnimation(); // Still not allowed
 ```
 
 ### `customAnimationPatterns` (default: `[]`)
@@ -65,8 +65,8 @@ Array of custom function names to treat as animation waits.
 
 ```javascript
 // With customAnimationPatterns: ["myCustomWait", "specialAnimationWait"]
-myCustomWait(); // ❌ Will be flagged
-specialAnimationWait(); // ❌ Will be flagged
+myCustomWait(); // Will be flagged
+specialAnimationWait(); // Will be flagged
 ```
 
 ### `ignorePatterns` (default: `[]`)
@@ -75,13 +75,13 @@ Array of regex patterns. Code matching these patterns will not be flagged.
 
 ```javascript
 // With ignorePatterns: ["legacyAnimation", "allowedWait"]
-waitForAnimation(); // ❌ Still flagged
-legacyAnimationWait(); // ✅ Ignored if matches pattern
+waitForAnimation(); // Still flagged
+legacyAnimationWait(); // Ignored if matches pattern
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Direct animation wait functions
@@ -129,7 +129,7 @@ await waitForAnimation();
 await element.waitFor("transitionend");
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Wait for specific elements or conditions

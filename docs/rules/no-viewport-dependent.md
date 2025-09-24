@@ -39,12 +39,12 @@ When set to `true`, allows viewport configuration in test setup hooks.
 ```javascript
 // With allowViewportSetup: true (default)
 beforeEach(() => {
-  cy.viewport(1920, 1080); // ✅ Allowed in setup
+  cy.viewport(1920, 1080); // Allowed in setup
 });
 
 // With allowViewportSetup: false
 beforeEach(() => {
-  cy.viewport(1920, 1080); // ❌ Not allowed
+  cy.viewport(1920, 1080); // Not allowed
 });
 ```
 
@@ -56,11 +56,11 @@ When set to `true`, allows tests specifically designed for responsive design tes
 // With allowResponsiveTests: true
 describe("Responsive design", () => {
   cy.viewport("macbook-15");
-  cy.get('[data-cy="mobile-menu"]').should("not.be.visible"); // ✅ Allowed
+  cy.get('[data-cy="mobile-menu"]').should("not.be.visible"); // Allowed
 });
 
 // With allowResponsiveTests: false (default)
-cy.get('[data-cy="mobile-menu"]').should("not.be.visible"); // ❌ Not allowed
+cy.get('[data-cy="mobile-menu"]').should("not.be.visible"); // Not allowed
 ```
 
 ### `ignoreMediaQueries` (default: `false`)
@@ -69,15 +69,15 @@ When set to `true`, ignores tests that specifically test CSS media query behavio
 
 ```javascript
 // With ignoreMediaQueries: true
-expect(window.matchMedia("(max-width: 768px)").matches).toBe(true); // ✅ Ignored
+expect(window.matchMedia("(max-width: 768px)").matches).toBe(true); // Ignored
 
 // With ignoreMediaQueries: false (default)
-expect(window.matchMedia("(max-width: 768px)").matches).toBe(true); // ❌ Not allowed
+expect(window.matchMedia("(max-width: 768px)").matches).toBe(true); // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Viewport size checks
@@ -136,7 +136,7 @@ cy.viewport("iphone-6");
 cy.get(".hamburger-menu").should("be.visible");
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Test functionality regardless of viewport

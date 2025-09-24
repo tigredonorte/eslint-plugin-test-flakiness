@@ -17,7 +17,7 @@ While focused and skipped tests don't directly cause flakiness, they create sign
 
 ## Examples
 
-❌ **Incorrect** (violations):
+**Incorrect** (violations):
 
 ```javascript
 // Focused tests - only these will run
@@ -73,7 +73,7 @@ fit`template literal focused test`;
 xdescribe`template literal skipped suite`;
 ```
 
-✅ **Correct**:
+**Correct**:
 
 ```javascript
 // Normal tests that always run

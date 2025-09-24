@@ -37,12 +37,12 @@ When set to `true`, allows CSS selectors with positional queries like `:nth-chil
 
 ```javascript
 // With allowNthChild: true
-const thirdItem = document.querySelector('li:nth-child(3)'); // ✅ Allowed
-const firstButton = document.querySelector('button:first-child'); // ✅ Allowed
+const thirdItem = document.querySelector("li:nth-child(3)"); // Allowed
+const firstButton = document.querySelector("button:first-child"); // Allowed
 
 // With allowNthChild: false (default)
-const thirdItem = document.querySelector('li:nth-child(3)'); // ❌ Not allowed
-const firstButton = document.querySelector('button:first-child'); // ❌ Not allowed
+const thirdItem = document.querySelector("li:nth-child(3)"); // Not allowed
+const firstButton = document.querySelector("button:first-child"); // Not allowed
 ```
 
 ### `allowSpecificIndices` (default: `[0, -1]`)
@@ -52,17 +52,17 @@ An array of specific indices that are allowed when accessing query results. By d
 ```javascript
 // With allowSpecificIndices: [0, -1] (default)
 const items = screen.getAllByRole("listitem");
-expect(items[0]).toBeInTheDocument(); // ✅ Allowed (first element)
-expect(items[items.length - 1]).toBeInTheDocument(); // ✅ Allowed (last element)
-expect(items[2]).toBeInTheDocument(); // ❌ Not allowed
+expect(items[0]).toBeInTheDocument(); // Allowed (first element)
+expect(items[items.length - 1]).toBeInTheDocument(); // Allowed (last element)
+expect(items[2]).toBeInTheDocument(); // Not allowed
 
 // With allowSpecificIndices: [0, 1, 2]
 const items = screen.getAllByRole("listitem");
-expect(items[2]).toBeInTheDocument(); // ✅ Now allowed
+expect(items[2]).toBeInTheDocument(); // Now allowed
 
 // With allowSpecificIndices: []
 const items = screen.getAllByRole("listitem");
-expect(items[0]).toBeInTheDocument(); // ❌ Not allowed
+expect(items[0]).toBeInTheDocument(); // Not allowed
 ```
 
 ### `ignoreDataTestId` (default: `true`)
@@ -72,16 +72,16 @@ When set to `true`, ignores index usage when queries use `data-testid` attribute
 ```javascript
 // With ignoreDataTestId: true (default)
 const items = screen.getAllByTestId("list-item");
-expect(items[0]).toBeInTheDocument(); // ✅ Allowed
+expect(items[0]).toBeInTheDocument(); // Allowed
 
 // With ignoreDataTestId: false
 const items = screen.getAllByTestId("list-item");
-expect(items[0]).toBeInTheDocument(); // ❌ Not allowed
+expect(items[0]).toBeInTheDocument(); // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Array index access on DOM queries
@@ -134,7 +134,7 @@ expect(rows[1].cells[0]).toHaveTextContent("John");
 expect(rows[1].cells[1]).toHaveTextContent("Doe");
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use semantic queries instead of index

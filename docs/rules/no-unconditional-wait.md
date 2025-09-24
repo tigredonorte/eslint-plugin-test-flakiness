@@ -37,11 +37,11 @@ Maximum allowed timeout duration in milliseconds.
 
 ```javascript
 // With maxTimeout: 1000 (default)
-setTimeout(() => {}, 500); // ✅ Allowed
-setTimeout(() => {}, 2000); // ❌ Too long
+setTimeout(() => {}, 500); // Allowed
+setTimeout(() => {}, 2000); // Too long
 
 // With maxTimeout: 2000
-setTimeout(() => {}, 1500); // ✅ Allowed
+setTimeout(() => {}, 1500); // Allowed
 ```
 
 ### `allowInSetup` (default: `true`)
@@ -51,12 +51,12 @@ When set to `true`, allows unconditional waits in setup/teardown hooks.
 ```javascript
 // With allowInSetup: true (default)
 beforeEach(async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // ✅ Allowed
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Allowed
 });
 
 // With allowInSetup: false
 beforeEach(async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // ❌ Not allowed
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Not allowed
 });
 ```
 
@@ -66,15 +66,15 @@ Array of method names that are allowed to use unconditional waits.
 
 ```javascript
 // With allowedMethods: ["debounceWait"]
-await debounceWait(500); // ✅ Allowed
+await debounceWait(500); // Allowed
 
 // With allowedMethods: []
-await debounceWait(500); // ❌ Not allowed if it uses setTimeout
+await debounceWait(500); // Not allowed if it uses setTimeout
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // setTimeout and setInterval
@@ -131,7 +131,7 @@ while (true) {
 await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for animation
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use conditional waiting

@@ -38,11 +38,11 @@ Array of operation names that are allowed to be followed by immediate assertions
 ```javascript
 // With allowedAfterOperations: ["render"]
 render(<Component />);
-expect(screen.getByText("Hello")).toBeInTheDocument(); // ✅ Allowed
+expect(screen.getByText("Hello")).toBeInTheDocument(); // Allowed
 
 // With allowedAfterOperations: []
 render(<Component />);
-expect(screen.getByText("Hello")).toBeInTheDocument(); // ❌ Not allowed
+expect(screen.getByText("Hello")).toBeInTheDocument(); // Not allowed
 ```
 
 ### `requireWaitFor` (default: `true`)
@@ -52,11 +52,11 @@ When set to `true`, requires `waitFor` for assertions after async operations.
 ```javascript
 // With requireWaitFor: true (default)
 await user.click(button);
-await waitFor(() => expect(element).toBeVisible()); // ✅ Required
+await waitFor(() => expect(element).toBeVisible()); // Required
 
 // With requireWaitFor: false
 await user.click(button);
-expect(element).toBeVisible(); // ✅ Allowed
+expect(element).toBeVisible(); // Allowed
 ```
 
 ### `ignoreDataTestId` (default: `false`)
@@ -66,16 +66,16 @@ When set to `true`, allows immediate assertions on elements with `data-testid`.
 ```javascript
 // With ignoreDataTestId: true
 await user.click(button);
-expect(screen.getByTestId("result")).toBeVisible(); // ✅ Allowed
+expect(screen.getByTestId("result")).toBeVisible(); // Allowed
 
 // With ignoreDataTestId: false (default)
 await user.click(button);
-expect(screen.getByTestId("result")).toBeVisible(); // ❌ Not allowed
+expect(screen.getByTestId("result")).toBeVisible(); // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // User interactions followed by immediate assertions
@@ -129,7 +129,7 @@ component.update();
 expect(wrapper.find(".updated")).toHaveLength(1);
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use waitFor for assertions after user interactions

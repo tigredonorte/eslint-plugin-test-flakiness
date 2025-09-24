@@ -37,13 +37,13 @@ Maximum allowed length for exact text matching.
 
 ```javascript
 // With maxLength: 30
-expect(screen.getByText("Click here")).toBeInTheDocument(); // ✅ Allowed (10 chars)
+expect(screen.getByText("Click here")).toBeInTheDocument(); // Allowed (10 chars)
 expect(
   screen.getByText("This is a very long text that might change"),
-).toBeInTheDocument(); // ❌ Not allowed (43 chars)
+).toBeInTheDocument(); // Not allowed (43 chars)
 
 // With maxLength: 50
-expect(screen.getByText("This is a moderately long text")).toBeInTheDocument(); // ✅ Allowed (31 chars)
+expect(screen.getByText("This is a moderately long text")).toBeInTheDocument(); // Allowed (31 chars)
 ```
 
 ### `allowPartialMatch` (default: `true`)
@@ -52,11 +52,11 @@ When set to `true`, allows partial text matching with regex or substring queries
 
 ```javascript
 // With allowPartialMatch: true (default)
-expect(screen.getByText(/Click here/)).toBeInTheDocument(); // ✅ Allowed
-expect(screen.getByText("Long text", { exact: false })).toBeInTheDocument(); // ✅ Allowed
+expect(screen.getByText(/Click here/)).toBeInTheDocument(); // Allowed
+expect(screen.getByText("Long text", { exact: false })).toBeInTheDocument(); // Allowed
 
 // With allowPartialMatch: false
-expect(screen.getByText(/Click here/)).toBeInTheDocument(); // ❌ Not allowed
+expect(screen.getByText(/Click here/)).toBeInTheDocument(); // Not allowed
 ```
 
 ### `ignoreTestIds` (default: `false`)
@@ -67,15 +67,15 @@ When set to `true`, ignores text matching when using `data-testid` attributes.
 // With ignoreTestIds: true
 expect(screen.getByTestId("long-text-element")).toHaveTextContent(
   "Very long text",
-); // ✅ Allowed
+); // Allowed
 
 // With ignoreTestIds: false (default)
-expect(screen.getByTestId("element")).toHaveTextContent("Very long text"); // ❌ Not allowed
+expect(screen.getByTestId("element")).toHaveTextContent("Very long text"); // Not allowed
 ```
 
 ## Examples
 
-### ❌ Incorrect
+### Incorrect
 
 ```javascript
 // Long exact text matches
@@ -132,7 +132,7 @@ expect(
 ).toBeInTheDocument();
 ```
 
-### ✅ Correct
+### Correct
 
 ```javascript
 // Use partial text matching
