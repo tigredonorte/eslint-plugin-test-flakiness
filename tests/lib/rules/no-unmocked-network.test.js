@@ -41,13 +41,13 @@ ruleTester.run('no-unmocked-network', rule, {
       filename: 'MockedAxios.test.js'
     },
     {
-      code: 'import MockAdapter from "axios-mock-adapter"; const mock = new MockAdapter(axios);',
+      code: 'import MockAdapter from "axios-mock-adapter";\nconst mock = new MockAdapter(axios);',
       filename: 'AxiosMockAdapter.test.js'
     },
 
     // Using MSW (Mock Service Worker)
     {
-      code: 'import { setupServer } from "msw/node"; const server = setupServer();',
+      code: 'import { setupServer } from "msw/node";\nconst server = setupServer();',
       filename: 'MSW.test.js'
     },
     {
@@ -443,15 +443,27 @@ ruleTester.run('no-unmocked-network', rule, {
       }]
     },
 
-    // Multiple violations
+    // Multiple violations - fetch
     {
-      code: `fetch("/api/users");
-axios.post("/api/data", data);
-$.get("/api/info");`,
-      filename: 'Multiple.test.js',
+      code: 'fetch("/api/users");',
+      filename: 'MultipleFetch.test.js',
       errors: [
-        { messageId: 'mockNetwork', data: { method: 'fetch' } },
-        { messageId: 'mockNetwork', data: { method: 'axios' } },
+        { messageId: 'mockNetwork', data: { method: 'fetch' } }
+      ]
+    },
+    // Multiple violations - axios
+    {
+      code: 'axios.post("/api/data", data);',
+      filename: 'MultipleAxios.test.js',
+      errors: [
+        { messageId: 'mockNetwork', data: { method: 'axios' } }
+      ]
+    },
+    // Multiple violations - jQuery
+    {
+      code: '$.get("/api/info");',
+      filename: 'MultipleJquery.test.js',
+      errors: [
         { messageId: 'mockNetwork', data: { method: 'ajax' } }
       ]
     },
