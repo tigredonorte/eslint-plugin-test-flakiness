@@ -5,31 +5,9 @@
 'use strict';
 
 const rule = require('../../../lib/rules/await-async-events');
-const { RuleTester } = require('eslint');
-const semver = require('semver');
+const { getRuleTester } = require('../../../lib/utils/test-helpers');
 
-// Detect ESLint version for proper RuleTester configuration
-const eslintPackage = require('eslint/package.json');
-const eslintVersion = semver.major(eslintPackage.version);
-
-// Configure RuleTester based on ESLint version
-const ruleTesterConfig = eslintVersion >= 9
-  ? {
-      // ESLint 9+ (flat config)
-      languageOptions: {
-        ecmaVersion: 2021,
-        sourceType: 'module'
-      }
-    }
-  : {
-      // ESLint 7-8 (legacy config)
-      parserOptions: {
-        ecmaVersion: 2021,
-        sourceType: 'module'
-      }
-    };
-
-const ruleTester = new RuleTester(ruleTesterConfig);
+const ruleTester = getRuleTester();
 
 ruleTester.run('await-async-events', rule, {
   valid: [
