@@ -34,7 +34,7 @@ describe('Viewport Dependent Violations', () => {
     expect(window.scrollY).toBe(0);
     expect(window.pageYOffset).toBe(0);
     expect(document.documentElement.scrollTop).toBe(0);
-    expect(element.scrollTop).toBeLessThan(100);
+    expect(someDiv.scrollTop).toBeLessThan(100); // Using non-mock element
   });
 
   // ❌ BAD: Media query based tests

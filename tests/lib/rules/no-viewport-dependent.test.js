@@ -210,7 +210,6 @@ ruleTester.run('no-viewport-dependent', rule, {
       code: 'target.scrollWidth',
       filename: 'TargetScroll.test.js'
     },
-
     // Non-window/screen destructuring (should be valid)
     {
       code: 'const { width, height } = element',
