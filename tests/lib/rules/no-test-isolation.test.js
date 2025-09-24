@@ -504,7 +504,7 @@ ruleTester.run('no-test-isolation', rule, {
       ]
     },
 
-    // Test case: Empty object should be treated as mutable (regression: previously, empty object literals were not flagged as shared mutable state)
+    // Empty objects should be treated as mutable
     {
       code: `
         const emptyObj = {};
