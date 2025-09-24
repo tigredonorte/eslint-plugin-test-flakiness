@@ -76,7 +76,8 @@ ruleTester.run('no-viewport-dependent', rule, {
     },
     {
       code: 'matchMedia("(max-width: 600px)").matches',
-      filename: 'MatchMedia.test.js'
+      filename: 'MatchMedia.test.js',
+      options: [{ ignoreMediaQueries: true }]
     },
 
     // Reading but not depending on values
@@ -142,6 +143,14 @@ ruleTester.run('no-viewport-dependent', rule, {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) { }
       `,
       filename: 'MatchMediaIgnore.test.js',
+      options: [{ ignoreMediaQueries: true }]
+    },
+    {
+      code: `
+        const isMobile = matchMedia('(max-width: 600px)').matches;
+        if (matchMedia('(prefers-color-scheme: dark)').matches) { }
+      `,
+      filename: 'GlobalMatchMediaIgnore.test.js',
       options: [{ ignoreMediaQueries: true }]
     },
 
@@ -567,6 +576,17 @@ ruleTester.run('no-viewport-dependent', rule, {
       errors: [{
         messageId: 'avoidViewportCheck',
         data: { property: 'window.matchMedia' }
+      }]
+    },
+
+    // Global matchMedia (without window prefix) should also be flagged
+    {
+      code: 'matchMedia(\'(max-width: 768px)\')',
+      filename: 'GlobalMediaQuery.test.js',
+      options: [{ ignoreMediaQueries: false }],
+      errors: [{
+        messageId: 'avoidViewportCheck',
+        data: { property: 'matchMedia' }
       }]
     },
 
