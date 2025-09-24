@@ -471,9 +471,8 @@ expect(window.matchMedia('(max-width: 768px)').matches).toBe(true);
 
 ## Related Rules
 
-- [no-index-queries](./no-index-queries.md) - Prevents position-dependent queries
 - [no-animation-wait](./no-animation-wait.md) - Prevents animation timing dependencies
-- [no-immediate-assertions](./no-immediate-assertions.md) - Requires proper waiting
+- [no-hard-coded-timeout](./no-hard-coded-timeout.md) - Prevents hard-coded timeout values
 
 ## Further Reading
 

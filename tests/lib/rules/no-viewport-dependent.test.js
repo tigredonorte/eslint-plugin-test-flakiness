@@ -89,9 +89,8 @@ ruleTester.run('no-viewport-dependent', rule, {
       filename: 'Debug.test.js'
     },
 
-    // Tests with allowViewportSetup: true and viewport is set
-    // Note: These still report errors because hasSetViewport is evaluated after the checks
-    // This is expected behavior - viewport should be set in beforeEach/setup hooks
+    // Tests with allowViewportSetup: true and explicit viewport setting are considered valid.
+    // This is expected behavior when the viewport is set in the test body.
     {
       code: `
         page.setViewport({ width: 1024, height: 768 });
@@ -127,7 +126,6 @@ ruleTester.run('no-viewport-dependent', rule, {
       filename: 'MobileViewport.test.js',
       options: [{ allowResponsiveTests: true }]
     },
-    // These test names don't contain responsive keywords so they won't be detected as responsive tests
 
     // Tests with ignoreMediaQueries: true
     {
