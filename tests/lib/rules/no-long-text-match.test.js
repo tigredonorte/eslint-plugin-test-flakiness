@@ -355,7 +355,7 @@ ruleTester.run('no-long-text-match', rule, {
       code: 'getByText("This text has numbers 123456789 and is way too long to be used as a reliable selector")',
       filename: 'Numbers.test.js',
       errors: [{
-        messageId: 'textTooLong',
+        messageId: 'avoidExactMatch',
         data: { length: 89, maxLength: 50 }
       }]
     },
@@ -386,7 +386,7 @@ ruleTester.run('no-long-text-match', rule, {
       code: 'expect(element).toHaveTextContent(`This is a very long template literal in an assertion that should be flagged according to the rule`)',
       filename: 'TemplateAssertion.test.js',
       errors: [{
-        messageId: 'textTooLong',
+        messageId: 'usePartialMatch',
         data: { length: 100, maxLength: 50 }
       }]
     },
@@ -428,7 +428,7 @@ ruleTester.run('no-long-text-match', rule, {
       code: 'getByText("This has dynamic content with lots of numbers: 123456789")',
       filename: 'DynamicContent.test.js',
       errors: [{
-        messageId: 'textTooLong',
+        messageId: 'avoidExactMatch',
         data: { length: 65, maxLength: 50 }
       }]
     },
