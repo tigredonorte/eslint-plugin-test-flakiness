@@ -356,7 +356,7 @@ ruleTester.run('no-long-text-match', rule, {
       filename: 'Numbers.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 94, maxLength: 50 }
+        data: { length: 89, maxLength: 50 }
       }]
     },
 
