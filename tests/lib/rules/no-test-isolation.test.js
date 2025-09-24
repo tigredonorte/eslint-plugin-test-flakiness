@@ -85,7 +85,7 @@ ruleTester.run('no-test-isolation', rule, {
     {
       code: 'beforeAll(() => { global.testData = {}; });',
       filename: 'SharedSetup.test.js',
-      options: [{ allowSharedSetup: true }] // default is true
+      options: [{ allowSharedSetup: true }]
     },
     {
       code: 'beforeEach(() => { window.mockFn = jest.fn(); });',
@@ -504,7 +504,7 @@ ruleTester.run('no-test-isolation', rule, {
       ]
     },
 
-    // Test case: Empty object should be treated as mutable (regression test for PR #15 fix)
+    // Test case: Empty object should be treated as mutable (regression: previously, empty object literals were not flagged as shared mutable state)
     {
       code: `
         const emptyObj = {};
