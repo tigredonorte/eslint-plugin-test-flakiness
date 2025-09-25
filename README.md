@@ -6,11 +6,13 @@
 [![npm downloads](https://img.shields.io/npm/dm/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
 [![CI Status](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml/badge.svg)](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml)
 [![Coverage Status](https://img.shields.io/codecov/c/github/tigredonorte/eslint-plugin-test-flakiness)](https://codecov.io/gh/tigredonorte/eslint-plugin-test-flakiness)
+[![TypeScript](https://img.shields.io/badge/types-included-blue.svg)](https://www.typescriptlang.org/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
 
-**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** | **[📦 View on NPM](https://www.npmjs.com/package/eslint-plugin-test-flakiness)**
+**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** | **[📦 View on NPM](https://www.npmjs.com/package/eslint-plugin-test-flakiness)** | **[🎬 See it in action](docs/demo-example.md)**
 
 ## Features
 
@@ -21,20 +23,23 @@ Catch flaky test patterns before they cause intermittent failures in your CI/CD 
 - **Fast**: Runs at lint-time, no runtime overhead
 - **Configurable**: Tune rules to match your team's needs
 
+## Compatibility
+
+| Environment          | Version                            | Status             |
+| -------------------- | ---------------------------------- | ------------------ |
+| **Node.js**          | 14.x, 16.x, 18.x, 20.x, 22.x, 24.x | ✅ Tested in CI    |
+| **ESLint**           | 7.x, 8.x, 9.x                      | ✅ Fully supported |
+| **TypeScript**       | 4.x, 5.x                           | ✅ Types included  |
+| **Package Managers** | npm, yarn, pnpm                    | ✅ All supported   |
+
 ## Installation
-
-> **Note:** This project uses pnpm 10.15.1 for package management. Install it with `npm install -g pnpm@10.15.1`
-
-```bash
-pnpm add -D eslint-plugin-test-flakiness
-```
-
-or with npm/yarn (though pnpm is recommended):
 
 ```bash
 npm install --save-dev eslint-plugin-test-flakiness
 # or
 yarn add -D eslint-plugin-test-flakiness
+# or
+pnpm add -D eslint-plugin-test-flakiness
 ```
 
 ## Quick Start
@@ -404,6 +409,16 @@ MIT © [Your Name]
 ## Contributing
 
 Contributions are welcome! Please read our [contributing guide](docs/CONTRIBUTING.md) for details.
+
+### Development Setup
+
+This project uses **pnpm 10.15.1** for package management. To contribute:
+
+1. Install pnpm: `npm install -g pnpm@10.15.1`
+2. Fork and clone the repository
+3. Run `pnpm install` to install dependencies
+4. Run `pnpm test:watch` for development
+5. Run `pnpm lint` before committing
 
 ### Additional Documentation
 
