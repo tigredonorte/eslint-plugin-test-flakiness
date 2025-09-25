@@ -41,13 +41,11 @@ jobs:
       - name: Run tests with coverage
         run: pnpm run test:ci
 
-      - name: Upload coverage reports
+      - name: Upload coverage reports to Codecov
         if: matrix.node-version == '24.x'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
-          verbose: true
 
   release:
     name: Release
@@ -68,17 +66,41 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check for code changes
+        id: code-changes
+        run: |
+          # Get the commit range to check
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            # Initial push or force push, check last commit
+            CHANGES=$(git diff --name-only HEAD~1..HEAD -- lib/ || echo "")
+          else
+            # Normal push, check the pushed commits
+            CHANGES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }} -- lib/ || echo "")
+          fi
+
+          if [ -z "$CHANGES" ]; then
+            echo "No code changes in lib folder"
+            echo "has_code_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Code changes detected in lib folder:"
+            echo "$CHANGES"
+            echo "has_code_changes=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Configure Git
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Setup pnpm
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 10.15.1
 
       - name: Setup Node.js
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
@@ -86,14 +108,17 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         run: pnpm install --frozen-lockfile
         env:
           HUSKY: 0
 
       - name: Verify tests pass
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         run: pnpm run test:ci
 
       - name: Run semantic-release
+        if: steps.code-changes.outputs.has_code_changes == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
