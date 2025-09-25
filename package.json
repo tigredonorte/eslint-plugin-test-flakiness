@@ -36,13 +36,23 @@
     "semantic-release": "semantic-release"
   },
   "files": [
-    "lib"
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "package.json",
+    "README.md",
+    "LICENSE"
   ],
   "peerDependencies": {
-    "eslint": ">=7.0.0"
+    "eslint": "^7.0.0 || ^8.0.0 || ^9.0.0"
+  },
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./lib/index.js",
+      "types": "./lib/index.d.ts"
+    }
   },
   "dependencies": {
-    "cypress": "^15.2.0",
     "requireindex": "^1.2.0"
   },
   "devDependencies": {
@@ -86,12 +96,21 @@
     "url": "https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues"
   },
   "homepage": "https://github.com/tigredonorte/eslint-plugin-test-flakiness#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tigredonorte"
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
   "packageManager": "pnpm@10.15.1",
+  "pnpm": {
+    "overrides": {
+      "tmp@<=0.2.3": ">=0.2.4"
+    }
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
