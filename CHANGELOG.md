@@ -1,3 +1,7 @@
+## 1.1.0 (2025-09-25)
+
+* feat: add high-impact improvements for better UX (#26) ([1e731bd](https://github.com/tigredonorte/eslint-plugin-test-flakiness/commit/1e731bd)), closes [#26](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues/26)
+
 ## 1.0.0 (2025-09-25)
 
 * fix(release): configure semantic-release repository ([8ee4622](https://github.com/tigredonorte/eslint-plugin-test-flakiness/commit/8ee4622)), closes [#24](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues/24)
