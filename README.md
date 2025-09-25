@@ -3,9 +3,14 @@
 > ESLint plugin to detect and prevent flaky test patterns
 
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
+[![npm downloads](https://img.shields.io/npm/dm/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
+[![CI Status](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml/badge.svg)](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml)
+[![Coverage Status](https://img.shields.io/codecov/c/github/tigredonorte/eslint-plugin-test-flakiness)](https://codecov.io/gh/tigredonorte/eslint-plugin-test-flakiness)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
+
+**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** | **[📦 View on NPM](https://www.npmjs.com/package/eslint-plugin-test-flakiness)**
 
 ## Features
 
@@ -46,7 +51,19 @@ export default [
       "test-flakiness": testFlakiness,
     },
     rules: {
+      // Start with recommended rules
       ...testFlakiness.configs.recommended.rules,
+
+      // Override specific rules as needed
+      "test-flakiness/no-hard-coded-timeout": [
+        "error",
+        {
+          maxTimeout: 100, // Allow timeouts under 100ms
+        },
+      ],
+
+      // Turn off rules that don't apply to your project
+      "test-flakiness/no-animation-wait": "off",
     },
   },
 ];
@@ -57,7 +74,17 @@ export default [
 ```json
 {
   "plugins": ["test-flakiness"],
-  "extends": ["plugin:test-flakiness/recommended"]
+  "extends": ["plugin:test-flakiness/recommended"],
+  "rules": {
+    // Override specific rules
+    "test-flakiness/no-hard-coded-timeout": [
+      "error",
+      {
+        "maxTimeout": 100
+      }
+    ],
+    "test-flakiness/no-animation-wait": "off"
+  }
 }
 ```
 
@@ -97,40 +124,49 @@ Enables all available rules as errors. Use with caution.
 
 ### High Risk
 
-| Rule                      | Description                                              | Auto-fix |
-| ------------------------- | -------------------------------------------------------- | -------- |
-| `no-hard-coded-timeout`   | Disallow hard-coded timeouts like `setTimeout(fn, 1000)` | ✅       |
-| `await-async-events`      | Enforce awaiting user events and async operations        | ✅       |
-| `no-immediate-assertions` | Prevent assertions immediately after state changes       | ✅       |
-| `no-unconditional-wait`   | Disallow unconditional waits                             | ✅       |
-| `no-promise-race`         | Avoid Promise.race in tests                              | ❌       |
+Rules that frequently cause test failures in CI/CD environments.
+
+| Rule                                                               | Why it matters                                                                       | Auto-fix |                    Docs                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | :------: | :-----------------------------------------: |
+| [`no-hard-coded-timeout`](docs/rules/no-hard-coded-timeout.md)     | Hard-coded timeouts like `setTimeout(fn, 1000)` are brittle and fail on slow systems |    ✅    |  [📖](docs/rules/no-hard-coded-timeout.md)  |
+| [`await-async-events`](docs/rules/await-async-events.md)           | Missing awaits cause race conditions between actions and assertions                  |    ✅    |   [📖](docs/rules/await-async-events.md)    |
+| [`no-immediate-assertions`](docs/rules/no-immediate-assertions.md) | Assertions immediately after state changes miss async updates                        |    ✅    | [📖](docs/rules/no-immediate-assertions.md) |
+| [`no-unconditional-wait`](docs/rules/no-unconditional-wait.md)     | Fixed delays don't guarantee operations complete                                     |    ✅    |  [📖](docs/rules/no-unconditional-wait.md)  |
+| [`no-promise-race`](docs/rules/no-promise-race.md)                 | Promise.race can produce unpredictable test results                                  |    ❌    |     [📖](docs/rules/no-promise-race.md)     |
 
 ### Medium Risk
 
-| Rule                       | Description                                        | Auto-fix |
-| -------------------------- | -------------------------------------------------- | -------- |
-| `no-index-queries`         | Prevent DOM queries by index (`:nth-child`, `[0]`) | ❌       |
-| `no-animation-waits`       | Avoid waiting for animations                       | ❌       |
-| `no-global-state-mutation` | Prevent global state mutations                     | ❌       |
-| `no-unmocked-network`      | Ensure network calls are mocked                    | ❌       |
-| `no-unmocked-fs`           | Ensure file system operations are mocked           | ❌       |
-| `no-database-operations`   | Prevent direct database operations in tests        | ❌       |
-| `no-element-removal-check` | Avoid checking for element removal                 | ✅       |
+Rules that cause intermittent failures or maintenance issues.
+
+| Rule                                                                 | Why it matters                                                     | Auto-fix |                     Docs                     |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------ | :------: | :------------------------------------------: |
+| [`no-index-queries`](docs/rules/no-index-queries.md)                 | Index-based queries (`:nth-child`, `[0]`) break when order changes |    ❌    |     [📖](docs/rules/no-index-queries.md)     |
+| [`no-animation-wait`](docs/rules/no-animation-wait.md)               | Animation timing varies across environments                        |    ❌    |    [📖](docs/rules/no-animation-wait.md)     |
+| [`no-global-state-mutation`](docs/rules/no-global-state-mutation.md) | Global state changes affect other tests                            |    ❌    | [📖](docs/rules/no-global-state-mutation.md) |
+| [`no-unmocked-network`](docs/rules/no-unmocked-network.md)           | Network calls fail when services are down                          |    ❌    |   [📖](docs/rules/no-unmocked-network.md)    |
+| [`no-unmocked-fs`](docs/rules/no-unmocked-fs.md)                     | File system operations are environment-dependent                   |    ❌    |      [📖](docs/rules/no-unmocked-fs.md)      |
+| [`no-database-operations`](docs/rules/no-database-operations.md)     | Database state affects test reliability                            |    ❌    |  [📖](docs/rules/no-database-operations.md)  |
+| [`no-element-removal-check`](docs/rules/no-element-removal-check.md) | Checking element removal is timing-sensitive                       |    ✅    | [📖](docs/rules/no-element-removal-check.md) |
 
 ### Low Risk
 
-| Rule                    | Description                             | Auto-fix |
-| ----------------------- | --------------------------------------- | -------- |
-| `no-random-data`        | Avoid non-deterministic data generation | ❌       |
-| `no-long-text-match`    | Prevent brittle long text matches       | ❌       |
-| `no-viewport-dependent` | Avoid viewport-dependent assertions     | ❌       |
-| `no-focus-check`        | Prevent focus-dependent assertions      | ❌       |
+Rules that improve test maintainability and reduce edge-case failures.
+
+| Rule                                                           | Why it matters                                     | Auto-fix |                   Docs                    |
+| -------------------------------------------------------------- | -------------------------------------------------- | :------: | :---------------------------------------: |
+| [`no-random-data`](docs/rules/no-random-data.md)               | Random data makes tests non-reproducible           |    ❌    |    [📖](docs/rules/no-random-data.md)     |
+| [`no-long-text-match`](docs/rules/no-long-text-match.md)       | Long text matches break with minor content changes |    ❌    |  [📖](docs/rules/no-long-text-match.md)   |
+| [`no-viewport-dependent`](docs/rules/no-viewport-dependent.md) | Tests fail on different screen sizes               |    ❌    | [📖](docs/rules/no-viewport-dependent.md) |
+| [`no-focus-check`](docs/rules/no-focus-check.md)               | Focus behavior varies across browsers              |    ❌    |    [📖](docs/rules/no-focus-check.md)     |
 
 ### Special Rules
 
-| Rule           | Description                        | Auto-fix |
-| -------------- | ---------------------------------- | -------- |
-| `no-test-only` | Prevent `.only` in committed tests | ✅       |
+Development and CI/CD specific rules.
+
+| Rule                                                   | Why it matters                                   | Auto-fix |                 Docs                  |
+| ------------------------------------------------------ | ------------------------------------------------ | :------: | :-----------------------------------: |
+| [`no-test-focus`](docs/rules/no-test-focus.md)         | `.only` and `.focus` skip other tests in CI      |    ✅    |   [📖](docs/rules/no-test-focus.md)   |
+| [`no-test-isolation`](docs/rules/no-test-isolation.md) | Tests without proper isolation affect each other |    ❌    | [📖](docs/rules/no-test-isolation.md) |
 
 ## Rule Configuration
 

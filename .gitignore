@@ -49,3 +49,7 @@ logs/
 *.temp
 tmp/
 temp/
+
+# env
+.env
+.envrc
