@@ -3,7 +3,7 @@
 > ESLint plugin to detect and prevent flaky test patterns
 
 [![npm version](https://img.shields.io/npm/v/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
-[![npm downloads](https://img.shields.io/npm/dm/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
+[![npm downloads](https://img.shields.io/npm/dt/eslint-plugin-test-flakiness.svg)](https://www.npmjs.com/package/eslint-plugin-test-flakiness)
 [![CI Status](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml/badge.svg)](https://github.com/tigredonorte/eslint-plugin-test-flakiness/actions/workflows/ci.yml)
 [![Coverage Status](https://img.shields.io/codecov/c/github/tigredonorte/eslint-plugin-test-flakiness)](https://codecov.io/gh/tigredonorte/eslint-plugin-test-flakiness)
 [![TypeScript](https://img.shields.io/badge/types-included-blue.svg)](https://www.typescriptlang.org/)
@@ -43,6 +43,8 @@ pnpm add -D eslint-plugin-test-flakiness
 ```
 
 ## Quick Start
+
+**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** - See the plugin in action with interactive examples
 
 ### Flat Config (ESLint 9+)
 
@@ -92,6 +94,39 @@ export default [
   }
 }
 ```
+
+## Adoption Path
+
+Gradual rollout strategy to minimize disruption while improving test quality:
+
+### Week 1: Discovery Phase
+
+- Install the plugin with `recommended` config
+- Set all rules to `warn` to identify problem areas
+- Run `npx eslint . --ext .test.js,.test.ts > flaky-patterns.txt` to audit your codebase
+- Review the results with your team to prioritize fixes
+
+### Week 2: High-Risk Mitigation
+
+- Switch high-risk rules to `error`:
+  - `no-hard-coded-timeout`
+  - `await-async-events`
+  - `no-immediate-assertions`
+- Fix or add eslint-disable comments with justification
+- Add pre-commit hooks to prevent new violations
+
+### Week 3: CI Integration
+
+- Enable `strict` config for CI/CD pipelines
+- Use `--max-warnings 0` for high-risk rules
+- Keep medium-risk rules as warnings for gradual improvement
+- Track warning counts as technical debt metrics
+
+### Week 4+: Full Adoption
+
+- Gradually convert warnings to errors as fixes are implemented
+- Consider custom configurations per test directory
+- Document team-specific exceptions in your contributing guide
 
 ## Available Configurations
 
@@ -397,6 +432,17 @@ await setTimeout(1000);
 4. **no-random-data**: Fine when testing randomization features themselves
 
 For more details on handling false positives, see our [False Positive Guide](docs/FALSE_POSITIVES.md).
+
+## Who's Using This?
+
+> Is your team using eslint-plugin-test-flakiness? [Add your company/project](https://github.com/tigredonorte/eslint-plugin-test-flakiness/edit/main/README.md) to this list!
+
+- **Your Company Here** - [Submit a PR](https://github.com/tigredonorte/eslint-plugin-test-flakiness/pulls) to add your logo and testimonial
+- Looking for early adopters! Be one of the first to showcase your commitment to test quality
+
+### Success Stories
+
+Share how this plugin helped reduce flaky tests in your project. [Create an issue](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues/new) with the `success-story` label.
 
 ## Reporting Issues
 
