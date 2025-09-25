@@ -2,6 +2,7 @@
   "branches": ["main"],
   "repositoryUrl": "https://github.com/tigredonorte/eslint-plugin-test-flakiness.git",
   "plugins": [
+    "semantic-release-export-data",
     ["@semantic-release/commit-analyzer", {
       "preset": "conventionalcommits",
       "releaseRules": [
