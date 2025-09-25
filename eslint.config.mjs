@@ -68,7 +68,7 @@ export default [
       'coverage/**',
       '*.min.js',
       '.husky/**',
-      'examples/**',
+      'playground/**',
     ],
   },
 ];

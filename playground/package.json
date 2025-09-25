@@ -1,0 +1,15 @@
+{
+  "name": "eslint-plugin-test-flakiness-playground",
+  "version": "1.0.0",
+  "description": "Try eslint-plugin-test-flakiness live!",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-plugin-test-flakiness": "latest",
+    "@testing-library/react": "^14.0.0",
+    "jest": "^29.0.0"
+  }
+}
