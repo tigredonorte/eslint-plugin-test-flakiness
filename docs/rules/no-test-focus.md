@@ -197,3 +197,11 @@ You might want to disable this rule if:
 
 - [no-test-isolation](./no-test-isolation.md) - Prevent test isolation issues
 - [no-conditional-test](./no-conditional-test.md) - Prevent conditional test execution
+
+## Further Reading
+
+- [Jest - Focusing and Skipping Tests](https://jestjs.io/docs/api#testonlyname-fn-timeout)
+- [Vitest - Skipping Suites and Tests](https://vitest.dev/guide/filtering.html#skipping-suites-and-tests)
+- [Playwright - Test Annotations](https://playwright.dev/docs/test-annotations#focus-a-test)
+- [Cypress - Excluding and Including Tests](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Excluding-and-Including-Tests)
+- [Why .only() is Dangerous in CI](https://kentcdodds.com/blog/test-isolation-with-react)
