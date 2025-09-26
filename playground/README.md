@@ -17,6 +17,7 @@ This playground contains example test files demonstrating common flaky patterns 
    ```
 
 3. Fix auto-fixable issues:
+
    ```bash
    npm run lint:fix
    ```

@@ -6,26 +6,29 @@ labels: bug
 assignees: ""
 ---
 
-**Describe the bug**
+## Describe the bug
+
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+## To Reproduce
+
 Steps to reproduce the behavior:
 
 1. Your ESLint configuration
 2. The test code that triggers the issue
 3. The error or unexpected behavior you see
 
-**Expected behavior**
+## Expected behavior
+
 A clear and concise description of what you expected to happen.
 
-**Code example**
+## Code example
 
 ```javascript
 // Minimal code example that reproduces the issue
 ```
 
-**Environment:**
+## Environment
 
 - eslint-plugin-test-flakiness version: [e.g. 1.1.0]
 - ESLint version: [e.g. 9.0.0]
@@ -33,5 +36,6 @@ A clear and concise description of what you expected to happen.
 - Test framework: [e.g. Jest, Vitest, Playwright]
 - Operating System: [e.g. macOS, Windows, Linux]
 
-**Additional context**
+## Additional context
+
 Add any other context about the problem here.

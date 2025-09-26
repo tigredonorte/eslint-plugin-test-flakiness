@@ -1,10 +1,12 @@
 # no-element-removal-check
 
-Avoid checking for element removal as timing can vary. Element removal checks can lead to flaky tests due to timing inconsistencies. This rule enforces best practices for handling element removal in tests.
+Avoid checking for element removal as timing can vary. Element removal checks can lead to flaky tests due to timing
+inconsistencies. This rule enforces best practices for handling element removal in tests.
 
 ## Rule Details
 
-This rule warns against patterns that check for element removal without proper waiting mechanisms, which can cause test flakiness due to timing issues.
+This rule warns against patterns that check for element removal without proper waiting mechanisms,
+which can cause test flakiness due to timing issues.
 
 ## Examples
 
@@ -67,7 +69,8 @@ When testing element removal, timing can vary based on:
 - Browser performance
 - System load
 
-Direct checks for element removal without proper waiting can fail intermittently when the removal takes slightly longer than expected.
+Direct checks for element removal without proper waiting can fail intermittently when the removal takes slightly
+longer than expected.
 
 ### Common Anti-patterns
 
@@ -93,6 +96,7 @@ Direct checks for element removal without proper waiting can fail intermittently
    ```
 
 4. **Insufficient timeout values**
+
    ```javascript
    // Bad - Timeout too short
    await waitForElementToBeRemoved(() => element, { timeout: 100 });
@@ -124,6 +128,7 @@ Direct checks for element removal without proper waiting can fail intermittently
    ```
 
 4. **Consider positive conditions**
+
    ```javascript
    // Good - Wait for what appears next
    await waitFor(() => {

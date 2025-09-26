@@ -10,9 +10,12 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
+Catch flaky test patterns before they cause intermittent failures in your CI/CD pipeline. This plugin identifies
+common anti-patterns that lead to flaky tests and provides automatic fixes where possible.
 
-**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** | **[📦 View on NPM](https://www.npmjs.com/package/eslint-plugin-test-flakiness)** | **[🎬 See it in action](docs/demo-example.md)**
+**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)**
+| **[📦 View on NPM](https://www.npmjs.com/package/eslint-plugin-test-flakiness)**
+| **[🎬 See it in action](docs/demo-example.md)**
 
 ## Features
 
@@ -44,7 +47,9 @@ pnpm add -D eslint-plugin-test-flakiness
 
 ## Quick Start
 
-**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)** - See the plugin in action with interactive examples
+**[🚀 Try it live in StackBlitz](https://stackblitz.com/github/tigredonorte/eslint-plugin-test-flakiness/tree/main/playground)**
+
+- See the plugin in action with interactive examples
 
 ### Flat Config (ESLint 9+)
 
@@ -405,10 +410,12 @@ A: No, it runs during ESLint's normal AST traversal with minimal overhead.
 A: Yes! It works with `.ts` and `.tsx` test files automatically.
 
 **Q: Does it work with all test frameworks?**
-A: It detects patterns common across frameworks. Some rules are framework-specific but will only activate when relevant.
+A: It detects patterns common across frameworks. Some rules are framework-specific but will only activate when
+relevant.
 
 **Q: How do I handle false positives?**
-A: You can disable rules inline with `// eslint-disable-next-line test-flakiness/rule-name` or configure rules to be less strict.
+A: You can disable rules inline with `// eslint-disable-next-line test-flakiness/rule-name` or configure rules to be
+less strict.
 
 ### Handling False Positives
 
@@ -435,14 +442,17 @@ For more details on handling false positives, see our [False Positive Guide](doc
 
 ## Who's Using This?
 
-> Is your team using eslint-plugin-test-flakiness? [Add your company/project](https://github.com/tigredonorte/eslint-plugin-test-flakiness/edit/main/README.md) to this list!
+> Is your team using eslint-plugin-test-flakiness?
+> [Add your company/project](https://github.com/tigredonorte/eslint-plugin-test-flakiness/edit/main/README.md) to this list!
 
-- **Your Company Here** - [Submit a PR](https://github.com/tigredonorte/eslint-plugin-test-flakiness/pulls) to add your logo and testimonial
+- **Your Company Here** - [Submit a PR](https://github.com/tigredonorte/eslint-plugin-test-flakiness/pulls) to add
+  your logo and testimonial
 - Looking for early adopters! Be one of the first to showcase your commitment to test quality
 
 ### Success Stories
 
-Share how this plugin helped reduce flaky tests in your project. [Create an issue](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues/new) with the `success-story` label.
+Share how this plugin helped reduce flaky tests in your project.
+[Create an issue](https://github.com/tigredonorte/eslint-plugin-test-flakiness/issues/new) with the `success-story` label.
 
 ## Reporting Issues
 
@@ -473,6 +483,6 @@ This project uses **pnpm 10.15.1** for package management. To contribute:
 
 ---
 
-<div align="center">
+---
+
 Made with care to reduce test flakiness everywhere
-</div>

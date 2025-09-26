@@ -1,6 +1,7 @@
 # Commit Message Guidelines
 
-This document outlines the standards for commit messages in this project. Following these guidelines ensures a clear and descriptive commit history.
+This document outlines the standards for commit messages in this project. Following these guidelines ensures a clear
+and descriptive commit history.
 
 ## The Format
 
@@ -13,6 +14,7 @@ All commit messages should follow this pattern:
 - **description**: A concise summary of the change.
 
 **Examples:**
+
 - `feat(auth): implement Google sign-in`
 - `fix(api): correct pagination error in user endpoint`
 - `docs: update installation instructions`
@@ -37,6 +39,7 @@ All commit messages should follow this pattern:
 ---
 
 ## Rules
+
 - Start with one of the types above
 - Use lowercase for the type
 - Keep the header of message under 72 characters
@@ -48,11 +51,14 @@ All commit messages should follow this pattern:
 
 ## Husky Hooks
 
-This project uses [Husky](https://typicode.github.io/husky/) to enforce commit standards automatically. The following hooks are active:
+This project uses [Husky](https://typicode.github.io/husky/) to enforce commit standards automatically. The following
+hooks are active:
 
-- **`commit-msg`**: This hook runs automatically when you run `git commit`. It uses `commitlint` to check if your commit message meets the required format. If the message is not compliant, the commit will be aborted.
+- **`commit-msg`**: This hook runs automatically when you run `git commit`. It uses `commitlint` to check if your
+  commit message meets the required format. If the message is not compliant, the commit will be aborted.
 
-- **`pre-commit`**: This hook runs before the `commit-msg` hook. It is used to run automated checks, such as linting or testing, to ensure code quality before it is committed. If any of these checks fail, the commit will be aborted.
+- **`pre-commit`**: This hook runs before the `commit-msg` hook. It is used to run automated checks, such as linting
+  or testing, to ensure code quality before it is committed. If any of these checks fail, the commit will be aborted.
 
 These hooks help maintain a clean and consistent codebase and commit history.
 
