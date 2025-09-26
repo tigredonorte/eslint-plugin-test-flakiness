@@ -11,20 +11,21 @@ We release patches for security vulnerabilities in the following versions:
 
 ## Reporting a Vulnerability
 
-We take the security of eslint-plugin-test-flakiness seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of eslint-plugin-test-flakiness seriously.
+If you believe you have found a security vulnerability, please report it to us as described below.
 
-### Please do NOT:
+### Please do NOT
 
 - Open a public GitHub issue for security vulnerabilities
 - Post about the vulnerability on social media
 
-### Please DO:
+### Please DO
 
-- Email us directly at: tigredonorte@users.noreply.github.com
+- Email us directly at: <tigredonorte@users.noreply.github.com>
 - Include the word "SECURITY" in the subject line
 - Provide as much information as possible about the vulnerability
 
-### What to include:
+### What to include
 
 1. Type of issue (e.g., arbitrary code execution, privilege escalation)
 2. Full paths of source file(s) related to the issue
@@ -33,7 +34,7 @@ We take the security of eslint-plugin-test-flakiness seriously. If you believe y
 5. Proof-of-concept or exploit code (if possible)
 6. Impact of the issue, including how an attacker might exploit it
 
-### What to expect:
+### What to expect
 
 - **Acknowledgment**: We will acknowledge receipt of your vulnerability report within 48 hours
 - **Assessment**: We will confirm the vulnerability and determine its impact within 7 days

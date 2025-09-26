@@ -12,7 +12,8 @@ Random data in tests creates non-deterministic behavior that can lead to flaky t
 - Test assertions may work with some random values but fail with others
 - Random timing can affect async operations
 
-This rule helps prevent test flakiness by detecting the use of random data generation that could cause unpredictable test behavior.
+This rule helps prevent test flakiness by detecting the use of random data generation that could cause unpredictable
+test behavior.
 
 ## Options
 

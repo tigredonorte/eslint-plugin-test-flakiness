@@ -11,10 +11,10 @@ This guide covers the complete setup for `eslint-plugin-test-flakiness` with Hus
    ```
 
 2. **GitHub Repository**
-   - Create at: https://github.com/tigredonorte/eslint-plugin-test-flakiness
+   - Create at: <https://github.com/tigredonorte/eslint-plugin-test-flakiness>
 
 3. **NPM Account**
-   - Register at: https://www.npmjs.com
+   - Register at: <https://www.npmjs.com>
    - Verify email address
 
 ## Initial Setup
@@ -195,25 +195,25 @@ git push origin feat/new-rule
 
 1. Create rule file:
 
-```bash
-touch lib/rules/new-rule-name.js
-```
+   ```bash
+   touch lib/rules/new-rule-name.js
+   ```
 
 2. Update configs:
 
-```javascript
-// lib/configs/recommended.js
-'test-flakiness/new-rule-name': 'warn'
-```
+   ```javascript
+   // lib/configs/recommended.js
+   'test-flakiness/new-rule-name': 'warn'
+   ```
 
 3. Commit:
 
-```bash
-pnpm commit
-# Type: feat
-# Scope: rules
-# Message: add new-rule-name to detect X pattern
-```
+   ```bash
+   pnpm commit
+   # Type: feat
+   # Scope: rules
+   # Message: add new-rule-name to detect X pattern
+   ```
 
 ## Testing
 

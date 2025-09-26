@@ -25,7 +25,7 @@ test("should update user profile", async () => {
 
 ### ESLint Output
 
-```
+```text
 test.spec.js
   3:9  error  Hard-coded timeout detected. Use waitFor() instead    test-flakiness/no-hard-coded-timeout
   6:3  error  Async event userEvent.click must be awaited           test-flakiness/await-async-events
@@ -72,7 +72,8 @@ Based on common patterns in test suites, implementing this plugin typically help
 | Test retry frequency           | Lower retry counts with deterministic patterns      |
 | Debugging time for flaky tests | Faster root cause identification with clear rules   |
 
-_Note: Actual impact will vary based on your codebase and testing patterns. These are illustrative examples of improvements observed when flaky patterns are addressed._
+_Note: Actual impact will vary based on your codebase and testing patterns. These are illustrative examples of
+improvements observed when flaky patterns are addressed._
 
 ## 🚀 Try It Yourself
 

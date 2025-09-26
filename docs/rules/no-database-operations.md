@@ -87,7 +87,8 @@ This rule accepts an options object with the following properties:
 
 ### `allowInHooks` (default: `true`)
 
-When set to `true`, database operations are allowed in setup/teardown hooks (`beforeAll`, `beforeEach`, `afterAll`, `afterEach`) but will suggest using transactions for proper cleanup.
+When set to `true`, database operations are allowed in setup/teardown hooks (`beforeAll`, `beforeEach`, `afterAll`,
+`afterEach`) but will suggest using transactions for proper cleanup.
 
 ```json
 {
@@ -168,7 +169,8 @@ describe("User Repository Integration", () => {
 
 ## Known Limitations
 
-This rule prioritizes accuracy over exhaustive detection to avoid false positives. The following patterns will **not** be detected:
+This rule prioritizes accuracy over exhaustive detection to avoid false positives. The following patterns will
+**not** be detected:
 
 ### Destructured Operations
 
@@ -204,7 +206,8 @@ const userService = new UserService();
 await userService.createUser({ name: "John" });
 ```
 
-These limitations are **intentional design decisions** to prevent false positives in legitimate abstractions and service layers.
+These limitations are **intentional design decisions** to prevent false positives in legitimate abstractions and
+service layers.
 
 ## Performance Considerations
 

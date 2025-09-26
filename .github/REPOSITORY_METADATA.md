@@ -6,7 +6,7 @@ ESLint plugin to detect and prevent flaky test patterns
 
 ## Website
 
-https://www.npmjs.com/package/eslint-plugin-test-flakiness
+<https://www.npmjs.com/package/eslint-plugin-test-flakiness>
 
 ## Topics (tags)
 
