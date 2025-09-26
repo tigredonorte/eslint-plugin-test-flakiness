@@ -47,7 +47,8 @@ const firstButton = document.querySelector("button:first-child"); // Not allowed
 
 ### `allowSpecificIndices` (default: `[0, -1]`)
 
-An array of specific indices that are allowed when accessing query results. By default, allows first (`0`) and last (`-1`) element access.
+An array of specific indices that are allowed when accessing query results. By default, allows first (`0`) and last
+(`-1`) element access.
 
 ```javascript
 // With allowSpecificIndices: [0, -1] (default)

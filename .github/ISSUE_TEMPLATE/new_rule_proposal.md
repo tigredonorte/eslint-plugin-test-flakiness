@@ -8,7 +8,8 @@ assignees: ""
 
 ## Flaky Pattern Description
 
-**What test pattern causes flakiness?**
+### What test pattern causes flakiness?
+
 Describe the anti-pattern that leads to flaky tests.
 
 ## Real-World Example
@@ -36,15 +37,15 @@ Explain why this pattern leads to intermittent test failures:
 
 ## Proposed Rule Details
 
-**Rule name:** `no-[pattern-name]`
+### Rule name: `no-[pattern-name]`
 
-**Risk level:**
+### Risk level
 
 - [ ] High (frequently causes CI failures)
 - [ ] Medium (occasionally causes issues)
 - [ ] Low (minor impact)
 
-**Auto-fixable?**
+### Auto-fixable?
 
 - [ ] Yes (describe the fix)
 - [ ] No (explain why)
@@ -73,4 +74,6 @@ Add any other context, links to blog posts, or documentation about this pattern.
 
 ---
 
-**Community Voting**: React with 👍 to vote for this rule, 👎 if you think it's not needed, or 💭 to discuss alternatives.
+### Community Voting
+
+React with 👍 to vote for this rule, 👎 if you think it's not needed, or 💭 to discuss alternatives.

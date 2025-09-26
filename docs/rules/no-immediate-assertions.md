@@ -12,7 +12,8 @@ Immediate assertions after asynchronous operations are a common source of flaky 
 - Component re-renders are asynchronous
 - Browser events are processed asynchronously
 
-This rule helps prevent test flakiness by detecting assertions that happen immediately after async operations without proper waiting mechanisms.
+This rule helps prevent test flakiness by detecting assertions that happen immediately after async operations without
+proper waiting mechanisms.
 
 ## Options
 

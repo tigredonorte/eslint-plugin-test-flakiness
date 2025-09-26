@@ -8,6 +8,7 @@ Thank you for your interest in contributing to eslint-plugin-test-flakiness! Thi
 
 - Node.js 18+
 - pnpm 10.15.1 (required)
+
   ```bash
   npm install -g pnpm@10.15.1
   ```
@@ -16,15 +17,20 @@ Thank you for your interest in contributing to eslint-plugin-test-flakiness! Thi
 
 1. Fork the repository
 2. Clone your fork:
+
    ```bash
    git clone https://github.com/tigredonorte/eslint-plugin-test-flakiness.git
    cd eslint-plugin-test-flakiness
    ```
+
 3. Install dependencies:
+
    ```bash
    pnpm install
    ```
+
 4. Set up git hooks:
+
    ```bash
    pnpm prepare
    ```
@@ -106,7 +112,8 @@ pnpm typecheck
 
 ### 4. Commit Your Changes
 
-We use [Conventional Commits](https://www.conventionalcommits.org/) and [Commitizen](http://commitizen.github.io/cz-cli/) for consistent commit messages.
+We use [Conventional Commits](https://www.conventionalcommits.org/) and
+[Commitizen](http://commitizen.github.io/cz-cli/) for consistent commit messages.
 
 ```bash
 # Stage your changes
@@ -121,7 +128,7 @@ git commit -m "feat(rules): add no-flaky-pattern rule"
 
 #### Commit Message Format
 
-```
+```markdown
 <type>(<scope>): <subject>
 
 <body>
