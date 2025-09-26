@@ -58,9 +58,8 @@ describe('Element Removal Check Violations', () => {
 
   // Violation 6: Direct null check with query method
   it('detects direct null comparison with query', () => {
-    const queryResult = screen.queryByTestId('item');
     // This should trigger: useWaitForRemoval message
-    if (queryResult === null) {
+    if (screen.queryByTestId('item') === null) {
       // Element not found - doing something with the condition
       // Simulating an action based on the null check
     }
@@ -76,8 +75,10 @@ describe('Element Removal Check Violations', () => {
   it('detects negated document.contains', () => {
     const testElement = document.createElement('div');
     // This should trigger: avoidRemovalCheck message
-    // eslint-disable-next-line no-unused-vars
     const isRemoved = !document.contains(testElement);
+    if (isRemoved) {
+      // Simulating an action based on the removal check
+    }
   });
 
   // Violation 9: querySelector with null check

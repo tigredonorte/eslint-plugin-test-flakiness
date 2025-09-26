@@ -20,9 +20,10 @@ const collection = { insertOne: () => {} };
 const users = { updateMany: () => {} };
 const posts = { deleteOne: () => {} };
 const prisma = {
-  user: { create: () => {}, update: () => {}, deleteMany: () => {} },
+  user: { create: () => {}, update: () => {}, deleteMany: () => {}, createMany: () => {}, upsert: () => {}, updateMany: () => {} },
   post: { update: () => {} },
-  comment: { deleteMany: () => {} }
+  comment: { deleteMany: () => {} },
+  customModel: { customOperation: () => {} }
 };
 const knex = () => ({ insert: () => {}, update: () => ({ where: () => {} }), del: () => ({ where: () => {} }) });
 const sinon = { stub: () => ({ resolves: () => {} }) };
@@ -132,6 +133,30 @@ it('Prisma deleteMany', async () => {
   await prisma.comment.deleteMany({ where: { postId: 1 } });
 });
 
+// ✅ DETECTED: Prisma createMany operation (covers line 102)
+it('Prisma createMany', async () => {
+  // ESLint error: Prisma createMany is detected via text pattern
+  await prisma.user.createMany({ data: [{ name: 'John' }, { name: 'Jane' }] });
+});
+
+// ✅ DETECTED: Prisma upsert operation (covers line 102)
+it('Prisma upsert', async () => {
+  // ESLint error: Prisma upsert is detected via text pattern
+  await prisma.user.upsert({ where: { id: 1 }, create: { name: 'John' }, update: { name: 'Jane' } });
+});
+
+// ✅ DETECTED: Prisma updateMany operation (covers line 102)
+it('Prisma updateMany', async () => {
+  // ESLint error: Prisma updateMany is detected via text pattern
+  await prisma.user.updateMany({ where: { active: false }, data: { active: true } });
+});
+
+// ✅ DETECTED: Custom Prisma model operation (covers line 111)
+it('Prisma custom model', async () => {
+  // ESLint error: Prisma operations detected via full text pattern
+  await prisma.customModel.customOperation({ data: { value: 'test' } });
+});
+
 // ✅ DETECTED: Knex insert operation
 test('Knex insert', async () => {
   // ESLint error: Knex operations are detected
@@ -179,6 +204,26 @@ describe('Mocked operations', () => {
     // ✅ OK: Mocked implementation
     User.delete = jest.fn();
     await User.delete({ id: 1 });
+  });
+
+  it('uses mocked MongoDB operations', async () => {
+    // ✅ OK: MongoDB operations with mock context (covers line 232)
+    jest.spyOn(collection, 'insertOne').mockResolvedValue({});
+    await collection.insertOne({ name: 'John' });
+  });
+
+  it('uses mocked Knex operations', async () => {
+    // ✅ OK: Knex operations with mock context (covers line 269)
+    const mockKnex = jest.fn().mockReturnValue({
+      insert: jest.fn().mockResolvedValue([1])
+    });
+    await mockKnex('users').insert({ name: 'John' });
+  });
+
+  it('uses mocked Prisma operations', async () => {
+    // ✅ OK: Prisma operations with mock context (covers line 308)
+    jest.spyOn(prisma.user, 'create').mockResolvedValue({ id: 1 });
+    await prisma.user.create({ data: { name: 'John' } });
   });
 });
 
