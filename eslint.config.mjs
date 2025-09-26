@@ -44,7 +44,7 @@ export default [
       },
     },
     plugins: {
-      'test-flakiness': testFlakiness,
+      'test-flakiness': testFlakiness
     },
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
