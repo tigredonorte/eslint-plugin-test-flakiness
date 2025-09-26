@@ -3,6 +3,15 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
+/* eslint-disable no-undef */
+/* eslint-disable no-global-assign */
+/* eslint-disable test-flakiness/no-test-isolation */
+/* eslint-disable test-flakiness/no-random-data */
+
+// Note: These mocks are defined outside the test scope for demonstration purposes
+// In real tests, global objects like window, document, global, process, console, navigator
+// should already exist in the test environment (e.g., jsdom for browser tests)
+
 describe('Global State Mutation Violations', () => {
   // ❌ BAD: Modifying window object
   it('should not modify window object', () => {
@@ -53,7 +62,6 @@ describe('Global State Mutation Violations', () => {
   // ❌ BAD: Modifying Date constructor
   it('should not modify Date', () => {
     const originalDate = Date;
-    // eslint-disable-next-line no-global-assign
     Date = jest.fn(() => new originalDate('2020-01-01'));
     Date.now = () => 1577836800000;
 
@@ -88,18 +96,14 @@ describe('Global State Mutation Violations', () => {
   // ❌ BAD: Modifying navigator object
   it('should not modify navigator', () => {
     // In Node.js test environment, navigator might not exist
-     
     if (typeof navigator !== 'undefined') {
-      // eslint-disable-next-line no-undef
       Object.defineProperty(navigator, 'userAgent', {
         value: 'Custom User Agent',
         writable: true
       });
 
-      // eslint-disable-next-line no-undef
       navigator.onLine = false;
 
-      // eslint-disable-next-line no-undef
       expect(navigator.userAgent).toBe('Custom User Agent');
     }
   });
@@ -129,6 +133,16 @@ describe('Global State Mutation Violations', () => {
 
   // ❌ BAD: Modifying imported modules
   it('should not modify imported modules', () => {
+    // Mock require for demonstration
+    const require = (name) => {
+      if (name === 'moment') {
+        return { locale: function(lang) { this._locale = lang; return lang; }, _locale: 'en' };
+      }
+      if (name === 'lodash') {
+        return {};
+      }
+    };
+
     const moment = require('moment');
     moment.locale('fr'); // Global change
 

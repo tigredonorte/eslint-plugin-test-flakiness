@@ -39,6 +39,20 @@ ruleTester.run('no-database-operations', rule, {
       filename: 'Query.test.js'
     },
 
+    // Mock context scenarios to cover lines 232, 269, 308
+    {
+      code: 'jest.spyOn(collection, "insertOne").mockResolvedValue({}); collection.insertOne({ name: "John" })',
+      filename: 'MongoMock.test.js'
+    },
+    {
+      code: 'const mockKnex = jest.fn().mockReturnValue({ insert: jest.fn() }); mockKnex("users").insert({ name: "John" })',
+      filename: 'KnexMock.test.js'
+    },
+    {
+      code: 'jest.spyOn(prisma.user, "create").mockResolvedValue({ id: 1 }); prisma.user.create({ data: { name: "John" } })',
+      filename: 'PrismaMock.test.js'
+    },
+
     // Non-database method names
     {
       code: 'component.save()',
@@ -549,6 +563,7 @@ ruleTester.run('no-database-operations', rule, {
       }]
     },
 
+
     // In setup hooks with allowInHooks: true (warns differently)
     {
       code: 'beforeEach(() => { User.create({ name: "test" }) })',
@@ -642,7 +657,8 @@ describe('no-database-operations rule internals', () => {
       report: jest.fn()
     };
 
-    const visitor = rule.create(context);
+    const localRule = require('../../../lib/rules/no-database-operations');
+    const visitor = localRule.create(context);
     expect(visitor).toEqual({});
   });
 
@@ -657,12 +673,19 @@ describe('no-database-operations rule internals', () => {
       })
     };
 
-    const visitor = rule.create(context);
+    const localRule = require('../../../lib/rules/no-database-operations');
+    const visitor = localRule.create(context);
     expect(visitor).toBeDefined();
     expect(visitor.CallExpression).toBeDefined();
   });
 
   describe('Edge cases', () => {
+    let localRule;
+
+    beforeEach(() => {
+      localRule = require('../../../lib/rules/no-database-operations');
+    });
+
     it('should handle CallExpression without callee properties', () => {
       const context = {
         options: [],
@@ -674,7 +697,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {},
@@ -697,7 +720,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -724,7 +747,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       expect(visitor).toBeDefined();
     });
 
@@ -739,7 +762,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       expect(visitor).toBeDefined();
     });
 
@@ -754,7 +777,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -781,7 +804,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -808,7 +831,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -835,7 +858,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -862,7 +885,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
 
       // Test with beforeEach in parent chain
       const nodeInBeforeEach = {
@@ -933,7 +956,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {
@@ -967,7 +990,7 @@ describe('no-database-operations rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       const node = {
         type: 'CallExpression',
         callee: {

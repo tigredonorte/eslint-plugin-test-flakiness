@@ -11,6 +11,7 @@ describe('Index-based Query Violations', () => {
     const thirdItem = document.querySelector('li:nth-child(3)');
     const fifthButton = document.querySelector('button:nth-child(5)');
     expect(thirdItem).toBeInTheDocument();
+    expect(fifthButton).toBeDefined();
   });
 
   // ❌ BAD: Using first-child/last-child
@@ -18,6 +19,7 @@ describe('Index-based Query Violations', () => {
     const firstItem = document.querySelector('.item:first-child');
     const lastItem = document.querySelector('.item:last-child');
     expect(firstItem).toBeVisible();
+    expect(lastItem).toBeDefined();
   });
 
   // ❌ BAD: Array index access on Testing Library query results
@@ -31,6 +33,8 @@ describe('Index-based Query Violations', () => {
     const secondItem = items[1]; // Bad: index access
 
     expect(firstButton).toBeDefined();
+    expect(thirdButton).toBeDefined();
+    expect(secondItem).toBeDefined();
   });
 
   // ❌ BAD: Testing Library getAllBy* with index
@@ -44,6 +48,9 @@ describe('Index-based Query Violations', () => {
     const specificItem = items[3]; // Bad: index access
 
     expect(firstButton).toBeInTheDocument();
+    expect(lastButton).toBeDefined();
+    expect(thirdButton).toBeDefined();
+    expect(specificItem).toBeDefined();
   });
 
   // ❌ BAD: Using data-index attributes
@@ -51,6 +58,7 @@ describe('Index-based Query Violations', () => {
     const element = document.querySelector('[data-index="0"]');
     const item = document.querySelector('[data-index="5"]');
     expect(element).toBeVisible();
+    expect(item).toBeDefined();
   });
 
   // ❌ BAD: jQuery nth selectors
@@ -60,13 +68,17 @@ describe('Index-based Query Violations', () => {
     const afterSecond = $('.item:gt(1)'); // jQuery greater than
 
     expect(element.length).toBe(1);
+    expect(firstThree.length).toBeGreaterThan(0);
+    expect(afterSecond.length).toBeGreaterThan(0);
   });
 
   // ❌ BAD: Cypress nth-child and index access
   it('should not use Cypress index patterns', () => {
     cy.get('li:nth-child(3)').click();
     cy.get('.item').eq(2).should('be.visible'); // .eq() is index-based
+    // eslint-disable-next-line test-flakiness/await-async-events
     cy.get('.button').first().click(); // .first() is position-based
+    // eslint-disable-next-line test-flakiness/await-async-events
     cy.get('.button').last().click(); // .last() is position-based
   });
 
@@ -85,6 +97,7 @@ describe('Index-based Query Violations', () => {
     const secondItem = items.at(1); // Bad: at() with index
 
     expect(lastItem).toBeInTheDocument();
+    expect(secondItem).toBeDefined();
   });
 
   // ❌ BAD: XPath with position
@@ -116,5 +129,7 @@ describe('Patterns NOT detected (but still bad)', () => {
 
     // The rule focuses on Testing Library, Cypress, and Playwright patterns
     // Generic DOM queries would require additional implementation
+    expect(thirdItem).toBeDefined();
+    expect(firstButton).toBeDefined();
   });
 });
