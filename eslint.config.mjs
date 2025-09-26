@@ -44,20 +44,28 @@ export default [
       },
     },
     plugins: {
-      'test-flakiness': testFlakiness,
+      'test-flakiness': testFlakiness
     },
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       'no-console': 'off',
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
-      // High-risk flaky test patterns - these should always error
-      'test-flakiness/no-hard-coded-timeout': 'error',
-      'test-flakiness/await-async-events': 'error',
-      'test-flakiness/no-immediate-assertions': 'error',
-      'test-flakiness/no-unconditional-wait': 'error',
-      'test-flakiness/no-promise-race': 'error',
-      'test-flakiness/no-test-focus': 'error',
+    },
+  },
+  {
+    files: ['**/*.test.js', '**/*.spec.js'],
+    plugins: {
+      'test-flakiness': testFlakiness,
+    },
+    rules: {
+      // Using the recommended preset
+      ...testFlakiness.configs.all.rules,
+
+      // Example: Override a specific rule
+      // 'test-flakiness/no-hard-coded-timeout': ['error', {
+      //   maxTimeout: 100, // Allow timeouts under 100ms
+      // }],
     },
   },
   {
@@ -95,6 +103,30 @@ export default [
     files: ['tests/lib/rules/no-test-focus.test.js'],
     rules: {
       'test-flakiness/no-test-focus': 'off',
+    },
+  },
+  {
+    files: ['tests/lib/rules/no-index-queries.test.js'],
+    rules: {
+      'test-flakiness/no-index-queries': 'off',
+    },
+  },
+  {
+    files: ['tests/lib/rules/no-animation-wait.test.js'],
+    rules: {
+      'test-flakiness/no-animation-wait': 'off',
+    },
+  },
+  {
+    files: ['tests/lib/rules/no-database-operations.test.js'],
+    rules: {
+      'test-flakiness/no-database-operations': 'off',
+    },
+  },
+  {
+    files: ['tests/lib/rules/no-element-removal-check.test.js'],
+    rules: {
+      'test-flakiness/no-element-removal-check': 'off',
     },
   },
   {

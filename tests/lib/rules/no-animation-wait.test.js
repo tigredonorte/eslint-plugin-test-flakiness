@@ -499,6 +499,197 @@ ruleTester.run('no-animation-wait', rule, {
       ]
     },
 
+    // addEventListener with animation events
+    {
+      code: 'element.addEventListener("transitionend", handler)',
+      filename: 'EventListener.test.js',
+      errors: [{
+        messageId: 'avoidTransitionWait'
+      }]
+    },
+    {
+      code: 'element.addEventListener("animationend", callback)',
+      filename: 'AnimationListener.test.js',
+      errors: [{
+        messageId: 'avoidTransitionWait'
+      }]
+    },
+    {
+      code: 'div.addEventListener("webkitAnimationEnd", onAnimationEnd)',
+      filename: 'WebkitListener.test.js',
+      errors: [{
+        messageId: 'avoidTransitionWait'
+      }]
+    },
+    {
+      code: 'element.addEventListener("transitioncancel", handler)',
+      filename: 'TransitionCancel.test.js',
+      errors: [{
+        messageId: 'avoidTransitionWait'
+      }]
+    },
+    {
+      code: 'element.addEventListener("animationiteration", handler)',
+      filename: 'AnimationIteration.test.js',
+      errors: [{
+        messageId: 'avoidTransitionWait'
+      }]
+    },
+
+    // jQuery animation methods with callbacks
+    {
+      code: '$element.fadeIn(500, function() { done(); })',
+      filename: 'JQueryFade.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: '$element.slideUp(300, () => callback())',
+      filename: 'JQuerySlide.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: '$modal.animate({ opacity: 0 }, 400, function() { onComplete(); })',
+      filename: 'JQueryAnimate.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'element.fadeOut("slow", function() { /* done */ })',
+      filename: 'JQueryFadeOut.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // Velocity.js animation callbacks
+    {
+      code: 'Velocity(element, { opacity: 1 }, { complete: onComplete })',
+      filename: 'Velocity.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'Velocity.animate(element, { left: "100px" }, { duration: 500, complete: callback })',
+      filename: 'VelocityAnimate.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // GSAP/TweenMax animation callbacks
+    {
+      code: 'TweenMax.to(element, 1, { x: 100, onComplete: done })',
+      filename: 'TweenMax.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'gsap.from(element, { duration: 2, y: -50, onStart: startHandler })',
+      filename: 'GSAP.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'TweenLite.fromTo(element, 0.5, { opacity: 0 }, { opacity: 1, onUpdate: updateHandler })',
+      filename: 'TweenLite.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'TimelineMax.to(element, 1, { scale: 2, onRepeat: repeatHandler })',
+      filename: 'TimelineMax.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'TimelineLite.set(element, { x: 100, onReverseComplete: reverseComplete })',
+      filename: 'TimelineLite.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // Framer Motion animation callbacks
+    {
+      code: 'await controls.start({ x: 100 })',
+      filename: 'FramerMotion.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'await useAnimation().start({ scale: 1.5 })',
+      filename: 'FramerMotionHook.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // Playwright waitForSelector with visible state
+    {
+      code: 'await page.waitForSelector(".modal", { state: "visible" })',
+      filename: 'PlaywrightVisible.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'await frame.waitForSelector("#popup", { state: "visible" })',
+      filename: 'PlaywrightFrame.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // React Spring animation states in waitFor
+    {
+      code: 'waitFor(() => expect(element.animating).toBe(false))',
+      filename: 'ReactSpring.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'waitFor(() => expect(isAnimating).toBeFalsy())',
+      filename: 'AnimatingState.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'waitFor(() => expect(spring.getValue()).toBeCloseTo(100))',
+      filename: 'SpringValue.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
+    // Web Animations API .finished property
+    {
+      code: 'await animation.finished',
+      filename: 'WebAnimationAPI.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+    {
+      code: 'animation.finished.then(onAnimationComplete)',
+      filename: 'WebAnimationThen.test.js',
+      errors: [{
+        messageId: 'avoidAnimationWait'
+      }]
+    },
+
     // In different contexts
     {
       code: 'beforeEach(() => waitForAnimation())',
@@ -598,7 +789,8 @@ describe('no-animation-wait rule internals', () => {
       report: jest.fn()
     };
 
-    const visitor = rule.create(context);
+    const localRule = require('../../../lib/rules/no-animation-wait');
+    const visitor = localRule.create(context);
     expect(visitor).toEqual({});
   });
 
@@ -608,13 +800,21 @@ describe('no-animation-wait rule internals', () => {
       report: jest.fn()
     };
 
-    const visitor = rule.create(context);
+    const localRule = require('../../../lib/rules/no-animation-wait');
+    const visitor = localRule.create(context);
     expect(visitor).toBeDefined();
     expect(visitor.Program).toBeDefined();
     expect(visitor.CallExpression).toBeDefined();
+    expect(visitor.MemberExpression).toBeDefined();
   });
 
   describe('Edge cases', () => {
+    let localRule;
+
+    beforeEach(() => {
+      localRule = require('../../../lib/rules/no-animation-wait');
+    });
+
     it('should handle CallExpression without callee name property', () => {
       const context = {
         getFilename: () => 'test.spec.js',
@@ -626,7 +826,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -649,7 +849,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -676,7 +876,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -702,7 +902,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
 
       // Test with Identifier
@@ -748,7 +948,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -777,7 +977,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -809,7 +1009,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -841,7 +1041,7 @@ describe('no-animation-wait rule internals', () => {
         })
       };
 
-      const visitor = rule.create(context);
+      const visitor = localRule.create(context);
       visitor.Program();
       const node = {
         type: 'CallExpression',
@@ -876,7 +1076,7 @@ describe('no-animation-wait rule internals', () => {
           report: jest.fn()
         };
 
-        const visitor = rule.create(context);
+        const visitor = localRule.create(context);
         // All patterns in the list should be recognized as test files
         expect(visitor.CallExpression).toBeDefined();
       });
@@ -897,9 +1097,67 @@ describe('no-animation-wait rule internals', () => {
           report: jest.fn()
         };
 
-        const visitor = rule.create(context);
+        const visitor = localRule.create(context);
         expect(visitor).toEqual({});
       });
+    });
+
+    it('should handle MemberExpression for Web Animations API finished property', () => {
+      const context = {
+        getFilename: () => 'test.spec.js',
+        options: [{}],
+        report: jest.fn(),
+        getSourceCode: () => ({
+          getText: () => '',
+          getCommentsBefore: () => []
+        })
+      };
+
+      const visitor = localRule.create(context);
+      visitor.Program();
+
+      // Test MemberExpression with finished property in AwaitExpression
+      const awaitNode = {
+        type: 'AwaitExpression'
+      };
+      const memberNode = {
+        type: 'MemberExpression',
+        property: { name: 'finished' },
+        parent: awaitNode
+      };
+
+      visitor.MemberExpression(memberNode);
+      expect(context.report).toHaveBeenCalledWith({
+        node: awaitNode,
+        messageId: 'avoidAnimationWait'
+      });
+    });
+
+    it('should handle MemberExpression with animations disabled', () => {
+      const context = {
+        getFilename: () => 'test.spec.js',
+        options: [{ allowIfAnimationsDisabled: true }],
+        report: jest.fn(),
+        getSourceCode: () => ({
+          getText: () => '// animation-duration: 0s !important;\nconst test = animation.finished;',
+          getCommentsBefore: () => []
+        })
+      };
+
+      const visitor = localRule.create(context);
+      visitor.Program();
+
+      const awaitNode = {
+        type: 'AwaitExpression'
+      };
+      const memberNode = {
+        type: 'MemberExpression',
+        property: { name: 'finished' },
+        parent: awaitNode
+      };
+
+      visitor.MemberExpression(memberNode);
+      expect(context.report).not.toHaveBeenCalled();
     });
   });
 });

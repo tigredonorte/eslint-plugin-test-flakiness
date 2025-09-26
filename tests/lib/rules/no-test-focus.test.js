@@ -306,6 +306,346 @@ ruleTester.run('no-test-focus', rule, {
       filename: 'test.spec.js',
       errors: [{ messageId: 'noSkippedTest', data: { method: 'anythingSkip' } }],
       output: 'anything("should be skipped", () => {});'
+    },
+    // Test for already focused methods (fdescribe is already a focused method)
+    {
+      code: 'fdescribe("should work", () => {});',
+      filename: 'test.spec.js',
+      errors: [{ messageId: 'noFocusedTest', data: { method: 'fdescribe' } }],
+      output: 'describe("should work", () => {});'
+    },
+    // Test for fit as a focused method
+    {
+      code: 'fit("should work", () => {});',
+      filename: 'test.spec.js',
+      errors: [{ messageId: 'noFocusedTest', data: { method: 'fit' } }],
+      output: 'it("should work", () => {});'
+    },
+    // Test custom pattern that removes f prefix and matches test method
+    {
+      code: 'ftest("should work", () => {});',
+      filename: 'test.spec.js',
+      options: [{ customFocusPatterns: ['ftest'] }],
+      errors: [
+        { messageId: 'noFocusedTest', data: { method: 'ftest' } },
+        { messageId: 'noFocusedTest', data: { method: 'ftest' } }
+      ],
+      output: 'test("should work", () => {});'
+    },
+    // Test for lines 146-147: custom pattern with .skip modifier
+    {
+      code: 'myTest.skip("should work", () => {});',
+      filename: 'test.spec.js',
+      options: [{ customSkipPatterns: ['myTest.skip'] }],
+      errors: [{ messageId: 'noSkippedTest', data: { method: 'myTest.skip' } }],
+      output: 'myTest("should work", () => {});'
+    },
+    // Test for line 155-156: custom pattern with .only modifier in pattern
+    {
+      code: 'customTest.only("should work", () => {});',
+      filename: 'test.spec.js',
+      options: [{ customFocusPatterns: ['customTest.only'] }],
+      errors: [{ messageId: 'noFocusedTest', data: { method: 'customTest.only' } }],
+      output: 'customTest("should work", () => {});'
+    },
+    // Test for non-identifier property in computed member expression (line 106)
+    {
+      code: 'window.global[test]["only"]("should work", () => {});',
+      filename: 'test.spec.js',
+      errors: [{ messageId: 'noTestOnly', data: { method: 'test' } }],
+      output: 'window.global[test]("should work", () => {});'
+    },
+    // Test for custom pattern with computed property and fix (line 296)
+    {
+      code: 'myCustomTest["skip"]("should skip", () => {});',
+      filename: 'test.spec.js',
+      options: [{ customSkipPatterns: ['myCustomTest.skip'] }],
+      errors: [{ messageId: 'noSkippedTest', data: { method: 'myCustomTest.skip' } }],
+      output: 'myCustomTest("should skip", () => {});'
+    },
+    // Test nested member expression with fallback (line 118)
+    {
+      code: 'window[globalVar].test.only("should work", () => {});',
+      filename: 'test.spec.js',
+      errors: [{ messageId: 'noTestOnly', data: { method: 'test' } }],
+      output: 'window[globalVar].test("should work", () => {});'
+    },
+    // Test for custom focus pattern with member expression and computed property (lines 255-260)
+    {
+      code: 'myCustom["only"]("should focus", () => {});',
+      filename: 'test.spec.js',
+      options: [{ customFocusPatterns: ['myCustom.only'] }],
+      errors: [{ messageId: 'noFocusedTest', data: { method: 'myCustom.only' } }],
+      output: 'myCustom("should focus", () => {});'
+    },
+    // Test fallback in getTestMethodName (line 212) - no test method found
+    {
+      code: 'customFramework.test.only("should work", () => {});',
+      filename: 'test.spec.js',
+      errors: [{ messageId: 'noTestOnly', data: { method: 'test' } }],
+      output: 'customFramework.test("should work", () => {});'
     }
   ]
+});
+
+// Additional unit tests for edge cases
+describe('no-test-focus edge cases', () => {
+  let rule;
+
+  beforeEach(() => {
+    rule = require('../../../lib/rules/no-test-focus');
+  });
+
+  it('should handle getObjectName with computed MemberExpression', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{}],
+      report: jest.fn(),
+      getSourceCode: () => ({
+        getTokenBefore: () => ({ range: [0, 1] })
+      })
+    };
+
+    const visitor = rule.create(context);
+
+    // Test computed property access - test['only']
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'Identifier',
+          name: 'test'
+        },
+        property: {
+          type: 'Literal',
+          value: 'only'
+        },
+        computed: true
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report because it's test['only']
+    expect(context.report).toHaveBeenCalled();
+  });
+
+  it('should handle getObjectName returning undefined', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{}],
+      report: jest.fn(),
+      getSourceCode: () => ({
+        getTokenBefore: () => ({ range: [0, 1] })
+      })
+    };
+
+    const visitor = rule.create(context);
+
+    // Test with an object that returns undefined from getObjectName
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'ThisExpression' // This will return undefined from getObjectName
+        },
+        property: {
+          name: 'only'
+        },
+        computed: false
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should not report because objectName is undefined
+    expect(context.report).not.toHaveBeenCalled();
+  });
+
+  it('should handle custom pattern fix when modified is a test method', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{ customFocusPatterns: ['fit'] }],
+      report: jest.fn(),
+      getSourceCode: () => ({})
+    };
+
+    const visitor = rule.create(context);
+
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'Identifier',
+        name: 'fit'
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report with fix
+    expect(context.report).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messageId: 'noFocusedTest',
+        fix: expect.any(Function)
+      })
+    );
+  });
+
+  it('should handle custom pattern with .only modifier', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{ customFocusPatterns: ['myTest.only'] }],
+      report: jest.fn(),
+      getSourceCode: () => ({})
+    };
+
+    const visitor = rule.create(context);
+
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'Identifier',
+        name: 'myTest.only'
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report with fix to remove .only
+    expect(context.report).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messageId: 'noFocusedTest',
+        fix: expect.any(Function)
+      })
+    );
+  });
+
+  it('should handle getObjectName with Literal node (line 90)', () => {
+    // Access the getObjectName function through the rule's create function
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{}],
+      report: jest.fn(),
+      getSourceCode: () => ({
+        getTokenBefore: () => ({ range: [0, 1] })
+      })
+    };
+
+    const visitor = rule.create(context);
+
+    // Create a node with Literal type to test line 90
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'Literal',
+          value: 'test'  // This should return 'test' from getObjectName
+        },
+        property: {
+          name: 'only'
+        },
+        computed: false
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report for test.only
+    expect(context.report).toHaveBeenCalled();
+  });
+
+  it('should handle getObjectName with TemplateLiteral (line 95)', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{}],
+      report: jest.fn(),
+      getSourceCode: () => ({
+        getTokenBefore: () => ({ range: [0, 1] })
+      })
+    };
+
+    const visitor = rule.create(context);
+
+    // Create a node with TemplateLiteral with no expressions
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'TemplateLiteral',
+          quasis: [{ value: { raw: 'test' } }],
+          expressions: []
+        },
+        property: {
+          name: 'only'
+        },
+        computed: false
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report for test.only
+    expect(context.report).toHaveBeenCalled();
+  });
+
+  it('should handle nested MemberExpression with computed property (lines 101-109)', () => {
+    const context = {
+      getFilename: () => 'test.spec.js',
+      options: [{}],
+      report: jest.fn(),
+      getSourceCode: () => ({
+        getTokenBefore: () => ({ range: [0, 1] })
+      })
+    };
+
+    const visitor = rule.create(context);
+
+    // Create nested MemberExpression with computed properties
+    const node = {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'MemberExpression',
+          object: {
+            type: 'MemberExpression',
+            object: {
+              type: 'Identifier',
+              name: 'window'
+            },
+            property: {
+              type: 'Identifier',
+              name: 'global'
+            },
+            computed: false
+          },
+          property: {
+            type: 'Literal',
+            value: 'test'
+          },
+          computed: true  // window.global['test']
+        },
+        property: {
+          name: 'only'
+        },
+        computed: false
+      },
+      arguments: [{ type: 'Literal', value: 'test name' }]
+    };
+
+    visitor.CallExpression(node);
+
+    // Should report for complex nested member expression ending in .only
+    expect(context.report).toHaveBeenCalled();
+  });
 });

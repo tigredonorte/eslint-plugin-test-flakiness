@@ -184,6 +184,71 @@ ruleTester.run('no-long-text-match', rule, {
       code: '/* This is a comment with getByText("This long text should be ignored when inside comment bounds") embedded inside */',
       filename: 'TextCompletelyInComment.test.js',
       options: [{ ignoreComments: true }]
+    },
+
+    // Non-string arguments to cover line 77 - checkTextContent return for non-string
+    {
+      code: 'getByText(42)',
+      filename: 'NonStringArg.test.js'
+    },
+    {
+      code: 'screen.getByText(null)',
+      filename: 'NullArg.test.js'
+    },
+    {
+      code: 'expect(element).toHaveTextContent(undefined)',
+      filename: 'UndefinedArg.test.js'
+    },
+
+    // RegExp constructor cases to cover lines 136, 195, 251
+    {
+      code: 'getByRole("button", { name: new RegExp("This is a very long text pattern that should be ignored because it uses RegExp constructor") })',
+      filename: 'RegExpConstructorRole.test.js'
+    },
+    {
+      code: 'screen.getByText(new RegExp("Another very long text pattern that should be skipped due to RegExp constructor usage"))',
+      filename: 'RegExpConstructorText.test.js'
+    },
+    {
+      code: 'expect(element).toHaveTextContent(new RegExp("Long text pattern in assertion that should be ignored with RegExp constructor"))',
+      filename: 'RegExpConstructorAssertion.test.js'
+    },
+
+    // Non-literal arguments to cover line 385
+    {
+      code: 'expect(element).toHaveTextContent(variable)',
+      filename: 'NonLiteralAssertion.test.js'
+    },
+    {
+      code: 'expect(screen.getByRole("button")).toHaveTextContent(getText())',
+      filename: 'FunctionCallAssertion.test.js'
+    },
+
+    // Cases with allowPartialMatch: false to test different code paths
+    {
+      code: 'getByText(new RegExp("This should be skipped even with allowPartialMatch false"))',
+      filename: 'RegExpWithFalsePartial.test.js',
+      options: [{ allowPartialMatch: false }]
+    },
+    {
+      code: 'screen.getByText(new RegExp("Another RegExp case with allowPartialMatch false"))',
+      filename: 'ScreenRegExpWithFalsePartial.test.js',
+      options: [{ allowPartialMatch: false }]
+    },
+    {
+      code: 'getByRole("button", { name: new RegExp("RegExp in role with allowPartialMatch false") })',
+      filename: 'RoleRegExpWithFalsePartial.test.js',
+      options: [{ allowPartialMatch: false }]
+    },
+
+    // Test specific code path for callee without proper name access (defensive checks)
+    {
+      code: 'getByText(fn.apply())',
+      filename: 'ComplexCallee.test.js'
+    },
+    {
+      code: 'screen.getByText(obj.method())',
+      filename: 'ObjectMethod.test.js'
     }
   ],
 

@@ -3,6 +3,13 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
+/* global IntersectionObserver, ResizeObserver */
+
+// Mock variables to avoid no-undef errors
+const mobileMenu = { style: { display: 'block' } };
+const desktopMenu = { style: { display: 'none' } };
+const someDiv = { scrollTop: 50 };
+
 describe('Viewport Dependent Violations', () => {
   // ❌ BAD: Checking window dimensions
   it('should not check window dimensions', () => {
@@ -22,6 +29,7 @@ describe('Viewport Dependent Violations', () => {
 
   // ❌ BAD: Checking element positions
   it('should not check absolute positions', () => {
+    const element = { getBoundingClientRect: () => ({ top: 100, left: 50, right: 300, bottom: 200 }) };
     const rect = element.getBoundingClientRect();
     expect(rect.top).toBe(100);
     expect(rect.left).toBe(50);
@@ -50,16 +58,17 @@ describe('Viewport Dependent Violations', () => {
   it('should not check responsive visibility', () => {
     // Checking if mobile menu is visible
     if (window.innerWidth < 768) {
-      expect(mobileMenu).toBeVisible();
-      expect(desktopMenu).not.toBeVisible();
+      expect(mobileMenu.style.display).toBe('block');
+      expect(desktopMenu.style.display).toBe('none');
     } else {
-      expect(desktopMenu).toBeVisible();
-      expect(mobileMenu).not.toBeVisible();
+      expect(desktopMenu.style.display).toBe('block');
+      expect(mobileMenu.style.display).toBe('none');
     }
   });
 
   // ❌ BAD: CSS pixel-based assertions
   it('should not assert exact pixel values', () => {
+    const element = document.createElement('div');
     const styles = window.getComputedStyle(element);
     expect(styles.width).toBe('250px');
     expect(styles.height).toBe('100px');
@@ -69,6 +78,7 @@ describe('Viewport Dependent Violations', () => {
 
   // ❌ BAD: Viewport-relative units
   it('should not test viewport units', () => {
+    const element = document.createElement('div');
     const styles = window.getComputedStyle(element);
     // These depend on viewport size
     expect(styles.width).toBe('50vw');
@@ -78,6 +88,7 @@ describe('Viewport Dependent Violations', () => {
 
   // ❌ BAD: Element offset checks
   it('should not check element offsets', () => {
+    const element = { offsetTop: 150, offsetLeft: 200, offsetWidth: 300, offsetHeight: 400 };
     expect(element.offsetTop).toBe(150);
     expect(element.offsetLeft).toBe(200);
     expect(element.offsetWidth).toBe(300);
@@ -86,6 +97,7 @@ describe('Viewport Dependent Violations', () => {
 
   // ❌ BAD: Client dimensions
   it('should not check client dimensions', () => {
+    const element = { clientWidth: 280, clientHeight: 380 };
     expect(element.clientWidth).toBe(280);
     expect(element.clientHeight).toBe(380);
     expect(document.documentElement.clientWidth).toBe(1920);
@@ -100,6 +112,7 @@ describe('Viewport Dependent Violations', () => {
       });
     });
 
+    const element = document.createElement('div');
     observer.observe(element);
   });
 
@@ -112,6 +125,7 @@ describe('Viewport Dependent Violations', () => {
       }
     });
 
+    const element = document.createElement('div');
     resizeObserver.observe(element);
   });
 

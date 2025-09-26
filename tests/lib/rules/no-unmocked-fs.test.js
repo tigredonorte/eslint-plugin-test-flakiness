@@ -293,6 +293,129 @@ ruleTester.run('no-unmocked-fs', rule, {
     {
       code: 'path.basename("/test/file.txt")',
       filename: 'PathBasename.test.js'
+    },
+
+    // Tests for uncovered lines
+    // Test fs/promises with allowed paths (line 296)
+    {
+      code: 'const fsPromises = require("fs/promises"); fsPromises.readFile("/allowed/path/file.txt")',
+      filename: 'FsPromisesAllowedPath.test.js',
+      options: [{
+        allowedPaths: ['/allowed/path']
+      }]
+    },
+
+    // Test fs/promises in setup hook with allowInSetup (line 301)
+    {
+      code: `
+        beforeEach(async () => {
+          const fsPromises = require("fs/promises");
+          await fsPromises.writeFile("test.txt", "data");
+        });
+      `,
+      filename: 'FsPromisesSetupHook.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Test fast-glob in setup hook with allowInSetup (line 378)
+    {
+      code: `
+        beforeAll(async () => {
+          const fg = require("fast-glob");
+          await fg("**/*.js");
+        });
+      `,
+      filename: 'FastGlobSetupHook.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Test fs-extra with allowed paths (line 430)
+    {
+      code: 'const fse = require("fs-extra"); fse.readJson("/allowed/config/settings.json")',
+      filename: 'FsExtraAllowedPath.test.js',
+      options: [{
+        allowedPaths: ['/allowed/config']
+      }]
+    },
+
+    // Test fs-extra in setup hook with allowInSetup (line 435)
+    {
+      code: `
+        afterAll(() => {
+          const fse = require("fs-extra");
+          fse.removeSync("test-dir");
+        });
+      `,
+      filename: 'FsExtraSetupTeardown.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Test destructured fs imports with allowed paths (line 471)
+    {
+      code: 'const { readFileSync } = require("fs"); readFileSync("/allowed/data/config.json")',
+      filename: 'DestructuredAllowedPath.test.js',
+      options: [{
+        allowedPaths: ['/allowed/data']
+      }]
+    },
+
+    // Test isInSetupHook returning true for direct function call (line 113)
+    {
+      code: `
+        beforeEach(function() {
+          fs.mkdirSync("test-directory");
+        });
+      `,
+      filename: 'SetupHookFunction.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Test fast-glob direct call in setup (line 378 - different pattern)
+    {
+      code: `
+        afterEach(() => {
+          const fg = require("fast-glob");
+          fg.sync("**/*.temp");
+        });
+      `,
+      filename: 'FastGlobDirectSetup.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Test isInSetupHook with CallExpression parent having callee.name (line 113)
+    {
+      code: `
+        beforeAll(() => fs.mkdirSync("test-dir"));
+      `,
+      filename: 'DirectSetupCall.test.js',
+      options: [{
+        allowInSetup: true
+      }]
+    },
+
+    // Additional test for nested setup hook patterns
+    {
+      code: `
+        describe("test suite", () => {
+          beforeEach(() => {
+            fs.mkdirSync("test-dir");
+          });
+        });
+      `,
+      filename: 'NestedSetupHook.test.js',
+      options: [{
+        allowInSetup: true
+      }]
     }
   ],
 
