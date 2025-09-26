@@ -1,0 +1,30 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "Root"
+    },
+    {
+      "path": "playground",
+      "name": "Playground"
+    }
+  ],
+  "settings": {
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "eslint.useFlatConfig": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "eslint.run": "onType",
+    "[**/playground/**]": {
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "never"
+      }
+    }
+  }
+}
