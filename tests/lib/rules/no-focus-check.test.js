@@ -91,6 +91,36 @@ ruleTester.run('no-focus-check', rule, {
     {
       code: 'expect(element.dataset.ariaFocused).toBe("true")',
       filename: 'AriaDataset.test.js'
+    },
+
+    // Mock/stub/spy focus methods should be ignored (covers line 194)
+    {
+      code: 'mockElement.focus()',
+      filename: 'MockFocus.test.js'
+    },
+    {
+      code: 'stubElement.focus()',
+      filename: 'StubFocus.test.js'
+    },
+    {
+      code: 'spyElement.focus()',
+      filename: 'SpyFocus.test.js'
+    },
+    {
+      code: 'jest.fn().focus()',
+      filename: 'JestFnFocus.test.js'
+    },
+
+    // Standalone :focus literal should be ignored (covers line 294)
+    {
+      code: 'const selector = ":focus"',
+      filename: 'FocusLiteral.test.js'
+    },
+
+    // Variable declaration with null init should be ignored (covers line 323)
+    {
+      code: 'let focusedElement;',
+      filename: 'NullInit.test.js'
     }
   ],
 
@@ -391,6 +421,29 @@ ruleTester.run('no-focus-check', rule, {
         messageId: 'useWaitForFocus'
       }],
       output: 'await act(async () => { element.focus() });'
-    }
+    },
+
+    // Test for not.toHaveFocus when allowWithWaitFor is false (covers lines 130-131)
+    {
+      code: 'expect(button).not.toHaveFocus()',
+      filename: 'NotFocusNoWait.test.js',
+      options: [{ allowWithWaitFor: false }],
+      errors: [{
+        messageId: 'avoidFocusCheck'
+      }],
+      output: 'await waitFor(() => expect(button).not.toHaveFocus())'
+    },
+
+
+    // Test for switch case with focus (covers line 240)
+    {
+      code: 'switch(true) { case true: element.focus(); break; }',
+      filename: 'SwitchCase.test.js',
+      errors: [{
+        messageId: 'useWaitForFocus'
+      }],
+      output: 'switch(true) { case true: await act(async () => { element.focus() }); break; }'
+    },
+
   ]
 });
