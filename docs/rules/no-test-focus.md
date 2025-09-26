@@ -4,7 +4,9 @@ Prevent focused or skipped tests that can cause incomplete test runs.
 
 ## Rule Details
 
-This rule helps prevent accidentally committing focused or skipped tests to your codebase. When tests are focused (using `.only`, `fit`, `fdescribe`, etc.), only those tests run, potentially hiding failures in other tests. When tests are skipped (using `.skip`, `xit`, `xdescribe`, etc.), they don't run at all, which can lead to untested code.
+This rule helps prevent accidentally committing focused or skipped tests to your codebase. When tests are focused
+(using `.only`, `fit`, `fdescribe`, etc.), only those tests run, potentially hiding failures in other tests. When
+tests are skipped (using `.skip`, `xit`, `xdescribe`, etc.), they don't run at all, which can lead to untested code.
 
 ## Why This Causes Flakiness
 
@@ -160,7 +162,7 @@ This rule detects focused/skipped tests in various formats:
 1. **Standard notation**: `test.only()`, `describe.skip()`
 2. **Prefixed notation**: `fit()`, `xdescribe()`
 3. **Bracket notation**: `test['only']()`, `describe["skip"]()`
-4. **Template literals**: `fit\`test\``, `test.only\`test\``
+4. **Template literals**: `fit\`test\``,`test.only\`test\``
 5. **Custom patterns with wildcards**: Configure patterns like `*Only` or `focus*`
 
 ## Best Practices

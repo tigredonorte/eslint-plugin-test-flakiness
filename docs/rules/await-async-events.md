@@ -2,7 +2,9 @@
 
 ## Rule Details
 
-This rule enforces proper usage of async event utilities and methods by requiring them to be awaited. When async operations are not awaited, tests may pass even when the async operations fail, leading to false positives and flaky tests.
+This rule enforces proper usage of async event utilities and methods by requiring them to be awaited. When async
+operations are not awaited, tests may pass even when the async operations fail, leading to false positives and flaky
+tests.
 
 ### Why is this rule important?
 
@@ -189,7 +191,8 @@ This rule accepts an optional configuration object:
 
 ### `customAsyncMethods` (array)
 
-An array of custom function names that should also be awaited. This is useful when you have custom async utilities in your test suite.
+An array of custom function names that should also be awaited. This is useful when you have custom async utilities
+in your test suite.
 
 Example:
 
@@ -201,7 +204,8 @@ await myAsyncHelper(); // ✅ Correct
 
 ## When Not To Use It
 
-You should not disable this rule when using Testing Library's user event utilities. The async nature of these utilities is essential for accurate testing. However, this rule does not apply to:
+You should not disable this rule when using Testing Library's user event utilities. The async nature of these
+utilities is essential for accurate testing. However, this rule does not apply to:
 
 - Synchronous event utilities (though these are deprecated in newer versions)
 - Direct DOM manipulation methods

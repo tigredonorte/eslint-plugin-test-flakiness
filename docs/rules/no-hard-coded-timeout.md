@@ -4,7 +4,8 @@ Disallow hard-coded timeouts in tests
 
 ## Rule Details
 
-This rule helps prevent test flakiness by discouraging the use of hard-coded timeouts in test files. Hard-coded timeouts can make tests brittle and unpredictable across different environments and system conditions.
+This rule helps prevent test flakiness by discouraging the use of hard-coded timeouts in test files. Hard-coded
+timeouts can make tests brittle and unpredictable across different environments and system conditions.
 
 The rule detects and reports:
 
@@ -72,7 +73,8 @@ This rule accepts an options object with the following properties:
 - Type: `number`
 - Default: `1000`
 
-The maximum timeout value (in milliseconds) allowed before the rule reports an issue. Timeouts below this threshold won't be reported.
+The maximum timeout value (in milliseconds) allowed before the rule reports an issue. Timeouts below this threshold
+won't be reported.
 
 ```json
 {
@@ -87,7 +89,8 @@ The maximum timeout value (in milliseconds) allowed before the rule reports an i
 - Type: `boolean`
 - Default: `false`
 
-When set to `true`, allows hard-coded timeouts in setup and teardown hooks (`before`, `after`, `beforeEach`, `afterEach`, `beforeAll`, `afterAll`).
+When set to `true`, allows hard-coded timeouts in setup and teardown hooks (`before`, `after`, `beforeEach`,
+`afterEach`, `beforeAll`, `afterAll`).
 
 ```json
 {

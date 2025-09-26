@@ -6,18 +6,20 @@ labels: "good first issue, help wanted"
 assignees: ""
 ---
 
-**Description**
+## Description
+
 A clear description of what needs to be done.
 
-**Expected outcome**
+## Expected outcome
+
 What the result should look like when complete.
 
-**Files to modify**
+## Files to modify
 
 - [ ] List the specific files that need changes
 - [ ] Include approximate line numbers if helpful
 
-**Getting started tips**
+## Getting started tips
 
 1. Fork and clone the repository
 2. Run `pnpm install` to install dependencies
@@ -26,11 +28,12 @@ What the result should look like when complete.
 5. Run `pnpm test` to ensure all tests pass
 6. Run `pnpm lint` to check code style
 
-**Resources**
+## Resources
 
 - Link to relevant documentation
 - Related issues or PRs
 - Examples of similar implementations
 
-**Questions?**
+## Questions?
+
 Feel free to ask questions in the comments!
