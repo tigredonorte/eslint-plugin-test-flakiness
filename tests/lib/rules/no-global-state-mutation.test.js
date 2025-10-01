@@ -104,6 +104,109 @@ ruleTester.run('no-global-state-mutation', rule, {
       code: 'beforeEach(() => { localStorage.clear(); })',
       filename: 'HooksLocalStorage.test.js',
       options: [{ allowInHooks: true }]
+    },
+
+    // Valid: non-assignment expressions are ignored (line 51 coverage)
+    {
+      code: 'window.location.href',
+      filename: 'NonAssignment.test.js'
+    },
+    {
+      code: 'typeof window.test',
+      filename: 'TypeofExpression.test.js'
+    },
+
+    // Valid: assignments to non-MemberExpressions (line 57 coverage)
+    {
+      code: 'let test = "value"',
+      filename: 'SimpleAssignment.test.js'
+    },
+    {
+      code: 'const obj = {}',
+      filename: 'ConstDeclaration.test.js'
+    },
+
+    // Valid: process.env mutations in hooks
+    {
+      code: 'beforeEach(() => { process.env.TEST_VAR = "value"; })',
+      filename: 'ProcessEnvInHook.test.js'
+    },
+
+    // Valid: nested global mutations with process.env in beforeEach/afterEach (line 99-108 coverage)
+    {
+      code: 'beforeEach(() => { window.location.href = "test"; })',
+      filename: 'NestedInBeforeEach.test.js',
+      options: [{ allowInHooks: true }]
+    },
+    {
+      code: 'afterEach(() => { global.app.config = {}; })',
+      filename: 'NestedInAfterEach.test.js',
+      options: [{ allowInHooks: true }]
+    },
+    {
+      code: 'afterAll(() => { window.test = null; })',
+      filename: 'WindowInAfterAll.test.js',
+      options: [{ allowInHooks: true }]
+    },
+
+    // Valid: non-global object assignments (line 131 coverage)
+    {
+      code: 'const myObj = {}; myObj.prop = "value"',
+      filename: 'LocalObjectAssignment.test.js'
+    },
+    {
+      code: 'this.prop = "value"',
+      filename: 'ThisAssignment.test.js'
+    },
+
+    // Valid: non-dangerous method calls (line 229 coverage)
+    {
+      code: 'localStorage.getItem("key")',
+      filename: 'SafeLocalStorageRead.test.js'
+    },
+    {
+      code: 'document.getElementById("test")',
+      filename: 'SafeDocumentRead.test.js'
+    },
+    {
+      code: 'window.location.toString()',
+      filename: 'SafeWindowMethod.test.js'
+    },
+
+    // Valid: console method calls are allowed (line 233-235 coverage)
+    {
+      code: 'console.log("test")',
+      filename: 'ConsoleLog.test.js'
+    },
+    {
+      code: 'console.error("error")',
+      filename: 'ConsoleError.test.js'
+    },
+    {
+      code: 'console.warn("warning")',
+      filename: 'ConsoleWarn.test.js'
+    },
+
+    // Valid: delete on non-UnaryExpression (line 307 coverage)
+    {
+      code: 'const test = delete obj.prop',
+      filename: 'DeleteLocalObject.test.js'
+    },
+
+    // Valid: delete on non-MemberExpression (line 311 coverage)
+    {
+      code: 'delete "test"',
+      filename: 'DeleteLiteral.test.js'
+    },
+    {
+      code: 'delete 123',
+      filename: 'DeleteNumber.test.js'
+    },
+
+    // Valid: getScope fallback test (line 266 coverage)
+    {
+      code: 'const testVar = "test"; testVar = "new value"',
+      filename: 'ReassignLocalVar.test.js'
     }
   ],
 
@@ -459,6 +562,145 @@ ruleTester.run('no-global-state-mutation', rule, {
       filename: 'GlobalAssignment.test.js',
       errors: [{
         messageId: 'useLocalVariable'
+      }]
+    },
+
+    // Test non-assignment expression (line 51 - early return check)
+    {
+      code: 'window.location.href === "test" ? window.test = 1 : null',
+      filename: 'ConditionalAssignment.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'window' }
+      }]
+    },
+
+    // Test nested process.env assignment skip (line 95 - isProcessEnvAssignment check within nested global)
+    {
+      code: 'window.location.env = "test"',
+      filename: 'WindowLocationEnv.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'window' }
+      }]
+    },
+
+    // Test beforeAll with nested global mutation - allowInHooks true (lines 101-108)
+    {
+      code: 'beforeAll(() => { window.location.href = "test"; })',
+      filename: 'BeforeAllNested.test.js',
+      options: [{ allowInHooks: true }],
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'window' }
+      }]
+    },
+
+    // Test beforeAll with direct global mutation - allowInHooks true
+    {
+      code: 'beforeAll(() => { global.testVar = "test"; })',
+      filename: 'BeforeAllDirectGlobal.test.js',
+      options: [{ allowInHooks: true }],
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'global' }
+      }]
+    },
+
+
+    // Test process mutation that's not process.env (line 149 - skip process env check)
+    {
+      code: 'process.title = "NewTitle"',
+      filename: 'ProcessTitle.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'process' }
+      }]
+    },
+
+    // Test navigator mutation
+    {
+      code: 'navigator.userAgent = "CustomAgent"',
+      filename: 'NavigatorMutation.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'navigator' }
+      }]
+    },
+
+    // Test document.write call (lines 229, 250 - dangerous method not localStorage/sessionStorage)
+    {
+      code: 'document.write("test")',
+      filename: 'DocumentWrite.test.js',
+      errors: [{
+        messageId: 'useLocalVariable'
+      }]
+    },
+
+    // Test document.writeln call
+    {
+      code: 'document.writeln("test")',
+      filename: 'DocumentWriteln.test.js',
+      errors: [{
+        messageId: 'useLocalVariable'
+      }]
+    },
+
+    // Test window.addEventListener call
+    {
+      code: 'window.addEventListener("click", () => {})',
+      filename: 'WindowAddEventListener.test.js',
+      errors: [{
+        messageId: 'useLocalVariable'
+      }]
+    },
+
+    // Test window.removeEventListener call
+    {
+      code: 'window.removeEventListener("click", handler)',
+      filename: 'WindowRemoveEventListener.test.js',
+      errors: [{
+        messageId: 'useLocalVariable'
+      }]
+    },
+
+    // Test non-UnaryExpression for delete (line 307 - early return)
+    {
+      code: 'delete window.test',
+      filename: 'BasicDelete.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'window' }
+      }]
+    },
+
+    // Test delete with non-MemberExpression argument (line 311 - early return)
+    {
+      code: 'typeof window.test !== "undefined" && delete window.test',
+      filename: 'ConditionalDelete.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'window' }
+      }]
+    },
+
+    // Test document delete
+    {
+      code: 'delete document.customProp',
+      filename: 'DeleteDocument.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'document' }
+      }]
+    },
+
+    // Test process delete
+    {
+      code: 'delete process.customProp',
+      filename: 'DeleteProcess.test.js',
+      errors: [{
+        messageId: 'avoidGlobalMutation',
+        data: { object: 'process' }
       }]
     }
   ]

@@ -1,3 +1,4 @@
+/* eslint-disable test-flakiness/no-global-state-mutation */
 /**
  * Examples of no-test-isolation rule violations
  * Demonstrates shared state, global mutation, and missing cleanup.
@@ -17,23 +18,23 @@ describe('Test Isolation Violations', () => {
   });
 
   // ❌ BAD: Mutating global object without cleanup
-  it('sets global.foo', () => {
-    global.foo = 'bar';
-    expect(global.foo).toBe('bar');
+  it('sets global property', () => {
+    global.testProperty = 'bar';
+    expect(global.testProperty).toBe('bar');
   });
 
-  it('expects global.foo to be undefined', () => {
-    expect(global.foo).toBeUndefined(); // Fails if previous test ran
+  it('expects global property to be undefined', () => {
+    expect(global.testProperty).toBeUndefined(); // Fails if previous test ran
   });
 
   // ❌ BAD: Not cleaning up environment variable
-  it('sets process.env.TEST_VAR', () => {
-    process.env.TEST_VAR = 'value';
-    expect(process.env.TEST_VAR).toBe('value');
+  it('sets global TEST_VAR property', () => {
+    global.TEST_VAR = 'value';
+    expect(global.TEST_VAR).toBe('value');
   });
 
-  it('expects process.env.TEST_VAR to be undefined', () => {
-    expect(process.env.TEST_VAR).toBeUndefined(); // Fails if previous test ran
+  it('expects global.TEST_VAR to be undefined', () => {
+    expect(global.TEST_VAR).toBeUndefined(); // Fails if previous test ran
   });
 
   // ❌ BAD: Shared mock state
@@ -50,7 +51,10 @@ describe('Test Isolation Violations', () => {
 
   // ❌ BAD: DOM state that persists
   it('modifies DOM', () => {
-    document.body.innerHTML = '<div id="test">Test</div>';
+    const element = document.createElement('div');
+    element.id = 'test';
+    element.textContent = 'Test';
+    document.body.appendChild(element);
     expect(document.getElementById('test')).toBeTruthy();
   });
 

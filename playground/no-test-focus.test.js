@@ -3,6 +3,8 @@
  * This file shows what the rule detects and prevents
  */
 
+const test = require("node:test");
+
 // ❌ BAD: These will be flagged by the rule
 
 // Focused tests - only these will run
@@ -11,46 +13,56 @@ test.only('will run exclusively', () => {
 });
 
 it.only('this test runs alone', () => {
-  // Other tests won't run
+  expect(1).toBe(1);
 });
 
 describe.only('focused suite', () => {
-  test('nested test 1', () => {});
-  test('nested test 2', () => {});
-  // Only tests in this suite will run
+  test('nested test 1', () => {
+    expect(true).toBe(true);
+  });
+  test('nested test 2', () => {
+    expect(true).toBe(true);
+  });
 });
 
 // Jasmine/Mocha focused syntax
 fit('focused jasmine test', () => {
-  // This is a focused test
+  expect(true).toBe(true);
 });
 
 fdescribe('focused jasmine suite', () => {
-  // All tests here run exclusively
+  test('inner test', () => {
+    expect(true).toBe(true);
+  });
 });
 
 // Skipped tests - these won't run at all
 test.skip('skipped test', () => {
-  // This test is skipped
+  expect(true).toBe(true);
 });
 
 it.skip('not running', () => {
-  // This won't execute
+  expect(1).toBe(1);
 });
 
 describe.skip('entire suite skipped', () => {
-  test('test 1', () => {});
-  test('test 2', () => {});
-  // None of these tests will run
+  test('test 1', () => {
+    expect(true).toBe(true);
+  });
+  test('test 2', () => {
+    expect(true).toBe(true);
+  });
 });
 
 // Jasmine/Mocha skip syntax
 xit('skipped jasmine test', () => {
-  // This test won't run
+  expect(true).toBe(true);
 });
 
 xdescribe('skipped jasmine suite', () => {
-  // No tests here will run
+  test('inner test', () => {
+    expect(true).toBe(true);
+  });
 });
 
 // Todo tests
@@ -60,6 +72,13 @@ it.todo('pending implementation');
 // ✅ GOOD: These are the correct patterns
 
 // Normal tests that always run
+
+// Mock functions for demonstration
+const isValidEmail = (email) => email.includes('@');
+const calculateTotal = (numbers) => numbers.reduce((a, b) => a + b, 0);
+const createUser = (first, last) => ({ fullName: `${first} ${last}` });
+const updateEmail = (user, newEmail) => { user.email = newEmail; };
+
 test('should validate user input', () => {
   const input = 'test@example.com';
   expect(isValidEmail(input)).toBe(true);
@@ -90,7 +109,11 @@ describe('UserService', () => {
 // });
 
 // Or use conditional logic for environment-specific tests
-if (process.env.RUN_INTEGRATION_TESTS) {
+// Mock process.env and fetchExternalData for demonstration
+const processEnv = typeof process !== 'undefined' ? process.env : {};
+const fetchExternalData = async () => ({ status: 200 });
+
+if (processEnv.RUN_INTEGRATION_TESTS) {
   test('integration test with external API', async () => {
     const response = await fetchExternalData();
     expect(response.status).toBe(200);
