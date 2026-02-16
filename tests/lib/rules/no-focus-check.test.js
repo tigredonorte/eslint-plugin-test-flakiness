@@ -391,6 +391,17 @@ ruleTester.run('no-focus-check', rule, {
         messageId: 'useWaitForFocus'
       }],
       output: 'await act(async () => { element.focus() });'
+    },
+
+    // Multiple statements on same line: focus + assertion (covers hasMultipleStatements branch)
+    {
+      code: 'element.focus(); expect(element).toHaveFocus();',
+      filename: 'test.test.js',
+      errors: [
+        { messageId: 'useWaitForFocus' },
+        { messageId: 'avoidFocusCheck' }
+      ],
+      output: 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
     }
   ]
 });
