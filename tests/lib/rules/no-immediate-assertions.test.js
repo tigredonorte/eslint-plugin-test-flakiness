@@ -418,7 +418,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Clicked')).toBeInTheDocument();
         });
       `
@@ -437,7 +437,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         userEvent.type(input, 'test');
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByDisplayValue('test')).toBeInTheDocument();
         });
       `
@@ -456,7 +456,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         component.setState({ value: 42 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(component.state.value).toBe(42);
         });
       `
@@ -475,7 +475,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         store.dispatch(action);
-        waitFor(() => {
+        await waitFor(() => {
           expect(store.getState().value).toBe(42);
         });
       `
@@ -494,7 +494,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         wrapper.setProps({ value: 42 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(42);
         });
       `
@@ -532,11 +532,11 @@ ruleTester.run('no-immediate-assertions', rule, {
       ],
       output: `
         fireEvent.click(button1);
-        waitFor(() => {
+        await waitFor(() => {
           expect(result1).toBe(true);
         });
         fireEvent.click(button2);
-        waitFor(() => {
+        await waitFor(() => {
           expect(result2).toBe(true);
         });
       `
@@ -555,7 +555,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         wrapper.simulate('click');
-        waitFor(() => {
+        await waitFor(() => {
           expect(wrapper.find('.result')).toHaveLength(1);
         });
       `
@@ -574,7 +574,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         wrapper.trigger('click');
-        waitFor(() => {
+        await waitFor(() => {
           expect(wrapper.text()).toBe('Clicked');
         });
       `
@@ -593,7 +593,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -612,7 +612,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.change(input, { target: { value: 'test' } });
-        waitFor(() => {
+        await waitFor(() => {
           expect(input.value).toBe('test');
         });
       `
@@ -631,7 +631,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.submit(form);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Submitted')).toBeInTheDocument();
         });
       `
@@ -650,7 +650,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         userEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Loading')).toBeInTheDocument();
         });
       `
@@ -669,7 +669,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         store.commit('SET_VALUE', 42);
-        waitFor(() => {
+        await waitFor(() => {
           expect(store.state.value).toBe(42);
         });
       `
@@ -688,7 +688,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
     fireEvent.click(button);
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText('Clicked')).toBeInTheDocument();
     });
       `
@@ -707,7 +707,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
 \t\tfireEvent.click(button);
-\t\twaitFor(() => {
+\t\tawait waitFor(() => {
 \t\t  expect(screen.getByText('Clicked')).toBeInTheDocument();
 \t\t});
       `
@@ -727,7 +727,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Clicked')).toBeInTheDocument();
         });
       `
@@ -748,7 +748,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         fireEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByTestId('result')).toBeVisible();
         });
       `
@@ -772,7 +772,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         setState({ value: 1 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(state.value).toBe(1);
         });
       `
@@ -792,7 +792,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         element.triggerEvent();
-        waitFor(() => {
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -811,7 +811,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         userEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Loading')).toBeInTheDocument();
         });
       `
@@ -830,7 +830,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         triggerEvent();
-        waitFor(() => {
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -849,7 +849,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         userEvent.click(button);
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Result')).toBeInTheDocument();
         });
       `
@@ -868,7 +868,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         component.setState({ value: 42 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(component.state.value).toBe(42);
         });
       `
@@ -887,7 +887,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         store.commit('SET_VALUE', 42);
-        waitFor(() => {
+        await waitFor(() => {
           expect(store.state.value).toBe(42);
         });
       `
@@ -906,7 +906,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         wrapper.setProps({ value: 100 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(100);
         });
       `
@@ -926,7 +926,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         component.setState({ value: 'new' });
-        waitFor(() => {
+        await waitFor(() => {
           expect(component.state.value).toBe('new');
         });
       `
@@ -943,7 +943,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         store.dispatch(updateAction());
-        waitFor(() => {
+        await waitFor(() => {
           expect(store.getState()).toEqual({ updated: true });
         });
       `
@@ -960,7 +960,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         vuexStore.commit('SET_VALUE', 'new');
-        waitFor(() => {
+        await waitFor(() => {
           expect(vuexStore.state.value).toBe('new');
         });
       `
@@ -977,7 +977,7 @@ ruleTester.run('no-immediate-assertions', rule, {
       }],
       output: `
         wrapper.setProps({ value: 100 });
-        waitFor(() => {
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(100);
         });
       `

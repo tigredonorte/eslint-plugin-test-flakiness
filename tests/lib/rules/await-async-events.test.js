@@ -119,6 +119,16 @@ ruleTester.run('await-async-events', rule, {
       filename: 'Variable.test.js'
     },
 
+    // expect().rejects / expect().resolves (Problem 3 fix)
+    {
+      code: 'async function test() { await expect(userEvent.click(button)).rejects.toThrow() }',
+      filename: 'Rejects.test.js'
+    },
+    {
+      code: 'async function test() { await expect(userEvent.type(input, "text")).resolves.toBeDefined() }',
+      filename: 'Resolves.test.js'
+    },
+
     // Properly awaited act with async callback
     {
       code: 'async function test() { await act(async () => { await doSomething() }) }',
@@ -819,6 +829,43 @@ ruleTester.run('await-async-events', rule, {
         data: { method: 'tab' }
       }],
       output: 'async function test() { const user = userEvent.setup(); await user.tab() }'
+    },
+
+    // Non-async function should be made async (Problem 1 fix)
+    {
+      code: 'function test() { userEvent.click(button) }',
+      filename: 'NonAsync.test.js',
+      errors: [{
+        messageId: 'missingAwaitUserEvent',
+        data: { method: 'click' }
+      }],
+      output: 'async function test() { await userEvent.click(button) }'
+    },
+    {
+      code: 'const test = () => { fireEvent.click(button) }',
+      filename: 'NonAsync.test.js',
+      errors: [{
+        messageId: 'missingAwaitFireEvent',
+        data: { method: 'click' }
+      }],
+      output: 'const test = async () => { await fireEvent.click(button) }'
+    },
+    {
+      code: 'function test() { act(async () => { await doSomething() }) }',
+      filename: 'NonAsync.test.js',
+      errors: [{
+        messageId: 'missingAwaitAct'
+      }],
+      output: 'async function test() { await act(async () => { await doSomething() }) }'
+    },
+    {
+      code: 'function test() { page.click("#button") }',
+      filename: 'NonAsync.spec.js',
+      errors: [{
+        messageId: 'missingAwaitPage',
+        data: { method: 'click' }
+      }],
+      output: 'async function test() { await page.click("#button") }'
     },
 
     // Multiple violations

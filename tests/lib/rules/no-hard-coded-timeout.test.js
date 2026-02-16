@@ -379,7 +379,7 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'it("test", () => { waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: 'it("test", async () => { await waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
     }
   ]
 });

@@ -45,6 +45,31 @@ describe('Missing Await for Async Events', () => {
     expect(input.value).toBe('test');
   });
 
+  // ✅ GOOD: expect().rejects properly handles the async event
+  it('should allow expect().rejects pattern', async () => {
+    const button = screen.getByRole('button');
+    await expect(userEvent.click(button)).rejects.toThrow('Button disabled');
+  });
+
+  // ✅ GOOD: expect().resolves properly handles the async event
+  it('should allow expect().resolves pattern', async () => {
+    const button = screen.getByRole('button');
+    await expect(userEvent.click(button)).resolves.toBeUndefined();
+  });
+
+  // ❌ BAD: Non-async callback with async events (fixer will add async + await)
+  it('should make callback async when adding await', () => {
+    const button = screen.getByRole('button');
+    userEvent.click(button); // Fixer: adds await AND makes callback async
+    expect(screen.getByText('Clicked')).toBeInTheDocument();
+  });
+
+  // ❌ BAD: Arrow function callback not async
+  const testArrow = () => {
+    const input = screen.getByRole('textbox');
+    userEvent.type(input, 'text'); // Fixer: adds await AND makes arrow async
+  };
+
   // ❌ BAD: act() with async callback not awaited
   it('should await act with async callback', async () => {
     const someAsyncOperation = async () => {
