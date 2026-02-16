@@ -9,6 +9,8 @@ const { getRuleTester } = require('../../../lib/utils/test-helpers');
 
 const ruleTester = getRuleTester();
 
+const importWaitFor = 'import { waitFor } from \'@testing-library/react\';\n';
+
 ruleTester.run('no-focus-check', rule, {
   valid: [
     // Non-test files should be ignored
@@ -102,7 +104,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element).toHaveFocus())'
+      output: importWaitFor + 'await waitFor(() => expect(element).toHaveFocus())'
     },
     {
       code: 'expect(input).toHaveFocus()',
@@ -110,7 +112,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(input).toHaveFocus())'
+      output: importWaitFor + 'await waitFor(() => expect(input).toHaveFocus())'
     },
     {
       code: 'expect(button).not.toHaveFocus()',
@@ -118,7 +120,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(button).not.toHaveFocus())'
+      output: importWaitFor + 'await waitFor(() => expect(button).not.toHaveFocus())'
     },
 
     // document.activeElement checks
@@ -128,7 +130,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidActiveElement'
       }],
-      output: 'await waitFor(() => expect(document.activeElement).toBe(input))'
+      output: importWaitFor + 'await waitFor(() => expect(document.activeElement).toBe(input))'
     },
     {
       code: 'expect(document.activeElement).toEqual(element)',
@@ -136,7 +138,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidActiveElement'
       }],
-      output: 'await waitFor(() => expect(document.activeElement).toEqual(element))'
+      output: importWaitFor + 'await waitFor(() => expect(document.activeElement).toEqual(element))'
     },
     {
       code: 'expect(document.activeElement.id).toBe("myInput")',
@@ -144,7 +146,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidActiveElement'
       }],
-      output: 'await waitFor(() => expect(document.activeElement.id).toBe("myInput"))'
+      output: importWaitFor + 'await waitFor(() => expect(document.activeElement.id).toBe("myInput"))'
     },
 
     // :focus pseudo-selector checks
@@ -178,7 +180,7 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
+      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus()'
     },
     {
       code: 'input.focus()',
@@ -204,8 +206,8 @@ ruleTester.run('no-focus-check', rule, {
       ],
       output: `
         await act(async () => { element.focus() })
-        await waitFor(() => expect(document.activeElement).toBe(element))
-        await waitFor(() => expect(element).toHaveFocus())
+        expect(document.activeElement).toBe(element);
+        expect(element).toHaveFocus();
       `
     },
 
@@ -216,7 +218,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element).toHaveFocus())'
+      output: importWaitFor + 'await waitFor(() => expect(element).toHaveFocus())'
     },
     {
       code: 'expect(document.activeElement).toBe(input)',
@@ -224,7 +226,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidActiveElement'
       }],
-      output: 'await waitFor(() => expect(document.activeElement).toBe(input))'
+      output: importWaitFor + 'await waitFor(() => expect(document.activeElement).toBe(input))'
     },
 
     // Focus within other assertions
@@ -234,7 +236,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element).toHaveFocus() && expect(element.value).toBe("test"))'
+      output: importWaitFor + 'await waitFor(() => expect(element).toHaveFocus() && expect(element.value).toBe("test"))'
     },
 
     // Multi-statement line with focus call followed by assertion
@@ -245,7 +247,7 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
+      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus();'
     },
     {
       code: 'const hasFocus = expect(element).toHaveFocus()',
@@ -262,7 +264,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.tabIndex).toBe(0))'
+      output: importWaitFor + 'await waitFor(() => expect(element.tabIndex).toBe(0))'
     },
     {
       code: 'expect(button.tabIndex).toEqual(-1)',
@@ -270,7 +272,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(button.tabIndex).toEqual(-1))'
+      output: importWaitFor + 'await waitFor(() => expect(button.tabIndex).toEqual(-1))'
     },
     {
       code: 'expect(element.getAttribute("tabindex")).toBe("0")',
@@ -278,7 +280,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.getAttribute("tabindex")).toBe("0"))'
+      output: importWaitFor + 'await waitFor(() => expect(element.getAttribute("tabindex")).toBe("0"))'
     },
     {
       code: 'expect(element.getAttribute("tabIndex")).toEqual("-1")',
@@ -286,7 +288,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.getAttribute("tabIndex")).toEqual("-1"))'
+      output: importWaitFor + 'await waitFor(() => expect(element.getAttribute("tabIndex")).toEqual("-1"))'
     },
 
     // ARIA focus attributes
@@ -296,7 +298,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.getAttribute("aria-focused")).toBe("true"))'
+      output: importWaitFor + 'await waitFor(() => expect(element.getAttribute("aria-focused")).toBe("true"))'
     },
     {
       code: 'expect(element.hasAttribute("aria-activedescendant")).toBeTruthy()',
@@ -304,7 +306,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.hasAttribute("aria-activedescendant")).toBeTruthy())'
+      output: importWaitFor + 'await waitFor(() => expect(element.hasAttribute("aria-activedescendant")).toBeTruthy())'
     },
     {
       code: 'expect(element.getAttribute("aria-activedescendant")).toBe("item-1")',
@@ -312,7 +314,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.getAttribute("aria-activedescendant")).toBe("item-1"))'
+      output: importWaitFor + 'await waitFor(() => expect(element.getAttribute("aria-activedescendant")).toBe("item-1"))'
     },
     {
       code: 'expect(element.hasAttribute("aria-focused")).toBeFalsy()',
@@ -320,7 +322,7 @@ ruleTester.run('no-focus-check', rule, {
       errors: [{
         messageId: 'avoidFocusCheck'
       }],
-      output: 'await waitFor(() => expect(element.hasAttribute("aria-focused")).toBeFalsy())'
+      output: importWaitFor + 'await waitFor(() => expect(element.hasAttribute("aria-focused")).toBeFalsy())'
     },
 
     // Cypress/Playwright focus checks (if applicable)
@@ -328,7 +330,7 @@ ruleTester.run('no-focus-check', rule, {
       code: 'cy.focused().should("have.id", "myInput")',
       filename: 'cypress.cy.js',
       errors: [{
-        messageId: 'avoidFocusCheck'
+        messageId: 'avoidFocusCheckCypress'
       }]
     },
     {
@@ -352,7 +354,7 @@ ruleTester.run('no-focus-check', rule, {
       ],
       output: `
         await act(async () => { element.focus() })
-        await waitFor(() => expect(document.activeElement).toBe(element))
+        expect(document.activeElement).toBe(element);
       `
     },
 
@@ -369,7 +371,7 @@ ruleTester.run('no-focus-check', rule, {
       ],
       output: `
         await act(async () => { input.focus() })
-        await waitFor(() => expect(input).toHaveFocus())
+        expect(input).toHaveFocus();
       `
     },
 
@@ -401,7 +403,7 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
+      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus();'
     }
   ]
 });

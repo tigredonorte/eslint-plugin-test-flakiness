@@ -966,10 +966,60 @@ describe('helpers', () => {
     it('should return fixer to add async keyword when not async', () => {
       const fixResult = { type: 'insertTextBefore' };
       const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
-      const funcNode = { async: false };
+      const funcNode = { async: false, parent: { type: 'CallExpression' } };
       const result = helpers.ensureAsyncFunction(fixer, funcNode);
       expect(result).toEqual([fixResult]);
       expect(fixer.insertTextBefore).toHaveBeenCalledWith(funcNode, 'async ');
+    });
+
+    it('should insert before method key for class methods', () => {
+      const fixResult = { type: 'insertTextBefore' };
+      const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
+      const key = { name: 'foo' };
+      const funcNode = {
+        type: 'FunctionExpression',
+        async: false,
+        parent: { type: 'MethodDefinition', kind: 'method', key }
+      };
+      const result = helpers.ensureAsyncFunction(fixer, funcNode);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextBefore).toHaveBeenCalledWith(key, 'async ');
+    });
+
+    it('should insert before method key for object method shorthand', () => {
+      const fixResult = { type: 'insertTextBefore' };
+      const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
+      const key = { name: 'bar' };
+      const funcNode = {
+        type: 'FunctionExpression',
+        async: false,
+        parent: { type: 'Property', method: true, key }
+      };
+      const result = helpers.ensureAsyncFunction(fixer, funcNode);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextBefore).toHaveBeenCalledWith(key, 'async ');
+    });
+
+    it('should return empty array for getters (cannot be async)', () => {
+      const fixer = { insertTextBefore: jest.fn() };
+      const funcNode = {
+        type: 'FunctionExpression',
+        async: false,
+        parent: { type: 'MethodDefinition', kind: 'get', key: { name: 'foo' } }
+      };
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(fixer.insertTextBefore).not.toHaveBeenCalled();
+    });
+
+    it('should return empty array for setters (cannot be async)', () => {
+      const fixer = { insertTextBefore: jest.fn() };
+      const funcNode = {
+        type: 'FunctionExpression',
+        async: false,
+        parent: { type: 'MethodDefinition', kind: 'set', key: { name: 'foo' } }
+      };
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(fixer.insertTextBefore).not.toHaveBeenCalled();
     });
   });
 
@@ -1049,17 +1099,48 @@ describe('helpers', () => {
       expect(fixer.insertTextAfter).toHaveBeenCalledWith(lastSpecifier, ', waitFor');
     });
 
-    it('should return empty array when no @testing-library import to augment', () => {
-      const fixer = {};
+    it('should add new import when no @testing-library import exists', () => {
+      const fixResult = { type: 'insertTextBefore' };
+      const firstNode = { type: 'ExpressionStatement' };
+      const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
       const context = {
         getFilename: () => 'test.test.js',
         getPhysicalFilename: () => 'test.test.js',
         getSourceCode: () => ({
           getText: () => 'const foo = require(\'foo\');',
-          ast: { body: [] }
+          ast: { body: [firstNode] }
         })
       };
-      expect(helpers.addWaitForImport(fixer, context)).toEqual([]);
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextBefore).toHaveBeenCalledWith(
+        firstNode,
+        'import { waitFor } from \'@testing-library/react\';\n'
+      );
+    });
+
+    it('should add separate import for namespace @testing-library imports', () => {
+      const fixResult = { type: 'insertTextAfter' };
+      const importNode = {
+        type: 'ImportDeclaration',
+        source: { value: '@testing-library/react' },
+        specifiers: [{ type: 'ImportNamespaceSpecifier', local: { name: 'RTL' } }]
+      };
+      const fixer = { insertTextAfter: jest.fn().mockReturnValue(fixResult) };
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'import * as RTL from \'@testing-library/react\';',
+          ast: { body: [importNode] }
+        })
+      };
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextAfter).toHaveBeenCalledWith(
+        importNode,
+        '\nimport { waitFor } from \'@testing-library/react\';'
+      );
     });
   });
 
