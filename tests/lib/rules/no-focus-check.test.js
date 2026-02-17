@@ -205,8 +205,9 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'avoidFocusCheck' }
       ],
       output: `
-        await act(async () => { element.focus() })
-        expect(document.activeElement).toBe(element);
+        import { waitFor } from '@testing-library/react';
+await act(async () => { element.focus() })
+        await waitFor(() => expect(document.activeElement).toBe(element))
         expect(element).toHaveFocus();
       `
     },
@@ -353,8 +354,9 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'avoidActiveElement' }
       ],
       output: `
-        await act(async () => { element.focus() })
-        expect(document.activeElement).toBe(element);
+        import { waitFor } from '@testing-library/react';
+await act(async () => { element.focus() })
+        await waitFor(() => expect(document.activeElement).toBe(element))
       `
     },
 
