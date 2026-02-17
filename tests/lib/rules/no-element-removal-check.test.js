@@ -145,21 +145,24 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'Element.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(element).not.toBeInTheDocument())'
     },
     {
       code: 'expect(screen.queryByText("Loading")).not.toBeInTheDocument()',
       filename: 'Loading.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument())'
     },
     {
       code: 'expect(queryByRole("dialog")).not.toBeInTheDocument()',
       filename: 'Dialog.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByRole("dialog")).not.toBeInTheDocument())'
     },
 
     // Query methods with null/undefined/falsy checks
@@ -168,28 +171,32 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'QueryNull.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByText("Loading")).toBeNull())'
     },
     {
       code: 'expect(screen.queryByRole("alert")).toBeNull()',
       filename: 'AlertNull.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(screen.queryByRole("alert")).toBeNull())'
     },
     {
       code: 'expect(queryByTestId("spinner")).toBeUndefined()',
       filename: 'SpinnerUndefined.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByTestId("spinner")).toBeUndefined())'
     },
     {
       code: 'expect(queryByLabelText("Email")).toBeFalsy()',
       filename: 'EmailFalsy.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByLabelText("Email")).toBeFalsy())'
     },
 
     // expect().not.toBeDefined() patterns
@@ -198,17 +205,19 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'NotDefined.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByText("Loading")).not.toBeDefined())'
     },
     {
       code: 'expect(screen.queryByRole("alert")).not.toBeDefined()',
       filename: 'ScreenNotDefined.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(screen.queryByRole("alert")).not.toBeDefined())'
     },
 
-    // Direct null checks
+    // Direct null checks (no autofix - too complex)
     {
       code: 'if (queryByTestId("element") === null) { /* removed */ }',
       filename: 'DirectNull.test.js',
@@ -230,14 +239,16 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'NotVisible.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(element).not.toBeVisible())'
     },
     {
       code: 'expect(screen.getByTestId("modal")).not.toBeVisible()',
       filename: 'ModalNotVisible.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(screen.getByTestId("modal")).not.toBeVisible())'
     },
 
     // !document.contains(element) pattern
@@ -275,7 +286,12 @@ ruleTester.run('no-element-removal-check', rule, {
         { messageId: 'avoidNotInDocument' },
         { messageId: 'useWaitForRemoval' },
         { messageId: 'avoidRemovalCheck' }
-      ]
+      ],
+      output: `
+        await waitFor(() => expect(element).not.toBeInTheDocument())
+        await waitFor(() => expect(queryByText("Loading")).toBeNull())
+        !document.contains(modal);
+      `
     },
 
     // Different test file extensions
@@ -284,14 +300,16 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'Component.spec.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'await waitFor(() => expect(element).not.toBeInTheDocument())'
     },
     {
       code: 'expect(queryByText("Loading")).toBeNull()',
       filename: 'test/loading.test.ts',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryByText("Loading")).toBeNull())'
     },
 
     // Nested patterns
@@ -300,7 +318,8 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'TestCase.test.js',
       errors: [{
         messageId: 'avoidNotInDocument'
-      }]
+      }],
+      output: 'it("should remove", async () => { await waitFor(() => expect(element).not.toBeInTheDocument()) })'
     },
     {
       code: 'const isRemoved = !document.contains(element)',
@@ -316,21 +335,24 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'QuerySelector.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(container.querySelector(".modal")).toBeNull())'
     },
     {
       code: 'expect(queryAllByRole("listitem")).toBeUndefined()',
       filename: 'QueryAll.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(queryAllByRole("listitem")).toBeUndefined())'
     },
     {
       code: 'expect(within(container).queryByText("text")).toBeFalsy()',
       filename: 'WithinQuery.test.js',
       errors: [{
         messageId: 'useWaitForRemoval'
-      }]
+      }],
+      output: 'await waitFor(() => expect(within(container).queryByText("text")).toBeFalsy())'
     }
   ]
 });
@@ -348,7 +370,7 @@ describe('no-element-removal-check rule internals', () => {
     expect(rule.meta.docs.description).toBe('Avoid checking for element removal as timing can vary');
     expect(rule.meta.docs.category).toBe('Best Practices');
     expect(rule.meta.docs.recommended).toBe(true);
-    expect(rule.meta.fixable).toBeUndefined();
+    expect(rule.meta.fixable).toBe('code');
     expect(rule.meta.messages).toHaveProperty('avoidRemovalCheck');
     expect(rule.meta.messages).toHaveProperty('useWaitForRemoval');
     expect(rule.meta.messages).toHaveProperty('avoidNotInDocument');
