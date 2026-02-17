@@ -180,7 +180,7 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus()'
+      output: importWaitFor + 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
     },
     {
       code: 'input.focus()',
@@ -248,7 +248,7 @@ await act(async () => { element.focus() })
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus();'
+      output: importWaitFor + 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
     },
     {
       code: 'const hasFocus = expect(element).toHaveFocus()',
@@ -372,8 +372,9 @@ await act(async () => { element.focus() })
         { messageId: 'avoidFocusCheck' }
       ],
       output: `
-        await act(async () => { input.focus() })
-        expect(input).toHaveFocus();
+        import { waitFor } from '@testing-library/react';
+await act(async () => { input.focus() })
+        await waitFor(() => expect(input).toHaveFocus())
       `
     },
 
@@ -405,7 +406,7 @@ await act(async () => { element.focus() })
         { messageId: 'useWaitForFocus' },
         { messageId: 'avoidFocusCheck' }
       ],
-      output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus();'
+      output: importWaitFor + 'await act(async () => { element.focus() }); await waitFor(() => expect(element).toHaveFocus())'
     },
 
     // Playwright framework: focus assertion uses framework-specific message (no fix)
