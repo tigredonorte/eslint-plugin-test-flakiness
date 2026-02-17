@@ -146,7 +146,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'avoidNotInDocument'
       }],
-      output: 'await waitFor(() => expect(element).not.toBeInTheDocument())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(element).not.toBeInTheDocument())'
     },
     {
       code: 'expect(screen.queryByText("Loading")).not.toBeInTheDocument()',
@@ -154,7 +154,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'avoidNotInDocument'
       }],
-      output: 'await waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(screen.queryByText("Loading")).not.toBeInTheDocument())'
     },
     {
       code: 'expect(queryByRole("dialog")).not.toBeInTheDocument()',
@@ -162,7 +162,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'avoidNotInDocument'
       }],
-      output: 'await waitFor(() => expect(queryByRole("dialog")).not.toBeInTheDocument())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByRole("dialog")).not.toBeInTheDocument())'
     },
 
     // Query methods with null/undefined/falsy checks
@@ -172,7 +172,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryByText("Loading")).toBeNull())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByText("Loading")).toBeNull())'
     },
     {
       code: 'expect(screen.queryByRole("alert")).toBeNull()',
@@ -180,7 +180,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(screen.queryByRole("alert")).toBeNull())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(screen.queryByRole("alert")).toBeNull())'
     },
     {
       code: 'expect(queryByTestId("spinner")).toBeUndefined()',
@@ -188,7 +188,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryByTestId("spinner")).toBeUndefined())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByTestId("spinner")).toBeUndefined())'
     },
     {
       code: 'expect(queryByLabelText("Email")).toBeFalsy()',
@@ -196,7 +196,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryByLabelText("Email")).toBeFalsy())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByLabelText("Email")).toBeFalsy())'
     },
 
     // expect().not.toBeDefined() patterns
@@ -206,7 +206,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryByText("Loading")).not.toBeDefined())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByText("Loading")).not.toBeDefined())'
     },
     {
       code: 'expect(screen.queryByRole("alert")).not.toBeDefined()',
@@ -214,7 +214,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(screen.queryByRole("alert")).not.toBeDefined())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(screen.queryByRole("alert")).not.toBeDefined())'
     },
 
     // Direct null checks (no autofix - too complex)
@@ -238,17 +238,17 @@ ruleTester.run('no-element-removal-check', rule, {
       code: 'expect(element).not.toBeVisible()',
       filename: 'NotVisible.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
+        messageId: 'avoidNotVisibleWithoutWaitFor'
       }],
-      output: 'await waitFor(() => expect(element).not.toBeVisible())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(element).not.toBeVisible())'
     },
     {
       code: 'expect(screen.getByTestId("modal")).not.toBeVisible()',
       filename: 'ModalNotVisible.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
+        messageId: 'avoidNotVisibleWithoutWaitFor'
       }],
-      output: 'await waitFor(() => expect(screen.getByTestId("modal")).not.toBeVisible())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(screen.getByTestId("modal")).not.toBeVisible())'
     },
 
     // !document.contains(element) pattern
@@ -288,8 +288,9 @@ ruleTester.run('no-element-removal-check', rule, {
         { messageId: 'avoidRemovalCheck' }
       ],
       output: `
-        await waitFor(() => expect(element).not.toBeInTheDocument())
-        await waitFor(() => expect(queryByText("Loading")).toBeNull())
+        import { waitFor } from '@testing-library/react';
+await waitFor(() => expect(element).not.toBeInTheDocument())
+        expect(queryByText("Loading")).toBeNull();
         !document.contains(modal);
       `
     },
@@ -301,7 +302,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'avoidNotInDocument'
       }],
-      output: 'await waitFor(() => expect(element).not.toBeInTheDocument())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(element).not.toBeInTheDocument())'
     },
     {
       code: 'expect(queryByText("Loading")).toBeNull()',
@@ -309,7 +310,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryByText("Loading")).toBeNull())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryByText("Loading")).toBeNull())'
     },
 
     // Nested patterns
@@ -319,7 +320,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'avoidNotInDocument'
       }],
-      output: 'it("should remove", async () => { await waitFor(() => expect(element).not.toBeInTheDocument()) })'
+      output: 'import { waitFor } from \'@testing-library/react\';\nit("should remove", async () => { await waitFor(() => expect(element).not.toBeInTheDocument()) })'
     },
     {
       code: 'const isRemoved = !document.contains(element)',
@@ -336,7 +337,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(container.querySelector(".modal")).toBeNull())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(container.querySelector(".modal")).toBeNull())'
     },
     {
       code: 'expect(queryAllByRole("listitem")).toBeUndefined()',
@@ -344,7 +345,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(queryAllByRole("listitem")).toBeUndefined())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(queryAllByRole("listitem")).toBeUndefined())'
     },
     {
       code: 'expect(within(container).queryByText("text")).toBeFalsy()',
@@ -352,7 +353,7 @@ ruleTester.run('no-element-removal-check', rule, {
       errors: [{
         messageId: 'useWaitForRemoval'
       }],
-      output: 'await waitFor(() => expect(within(container).queryByText("text")).toBeFalsy())'
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(within(container).queryByText("text")).toBeFalsy())'
     }
   ]
 });
@@ -374,6 +375,7 @@ describe('no-element-removal-check rule internals', () => {
     expect(rule.meta.messages).toHaveProperty('avoidRemovalCheck');
     expect(rule.meta.messages).toHaveProperty('useWaitForRemoval');
     expect(rule.meta.messages).toHaveProperty('avoidNotInDocument');
+    expect(rule.meta.messages).toHaveProperty('avoidNotVisibleWithoutWaitFor');
   });
 
   it('should have correct URL in meta', () => {
@@ -1068,7 +1070,7 @@ describe('no-element-removal-check rule internals', () => {
       visitor.CallExpression(node);
       expect(context.report).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageId: 'avoidNotInDocument'
+          messageId: 'avoidNotVisibleWithoutWaitFor'
         })
       );
     });
