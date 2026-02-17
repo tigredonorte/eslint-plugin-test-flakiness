@@ -417,8 +417,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-        fireEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByText('Clicked')).toBeInTheDocument();
         });
       `
@@ -436,8 +437,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'userEvent.type' }
       }],
       output: `
-        userEvent.type(input, 'test');
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+userEvent.type(input, 'test');
+        await waitFor(() => {
           expect(screen.getByDisplayValue('test')).toBeInTheDocument();
         });
       `
@@ -455,8 +457,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'component.setState' }
       }],
       output: `
-        component.setState({ value: 42 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+component.setState({ value: 42 });
+        await waitFor(() => {
           expect(component.state.value).toBe(42);
         });
       `
@@ -474,8 +477,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'store.dispatch' }
       }],
       output: `
-        store.dispatch(action);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+store.dispatch(action);
+        await waitFor(() => {
           expect(store.getState().value).toBe(42);
         });
       `
@@ -493,8 +497,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'wrapper.setProps' }
       }],
       output: `
-        wrapper.setProps({ value: 42 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+wrapper.setProps({ value: 42 });
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(42);
         });
       `
@@ -531,14 +536,13 @@ ruleTester.run('no-immediate-assertions', rule, {
         }
       ],
       output: `
-        fireEvent.click(button1);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.click(button1);
+        await waitFor(() => {
           expect(result1).toBe(true);
         });
         fireEvent.click(button2);
-        waitFor(() => {
-          expect(result2).toBe(true);
-        });
+        expect(result2).toBe(true);
       `
     },
 
@@ -554,8 +558,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'wrapper.simulate' }
       }],
       output: `
-        wrapper.simulate('click');
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+wrapper.simulate('click');
+        await waitFor(() => {
           expect(wrapper.find('.result')).toHaveLength(1);
         });
       `
@@ -573,8 +578,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'wrapper.trigger' }
       }],
       output: `
-        wrapper.trigger('click');
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+wrapper.trigger('click');
+        await waitFor(() => {
           expect(wrapper.text()).toBe('Clicked');
         });
       `
@@ -592,8 +598,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-        fireEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -611,8 +618,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.change' }
       }],
       output: `
-        fireEvent.change(input, { target: { value: 'test' } });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.change(input, { target: { value: 'test' } });
+        await waitFor(() => {
           expect(input.value).toBe('test');
         });
       `
@@ -630,8 +638,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.submit' }
       }],
       output: `
-        fireEvent.submit(form);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.submit(form);
+        await waitFor(() => {
           expect(screen.getByText('Submitted')).toBeInTheDocument();
         });
       `
@@ -649,8 +658,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'userEvent.click' }
       }],
       output: `
-        userEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+userEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByText('Loading')).toBeInTheDocument();
         });
       `
@@ -668,8 +678,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'store.commit' }
       }],
       output: `
-        store.commit('SET_VALUE', 42);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+store.commit('SET_VALUE', 42);
+        await waitFor(() => {
           expect(store.state.value).toBe(42);
         });
       `
@@ -687,8 +698,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-    fireEvent.click(button);
-    waitFor(() => {
+    import { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+    await waitFor(() => {
       expect(screen.getByText('Clicked')).toBeInTheDocument();
     });
       `
@@ -706,8 +718,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-\t\tfireEvent.click(button);
-\t\twaitFor(() => {
+\t\timport { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+\t\tawait waitFor(() => {
 \t\t  expect(screen.getByText('Clicked')).toBeInTheDocument();
 \t\t});
       `
@@ -726,8 +739,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-        fireEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByText('Clicked')).toBeInTheDocument();
         });
       `
@@ -747,8 +761,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'fireEvent.click' }
       }],
       output: `
-        fireEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+fireEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByTestId('result')).toBeVisible();
         });
       `
@@ -771,8 +786,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'setState' }
       }],
       output: `
-        setState({ value: 1 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+setState({ value: 1 });
+        await waitFor(() => {
           expect(state.value).toBe(1);
         });
       `
@@ -791,8 +807,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'element.triggerEvent' }
       }],
       output: `
-        element.triggerEvent();
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+element.triggerEvent();
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -810,8 +827,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'userEvent.click' }
       }],
       output: `
-        userEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+userEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByText('Loading')).toBeInTheDocument();
         });
       `
@@ -829,8 +847,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'triggerEvent' }
       }],
       output: `
-        triggerEvent();
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+triggerEvent();
+        await waitFor(() => {
           expect(result).toBe(true);
         });
       `
@@ -848,8 +867,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'userEvent.click' }
       }],
       output: `
-        userEvent.click(button);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+userEvent.click(button);
+        await waitFor(() => {
           expect(screen.getByText('Result')).toBeInTheDocument();
         });
       `
@@ -867,8 +887,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'component.setState' }
       }],
       output: `
-        component.setState({ value: 42 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+component.setState({ value: 42 });
+        await waitFor(() => {
           expect(component.state.value).toBe(42);
         });
       `
@@ -886,8 +907,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'store.commit' }
       }],
       output: `
-        store.commit('SET_VALUE', 42);
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+store.commit('SET_VALUE', 42);
+        await waitFor(() => {
           expect(store.state.value).toBe(42);
         });
       `
@@ -905,8 +927,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'wrapper.setProps' }
       }],
       output: `
-        wrapper.setProps({ value: 100 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+wrapper.setProps({ value: 100 });
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(100);
         });
       `
@@ -925,8 +948,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'component.setState' }
       }],
       output: `
-        component.setState({ value: 'new' });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+component.setState({ value: 'new' });
+        await waitFor(() => {
           expect(component.state.value).toBe('new');
         });
       `
@@ -942,8 +966,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'store.dispatch' }
       }],
       output: `
-        store.dispatch(updateAction());
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+store.dispatch(updateAction());
+        await waitFor(() => {
           expect(store.getState()).toEqual({ updated: true });
         });
       `
@@ -959,8 +984,9 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'vuexStore.commit' }
       }],
       output: `
-        vuexStore.commit('SET_VALUE', 'new');
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+vuexStore.commit('SET_VALUE', 'new');
+        await waitFor(() => {
           expect(vuexStore.state.value).toBe('new');
         });
       `
@@ -976,11 +1002,36 @@ ruleTester.run('no-immediate-assertions', rule, {
         data: { action: 'wrapper.setProps' }
       }],
       output: `
-        wrapper.setProps({ value: 100 });
-        waitFor(() => {
+        import { waitFor } from '@testing-library/react';
+wrapper.setProps({ value: 100 });
+        await waitFor(() => {
           expect(wrapper.props().value).toBe(100);
         });
       `
+    },
+
+    // Playwright framework: uses framework-specific message (no fix)
+    {
+      code: `import { test, expect } from '@playwright/test';
+fireEvent.click(button);
+expect(screen.getByText('Clicked')).toBeInTheDocument();`,
+      filename: 'PlaywrightImmediate.spec.js',
+      errors: [{
+        messageId: 'needsWaitForPlaywright',
+        data: { action: 'fireEvent.click' }
+      }]
+    },
+
+    // Cypress framework: uses framework-specific message (no fix)
+    {
+      code: `import { mount } from 'cypress/react';
+fireEvent.click(button);
+expect(screen.getByText('Clicked')).toBeInTheDocument();`,
+      filename: 'CypressImmediate.cy.js',
+      errors: [{
+        messageId: 'needsWaitForCypress',
+        data: { action: 'fireEvent.click' }
+      }]
     }
 
 

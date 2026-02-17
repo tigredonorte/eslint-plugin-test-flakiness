@@ -153,7 +153,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
           data: { timeout: 2000 }
         }
       ],
-      output: 'async function test() { await waitFor(async () => {\n  console.log("done")\n}, { timeout: 2000 }) }'
+      output: `import { waitFor } from '@testing-library/react';
+async function test() { await waitFor(async () => {
+  console.log("done")
+}, { timeout: 2000 }) }`
     },
     // setInterval violation
     {
@@ -165,7 +168,7 @@ ruleTester.run('no-hard-coded-timeout', rule, {
         }
       ]
     },
-    // Promise-based timeout
+    // Promise-based timeout — no autofix (setTimeout callback is not a function literal)
     {
       code: 'async function test() { await new Promise(resolve => setTimeout(resolve, 3000)) }',
       filename: 'test.spec.js',
@@ -177,8 +180,7 @@ ruleTester.run('no-hard-coded-timeout', rule, {
           messageId: 'avoidHardTimeout',
           data: { timeout: 3000 }
         }
-      ],
-      output: 'async function test() { await waitFor(() => expect(true).toBe(true), { timeout: 3000 }) }'
+      ]
     },
     // Cypress wait with number
     {
@@ -241,7 +243,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
           data: { timeout: 2000 }
         }
       ],
-      output: 'async function test() { await waitFor(async () => {\n  \n}, { timeout: 2000 }) }'
+      output: `import { waitFor } from '@testing-library/react';
+async function test() { await waitFor(async () => {
+  
+}, { timeout: 2000 }) }`
     },
     // Custom maxTimeout setting
     {
@@ -254,7 +259,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
           data: { timeout: 100 }
         }
       ],
-      output: 'async function test() { await waitFor(async () => {\n  \n}, { timeout: 100 }) }'
+      output: `import { waitFor } from '@testing-library/react';
+async function test() { await waitFor(async () => {
+  
+}, { timeout: 100 }) }`
     },
     // Should report in setup when not allowed
     {
@@ -267,7 +275,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
           data: { timeout: 2000 }
         }
       ],
-      output: 'beforeEach(async () => { await waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: `import { waitFor } from '@testing-library/react';
+beforeEach(async () => { await waitFor(async () => {
+  
+}, { timeout: 2000 }) })`
     },
     // Multiple violations
     {
@@ -280,12 +291,11 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       `,
       filename: 'test.spec.js',
       errors: [
-        { messageId: 'avoidHardTimeout', data: { timeout: 2000 } },
-        { messageId: 'avoidPromiseTimeout' },
-        { messageId: 'avoidHardTimeout', data: { timeout: 3000 } },
+        { messageId: 'avoidHardTimeoutCypress', data: { timeout: 2000 } },
+        { messageId: 'avoidPromiseTimeoutCypress' },
+        { messageId: 'avoidHardTimeoutCypress', data: { timeout: 3000 } },
         { messageId: 'avoidCypressWait' }
-      ],
-      output: '\n        it(\'test\', async () => {\n          await waitFor(async () => {\n  \n}, { timeout: 2000 });\n          await waitFor(() => expect(true).toBe(true), { timeout: 3000 });\n          cy.wait(4000);\n        })\n      '
+      ]
     },
     // Nested setTimeout
     {
@@ -299,21 +309,23 @@ ruleTester.run('no-hard-coded-timeout', rule, {
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } },
         { messageId: 'avoidHardTimeout', data: { timeout: 1000 } }
       ],
-      output: `async function test() {
-        await waitFor(async () => {
-  setTimeout(() => {}, 2000);
-}, { timeout: 1000 });
+      output: `import { waitFor } from '@testing-library/react';
+async function test() {
+        setTimeout(async () => {
+          await waitFor(async () => {
+  
+}, { timeout: 2000 });
+        }, 1000);
       }`
     },
-    // Promise with block statement body containing setTimeout
+    // Promise with block statement body containing setTimeout — no autofix
     {
       code: 'async function test() { await new Promise(resolve => { setTimeout(resolve, 2000); }) }',
       filename: 'test.spec.js',
       errors: [
         { messageId: 'avoidPromiseTimeout' },
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
-      ],
-      output: 'async function test() { await waitFor(() => expect(true).toBe(true), { timeout: 2000 }) }'
+      ]
     },
     // Arrow function with expression body in setTimeout
     {
@@ -322,16 +334,16 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'async function test() { await waitFor(async () => console.log("test"), { timeout: 2000 }) }'
+      output: `import { waitFor } from '@testing-library/react';
+async function test() { await waitFor(async () => console.log("test"), { timeout: 2000 }) }`
     },
-    // setTimeout with non-function first argument
+    // setTimeout with non-function first argument — no autofix (cannot safely wrap)
     {
       code: 'async function test() { setTimeout(myCallback, 2000) }',
       filename: 'test.spec.js',
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
-      ],
-      output: 'async function test() { await waitFor(async () => {\n  myCallback\n}, { timeout: 2000 }) }'
+      ]
     },
     // Test isInMockContext edge case - setInterval in non-mock context
     {
@@ -349,7 +361,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'afterAll(async () => { await waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: `import { waitFor } from '@testing-library/react';
+afterAll(async () => { await waitFor(async () => {
+  
+}, { timeout: 2000 }) })`
     },
     // Test in beforeAll hook with allowInSetup false
     {
@@ -359,7 +374,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'beforeAll(async () => { await waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: `import { waitFor } from '@testing-library/react';
+beforeAll(async () => { await waitFor(async () => {
+  
+}, { timeout: 2000 }) })`
     },
     // Test in afterEach hook with allowInSetup false
     {
@@ -369,7 +387,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'afterEach(async () => { await waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: `import { waitFor } from '@testing-library/react';
+afterEach(async () => { await waitFor(async () => {
+  
+}, { timeout: 2000 }) })`
     },
     // Test setTimeout outside setup with allowInSetup true (should still error - line 239 coverage)
     {
@@ -379,7 +400,10 @@ ruleTester.run('no-hard-coded-timeout', rule, {
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
       ],
-      output: 'it("test", () => { waitFor(async () => {\n  \n}, { timeout: 2000 }) })'
+      output: `import { waitFor } from '@testing-library/react';
+it("test", async () => { await waitFor(async () => {
+  
+}, { timeout: 2000 }) })`
     }
   ]
 });

@@ -5,6 +5,8 @@
 
 describe('Focus Check Violations', () => {
   // ❌ BAD: Checking document.activeElement
+  // Fixer: wraps focus() in await act(), wraps assertions in await waitFor(),
+  //        AND makes the callback async if not already
   it('should not check document.activeElement', () => {
     input.focus();
     expect(document.activeElement).toBe(input);

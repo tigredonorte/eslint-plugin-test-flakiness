@@ -369,7 +369,8 @@ ruleTester.run('no-unconditional-wait', rule, {
         messageId: 'useWaitFor'
       }],
       output: `
-        beforeAll(async () => {
+        import { waitFor } from '@testing-library/react';
+beforeAll(async () => {
           await waitFor(() => {
   // TODO: Add assertion or condition
   expect(true).toBe(true);
@@ -571,7 +572,8 @@ ruleTester.run('no-unconditional-wait', rule, {
       errors: [{
         messageId: 'useWaitFor'
       }],
-      output: `await waitFor(() => {
+      output: `import { waitFor } from '@testing-library/react';
+await waitFor(() => {
   // TODO: Add assertion or condition
   expect(true).toBe(true);
 });`
@@ -584,7 +586,8 @@ ruleTester.run('no-unconditional-wait', rule, {
       errors: [{
         messageId: 'useWaitFor'
       }],
-      output: `await waitFor(() => {
+      output: `import { waitFor } from '@testing-library/react';
+await waitFor(() => {
   // TODO: Add assertion or condition
   expect(true).toBe(true);
 });`
@@ -689,15 +692,12 @@ ruleTester.run('no-unconditional-wait', rule, {
       errors: [
         { messageId: 'avoidUnconditionalWait' },
         { messageId: 'useWaitFor' },
-        { messageId: 'useWaitFor' }
+        { messageId: 'useWaitForCypress' }
       ],
       output: `
         cy.wait('@apiCall') // TODO: Replace with actual alias or remove wait;
         setTimeout(() => {}, 2000);
-        await waitFor(() => {
-  // TODO: Add assertion or condition
-  expect(true).toBe(true);
-});
+        await new Promise(r => setTimeout(r, 500));
       `
     },
 
