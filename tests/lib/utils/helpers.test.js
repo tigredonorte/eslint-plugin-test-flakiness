@@ -1130,6 +1130,30 @@ describe('helpers', () => {
       );
     });
 
+    it('should add separate import for default-only @testing-library imports', () => {
+      const fixResult = { type: 'insertTextAfter' };
+      const importNode = {
+        type: 'ImportDeclaration',
+        source: { value: '@testing-library/user-event' },
+        specifiers: [{ type: 'ImportDefaultSpecifier', local: { name: 'userEvent' } }]
+      };
+      const fixer = { insertTextAfter: jest.fn().mockReturnValue(fixResult) };
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'import userEvent from \'@testing-library/user-event\';',
+          ast: { body: [importNode] }
+        })
+      };
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextAfter).toHaveBeenCalledWith(
+        importNode,
+        '\nimport { waitFor } from \'@testing-library/user-event\';'
+      );
+    });
+
     it('should add separate import for namespace @testing-library imports', () => {
       const fixResult = { type: 'insertTextAfter' };
       const importNode = {
