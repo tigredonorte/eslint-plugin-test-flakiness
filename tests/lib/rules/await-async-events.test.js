@@ -928,6 +928,41 @@ await user.click(button1);
 await userEvent.click(button2);
 await user.type(input, "text");
 }`
+    },
+
+    // --- Regression: fixer returns null for non-asyncable contexts ---
+
+    // userEvent inside getter — no fix (ensureAsyncFunction returns null)
+    {
+      code: `class MyTest {
+  get data() {
+    userEvent.click(button);
+  }
+}`,
+      filename: 'getter.test.js',
+      errors: [{ messageId: 'missingAwaitUserEvent', data: { method: 'click' } }]
+    },
+
+    // fireEvent inside setter — no fix
+    {
+      code: `class MyTest {
+  set value(v) {
+    fireEvent.click(button);
+  }
+}`,
+      filename: 'setter.test.js',
+      errors: [{ messageId: 'missingAwaitFireEvent', data: { method: 'click' } }]
+    },
+
+    // act() with async callback inside constructor — no fix
+    {
+      code: `class MyTest {
+  constructor() {
+    act(async () => { render(component) });
+  }
+}`,
+      filename: 'constructor.test.js',
+      errors: [{ messageId: 'missingAwaitAct' }]
     }
   ]
 });
