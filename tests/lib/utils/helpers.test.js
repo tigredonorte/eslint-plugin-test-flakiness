@@ -1074,14 +1074,52 @@ describe('helpers', () => {
       expect(helpers.addWaitForImport(fixer, context)).toEqual([]);
     });
 
-    it('should return empty array when waitFor is already imported via require', () => {
+    it('should return empty array when waitFor is already imported via destructured require', () => {
       const fixer = {};
       const context = {
         getFilename: () => 'test.test.js',
         getPhysicalFilename: () => 'test.test.js',
         getSourceCode: () => ({
           getText: () => 'const { render, waitFor } = require(\'@testing-library/react\');',
-          ast: { body: [] }
+          ast: {
+            body: [{
+              type: 'VariableDeclaration',
+              declarations: [{
+                init: { type: 'CallExpression', callee: { name: 'require', type: 'Identifier' }, arguments: [] },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [
+                    { type: 'Property', key: { name: 'render', type: 'Identifier' }, value: { name: 'render', type: 'Identifier' } },
+                    { type: 'Property', key: { name: 'waitFor', type: 'Identifier' }, value: { name: 'waitFor', type: 'Identifier' } }
+                  ]
+                }
+              }]
+            }]
+          }
+        })
+      };
+      expect(helpers.addWaitForImport(fixer, context)).toEqual([]);
+    });
+
+    it('should return empty array when waitFor is imported via require member expression', () => {
+      const fixer = {};
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'const waitFor = require(\'@testing-library/react\').waitFor;',
+          ast: {
+            body: [{
+              type: 'VariableDeclaration',
+              declarations: [{
+                init: {
+                  type: 'MemberExpression',
+                  object: { type: 'CallExpression', callee: { name: 'require', type: 'Identifier' }, arguments: [] }
+                },
+                id: { type: 'Identifier', name: 'waitFor' }
+              }]
+            }]
+          }
         })
       };
       expect(helpers.addWaitForImport(fixer, context)).toEqual([]);

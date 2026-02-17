@@ -434,6 +434,75 @@ expect(element).toHaveFocus();`,
       errors: [{
         messageId: 'avoidFocusCheckCypress'
       }]
+    },
+
+    // --- Coverage: asyncFixes === null guards (getter/setter/constructor) ---
+
+    // Focus assertion inside getter — createWaitForFix asyncFixes null (no fix)
+    {
+      code: `import { render } from '@testing-library/react';
+class Foo { get bar() { expect(element).toHaveFocus(); } }`,
+      filename: 'GetterFocus.test.js',
+      errors: [{
+        messageId: 'avoidFocusCheck'
+      }]
+    },
+
+    // document.activeElement inside getter — checkActiveElement asyncFixes null (no fix)
+    {
+      code: `import { render } from '@testing-library/react';
+class Foo { get bar() { expect(document.activeElement).toBe(input); } }`,
+      filename: 'GetterActive.test.js',
+      errors: [{
+        messageId: 'avoidActiveElement'
+      }]
+    },
+
+    // focus() followed by assertion inside setter — focus+assertion asyncFixes null (no fix)
+    {
+      code: `import { render } from '@testing-library/react';
+class Foo {
+  set bar(v) {
+    element.focus();
+    expect(element).toHaveFocus();
+  }
+}`,
+      filename: 'SetterFocusAssertion.test.js',
+      errors: [
+        { messageId: 'useWaitForFocus' },
+        { messageId: 'avoidFocusCheck' }
+      ]
+    },
+
+    // Standalone focus() inside constructor — standalone focus asyncFixes null (no fix)
+    {
+      code: `import { render } from '@testing-library/react';
+class Foo { constructor() { element.focus(); } }`,
+      filename: 'ConstructorFocus.test.js',
+      errors: [{
+        messageId: 'useWaitForFocus'
+      }]
+    },
+
+    // Variable assignment with focus — default return null in IIFE/other fixer
+    {
+      code: 'const x = element.focus()',
+      filename: 'VarFocus.test.js',
+      errors: [{
+        messageId: 'useWaitForFocus'
+      }]
+    },
+
+    // Multi-line IIFE — hasMultipleStatements=false for IIFE fixer
+    {
+      code: `(() => {
+  return element.focus();
+})()`,
+      filename: 'IIFEMultiLine.test.js',
+      errors: [{
+        messageId: 'useWaitForFocus'
+      }],
+      output: 'await act(async () => { element.focus() })'
     }
   ]
 });
