@@ -1021,6 +1021,17 @@ describe('helpers', () => {
       expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
       expect(fixer.insertTextBefore).not.toHaveBeenCalled();
     });
+
+    it('should return empty array for constructors (cannot be async)', () => {
+      const fixer = { insertTextBefore: jest.fn() };
+      const funcNode = {
+        type: 'FunctionExpression',
+        async: false,
+        parent: { type: 'MethodDefinition', kind: 'constructor', key: { name: 'constructor' } }
+      };
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(fixer.insertTextBefore).not.toHaveBeenCalled();
+    });
   });
 
   describe('addWaitForImport', () => {
@@ -1141,6 +1152,19 @@ describe('helpers', () => {
         importNode,
         '\nimport { waitFor } from \'@testing-library/react\';'
       );
+    });
+
+    it('should return empty array when AST body is missing', () => {
+      const fixer = {};
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => '',
+          ast: {}
+        })
+      };
+      expect(helpers.addWaitForImport(fixer, context)).toEqual([]);
     });
   });
 

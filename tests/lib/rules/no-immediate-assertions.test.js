@@ -1008,6 +1008,30 @@ wrapper.setProps({ value: 100 });
           expect(wrapper.props().value).toBe(100);
         });
       `
+    },
+
+    // Playwright framework: uses framework-specific message (no fix)
+    {
+      code: `import { test, expect } from '@playwright/test';
+fireEvent.click(button);
+expect(screen.getByText('Clicked')).toBeInTheDocument();`,
+      filename: 'PlaywrightImmediate.spec.js',
+      errors: [{
+        messageId: 'needsWaitForPlaywright',
+        data: { action: 'fireEvent.click' }
+      }]
+    },
+
+    // Cypress framework: uses framework-specific message (no fix)
+    {
+      code: `import { mount } from 'cypress/react';
+fireEvent.click(button);
+expect(screen.getByText('Clicked')).toBeInTheDocument();`,
+      filename: 'CypressImmediate.cy.js',
+      errors: [{
+        messageId: 'needsWaitForCypress',
+        data: { action: 'fireEvent.click' }
+      }]
     }
 
 

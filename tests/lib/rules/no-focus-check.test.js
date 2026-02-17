@@ -404,6 +404,36 @@ ruleTester.run('no-focus-check', rule, {
         { messageId: 'avoidFocusCheck' }
       ],
       output: 'await act(async () => { element.focus() }); expect(element).toHaveFocus();'
+    },
+
+    // Playwright framework: focus assertion uses framework-specific message (no fix)
+    {
+      code: `import { test, expect } from '@playwright/test';
+expect(element).toHaveFocus();`,
+      filename: 'focus.spec.js',
+      errors: [{
+        messageId: 'avoidFocusCheckPlaywright'
+      }]
+    },
+
+    // Playwright framework: activeElement uses framework-specific message (no fix)
+    {
+      code: `import { test, expect } from '@playwright/test';
+expect(document.activeElement).toBe(input);`,
+      filename: 'active.spec.js',
+      errors: [{
+        messageId: 'avoidActiveElementPlaywright'
+      }]
+    },
+
+    // Cypress framework: focus assertion uses framework-specific message
+    {
+      code: `import { mount } from 'cypress/react';
+expect(element).toHaveFocus();`,
+      filename: 'focus.cy.js',
+      errors: [{
+        messageId: 'avoidFocusCheckCypress'
+      }]
     }
   ]
 });
