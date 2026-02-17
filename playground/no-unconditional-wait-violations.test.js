@@ -88,6 +88,8 @@ describe('Unconditional Wait Violations', () => {
   });
 
   // ❌ BAD: Promise with only setTimeout
+  // Fixer: replaces with await waitFor(), adds waitFor import,
+  //        AND makes the callback async if not already
   it('should not use Promise with just setTimeout', async () => {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Bad: unconditional wait
     // This is just an unconditional wait

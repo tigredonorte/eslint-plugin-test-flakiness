@@ -12,6 +12,8 @@ describe('Hard-coded Timeout Violations', () => {
   });
 
   // ❌ BAD: Using setTimeout directly
+  // Fixer: replaces with await waitFor(), adds waitFor import,
+  //        AND makes the callback async if not already
   it('should use raw setTimeout', (done) => {
     setTimeout(() => {
       expect(true).toBe(true);

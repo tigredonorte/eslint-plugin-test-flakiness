@@ -8,10 +8,11 @@ import userEvent from '@testing-library/user-event';
 
 describe('Immediate Assertions After State Changes', () => {
   // ❌ BAD: Assertion immediately after state change
+  // Fixer: wraps in await waitFor() AND makes callback async
   it('should not assert immediately after setState', () => {
     const component = { setState: jest.fn(), state: { loading: false } };
     component.setState({ loading: false });
-    expect(component.state.loading).toBe(false); // Immediate assertion!
+    expect(component.state.loading).toBe(false); // Fixer: await waitFor(() => { expect(...) })
   });
 
   // ❌ BAD: Assertion immediately after dispatch
