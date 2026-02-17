@@ -168,7 +168,7 @@ async function test() { await waitFor(async () => {
         }
       ]
     },
-    // Promise-based timeout
+    // Promise-based timeout — no autofix (setTimeout callback is not a function literal)
     {
       code: 'async function test() { await new Promise(resolve => setTimeout(resolve, 3000)) }',
       filename: 'test.spec.js',
@@ -180,11 +180,7 @@ async function test() { await waitFor(async () => {
           messageId: 'avoidHardTimeout',
           data: { timeout: 3000 }
         }
-      ],
-      output: `import { waitFor } from '@testing-library/react';
-async function test() { await new Promise(async resolve => await waitFor(async () => {
-  resolve
-}, { timeout: 3000 })) }`
+      ]
     },
     // Cypress wait with number
     {
@@ -322,18 +318,14 @@ async function test() {
         }, 1000);
       }`
     },
-    // Promise with block statement body containing setTimeout
+    // Promise with block statement body containing setTimeout — no autofix
     {
       code: 'async function test() { await new Promise(resolve => { setTimeout(resolve, 2000); }) }',
       filename: 'test.spec.js',
       errors: [
         { messageId: 'avoidPromiseTimeout' },
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
-      ],
-      output: `import { waitFor } from '@testing-library/react';
-async function test() { await new Promise(async resolve => { await waitFor(async () => {
-  resolve
-}, { timeout: 2000 }); }) }`
+      ]
     },
     // Arrow function with expression body in setTimeout
     {
@@ -345,17 +337,13 @@ async function test() { await new Promise(async resolve => { await waitFor(async
       output: `import { waitFor } from '@testing-library/react';
 async function test() { await waitFor(async () => console.log("test"), { timeout: 2000 }) }`
     },
-    // setTimeout with non-function first argument
+    // setTimeout with non-function first argument — no autofix (cannot safely wrap)
     {
       code: 'async function test() { setTimeout(myCallback, 2000) }',
       filename: 'test.spec.js',
       errors: [
         { messageId: 'avoidHardTimeout', data: { timeout: 2000 } }
-      ],
-      output: `import { waitFor } from '@testing-library/react';
-async function test() { await waitFor(async () => {
-  myCallback
-}, { timeout: 2000 }) }`
+      ]
     },
     // Test isInMockContext edge case - setInterval in non-mock context
     {

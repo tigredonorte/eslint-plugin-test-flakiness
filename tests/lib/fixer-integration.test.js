@@ -7,7 +7,7 @@
  *   3. Re-parse the output to ensure it is syntactically valid
  *   4. Re-lint the output to ensure no new undefined-identifier errors were introduced
  *
- * This guarantees the "fixer contract": autofixes must not produce broken code.
+ * This guarantees the "fixer contract": autofixes must not produce syntactically invalid (unparsable) code.
  */
 'use strict';
 
@@ -74,9 +74,9 @@ it('test', () => { setTimeout(() => {}, 2000) });`;
       expect(hadFix).toBe(true);
       expect(syntaxErrors).toEqual([]);
       expect(fixedCode).toContain('waitFor');
-      // Must add a separate import, NOT corrupt the default import
+      // user-event doesn't export waitFor — must import from @testing-library/react
       expect(fixedCode).toContain('import userEvent from \'@testing-library/user-event\'');
-      expect(fixedCode).toContain('import { waitFor } from \'@testing-library/user-event\'');
+      expect(fixedCode).toContain('import { waitFor } from \'@testing-library/react\'');
     });
 
     it('fixes setTimeout with namespace import', () => {
@@ -116,9 +116,19 @@ it('test', () => { setTimeout(() => {}, 2000) });`;
       expect(fixedCode).toContain('await waitFor');
     });
 
-    it('fixes Promise-wrapped setTimeout — produces valid output', () => {
+    it('skips autofix for Promise-wrapped setTimeout with identifier callback', () => {
       const code = `import { render } from '@testing-library/react';
 async function test() { await new Promise(resolve => setTimeout(resolve, 3000)) }`;
+      const { hadFix } = fixAndValidate(
+        'test-flakiness/no-hard-coded-timeout', code
+      );
+      // setTimeout(resolve, 3000) — resolve is not a function literal, so no autofix
+      expect(hadFix).toBe(false);
+    });
+
+    it('fixes Promise-wrapped setTimeout with function callback — produces valid output', () => {
+      const code = `import { render } from '@testing-library/react';
+async function test() { await new Promise(resolve => setTimeout(() => resolve(), 3000)) }`;
       const { fixedCode, syntaxErrors, hadFix } = fixAndValidate(
         'test-flakiness/no-hard-coded-timeout', code
       );

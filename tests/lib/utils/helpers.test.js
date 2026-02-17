@@ -1000,36 +1000,36 @@ describe('helpers', () => {
       expect(fixer.insertTextBefore).toHaveBeenCalledWith(key, 'async ');
     });
 
-    it('should return empty array for getters (cannot be async)', () => {
+    it('should return null for getters (cannot be async)', () => {
       const fixer = { insertTextBefore: jest.fn() };
       const funcNode = {
         type: 'FunctionExpression',
         async: false,
         parent: { type: 'MethodDefinition', kind: 'get', key: { name: 'foo' } }
       };
-      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toBeNull();
       expect(fixer.insertTextBefore).not.toHaveBeenCalled();
     });
 
-    it('should return empty array for setters (cannot be async)', () => {
+    it('should return null for setters (cannot be async)', () => {
       const fixer = { insertTextBefore: jest.fn() };
       const funcNode = {
         type: 'FunctionExpression',
         async: false,
         parent: { type: 'MethodDefinition', kind: 'set', key: { name: 'foo' } }
       };
-      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toBeNull();
       expect(fixer.insertTextBefore).not.toHaveBeenCalled();
     });
 
-    it('should return empty array for constructors (cannot be async)', () => {
+    it('should return null for constructors (cannot be async)', () => {
       const fixer = { insertTextBefore: jest.fn() };
       const funcNode = {
         type: 'FunctionExpression',
         async: false,
         parent: { type: 'MethodDefinition', kind: 'constructor', key: { name: 'constructor' } }
       };
-      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toEqual([]);
+      expect(helpers.ensureAsyncFunction(fixer, funcNode)).toBeNull();
       expect(fixer.insertTextBefore).not.toHaveBeenCalled();
     });
   });
@@ -1130,14 +1130,15 @@ describe('helpers', () => {
       );
     });
 
-    it('should add separate import for default-only @testing-library imports', () => {
-      const fixResult = { type: 'insertTextAfter' };
+    it('should add new import when only @testing-library/user-event default import exists', () => {
+      // user-event does NOT export waitFor, so we should NOT augment it
+      const fixResult = { type: 'insertTextBefore' };
       const importNode = {
         type: 'ImportDeclaration',
         source: { value: '@testing-library/user-event' },
         specifiers: [{ type: 'ImportDefaultSpecifier', local: { name: 'userEvent' } }]
       };
-      const fixer = { insertTextAfter: jest.fn().mockReturnValue(fixResult) };
+      const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
       const context = {
         getFilename: () => 'test.test.js',
         getPhysicalFilename: () => 'test.test.js',
@@ -1148,9 +1149,33 @@ describe('helpers', () => {
       };
       const result = helpers.addWaitForImport(fixer, context);
       expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextBefore).toHaveBeenCalledWith(
+        importNode,
+        'import { waitFor } from \'@testing-library/react\';\n'
+      );
+    });
+
+    it('should add separate import for default-only @testing-library/react import', () => {
+      const fixResult = { type: 'insertTextAfter' };
+      const importNode = {
+        type: 'ImportDeclaration',
+        source: { value: '@testing-library/react' },
+        specifiers: [{ type: 'ImportDefaultSpecifier', local: { name: 'RTL' } }]
+      };
+      const fixer = { insertTextAfter: jest.fn().mockReturnValue(fixResult) };
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'import RTL from \'@testing-library/react\';',
+          ast: { body: [importNode] }
+        })
+      };
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
       expect(fixer.insertTextAfter).toHaveBeenCalledWith(
         importNode,
-        '\nimport { waitFor } from \'@testing-library/user-event\';'
+        '\nimport { waitFor } from \'@testing-library/react\';'
       );
     });
 
