@@ -20,11 +20,11 @@ done
 
 # Get changed JS files
 if [ "$COMPARE_TO_MAIN" = true ]; then
-  CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '\.js$' || true)
+  CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '\.(js|cjs|mjs)$' || true)
   echo "Linting changes against origin/main..."
 else
-  CHANGED_FILES=$(git diff --name-only --diff-filter=d HEAD | grep -E '\.js$' || true)
-  STAGED_FILES=$(git diff --name-only --diff-filter=d --cached | grep -E '\.js$' || true)
+  CHANGED_FILES=$(git diff --name-only --diff-filter=d HEAD | grep -E '\.(js|cjs|mjs)$' || true)
+  STAGED_FILES=$(git diff --name-only --diff-filter=d --cached | grep -E '\.(js|cjs|mjs)$' || true)
   CHANGED_FILES=$(echo -e "$CHANGED_FILES\n$STAGED_FILES" | sort -u | grep -v '^$' || true)
   echo "Linting HEAD changes only (use --main for full branch comparison)..."
 fi
@@ -35,7 +35,7 @@ if [ -z "$CHANGED_FILES" ]; then
     exit 0
   else
     echo "No HEAD changes, falling back to origin/main comparison..."
-    CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '\.js$' || true)
+    CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/main...HEAD | grep -E '\.(js|cjs|mjs)$' || true)
     if [ -z "$CHANGED_FILES" ]; then
       echo "No JS files changed"
       exit 0

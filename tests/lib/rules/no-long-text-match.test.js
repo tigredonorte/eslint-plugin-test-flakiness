@@ -197,7 +197,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 128, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This is a very long text that should probably be matched by a test ID or a more stable selector instead of the full text content", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+very\\s+long/)' }
         ]
       }]
     },
@@ -209,7 +209,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 78, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'screen.getByText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'screen.getByText(/Lorem/)' }
+          { messageId: 'suggestUseRegex', output: 'screen.getByText(/Lorem\\s+ipsum\\s+dolor/)' }
         ]
       }]
     },
@@ -223,7 +223,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 83, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'queryByText("This is another very long text that exceeds the recommended length for text queries", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'queryByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'queryByText(/This\\s+another\\s+very/)' }
         ]
       }]
     },
@@ -237,7 +237,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 89, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'await findByText("This long text will make the test brittle because any change to the wording will break it", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'await findByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'await findByText(/This\\s+long\\s+text/)' }
         ]
       }]
     },
@@ -251,7 +251,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 73, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getAllByText("This is a repeated long text that appears multiple times in the component", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getAllByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getAllByText(/This\\s+repeated\\s+long/)' }
         ]
       }]
     },
@@ -265,7 +265,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 81, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'within(container).getByText("This is a long text within a specific container that should use a better selector", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'within(container).getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'within(container).getByText(/This\\s+long\\s+text/)' }
         ]
       }]
     },
@@ -290,7 +290,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 10, maxLength: 5 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("Short text", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/Short/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/Short\\s+text/)' }
         ]
       }]
     },
@@ -303,7 +303,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 38, maxLength: 20 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This text is longer than 20 characters", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+text\\s+longer/)' }
         ]
       }]
     },
@@ -317,7 +317,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 94, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This is a very long text that spans multiple lines and should definitely use a better selector", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+very\\s+long/)' }
         ]
       }]
     },
@@ -331,7 +331,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 93, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This is a long text with special chars: !@#$%^&*() that makes it even longer and more brittle", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+long\\s+text/)' }
         ]
       }]
     },
@@ -355,7 +355,7 @@ ruleTester.run('no-long-text-match', rule, {
         findByText("And here is the third very long text that makes tests brittle and hard to maintain");
       ` },
             { messageId: 'suggestUseRegex', output: `
-        getByText(/This/);
+        getByText(/This\\s+first\\s+very/);
         queryByText("This is the second very long text that also should not be used as a selector");
         findByText("And here is the third very long text that makes tests brittle and hard to maintain");
       ` }
@@ -372,7 +372,7 @@ ruleTester.run('no-long-text-match', rule, {
       ` },
             { messageId: 'suggestUseRegex', output: `
         getByText("This is the first very long text that should not be used as a query selector");
-        queryByText(/This/);
+        queryByText(/This\\s+second\\s+very/);
         findByText("And here is the third very long text that makes tests brittle and hard to maintain");
       ` }
           ]
@@ -389,7 +389,7 @@ ruleTester.run('no-long-text-match', rule, {
             { messageId: 'suggestUseRegex', output: `
         getByText("This is the first very long text that should not be used as a query selector");
         queryByText("This is the second very long text that also should not be used as a selector");
-        findByText(/here/);
+        findByText(/here\\s+third\\s+very/);
       ` }
           ]
         }
@@ -433,7 +433,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 85, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("Hello, this is a long sentence with punctuation. It should not be used as a selector!", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/Hello,/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/Hello,\\s+this\\s+long/)' }
         ]
       }]
     },
@@ -447,7 +447,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 89, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This text has numbers 123456789 and is way too long to be used as a reliable selector", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+text\\s+numbers/)' }
         ]
       }]
     },
@@ -491,7 +491,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 63, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'screen.getByText("This is a very long text content without exact option specified", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'screen.getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'screen.getByText(/This\\s+very\\s+long/)' }
         ]
       }]
     },
@@ -515,7 +515,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 85, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: '/* comment */ getByText("This is a very long text that should be flagged because it is not actually in comment", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: '/* comment */ getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: '/* comment */ getByText(/This\\s+very\\s+long/)' }
         ]
       }]
     },
@@ -529,7 +529,7 @@ ruleTester.run('no-long-text-match', rule, {
         data: { length: 65, maxLength: 50 },
         suggestions: [
           { messageId: 'suggestExactFalse', output: 'getByText("This has dynamic content with lots of numbers: 123456789", { exact: false })' },
-          { messageId: 'suggestUseRegex', output: 'getByText(/This/)' }
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+dynamic\\s+content/)' }
         ]
       }]
     },
@@ -564,6 +564,20 @@ ruleTester.run('no-long-text-match', rule, {
       errors: [{
         messageId: 'textTooLong',
         data: { length: 97, maxLength: 50 }
+      }]
+    },
+
+    // Text containing forward slashes (string literal - has suggestions with escaped slashes)
+    {
+      code: 'getByText("The file at path/to/resource is not found and this message is quite long")',
+      filename: 'SlashText.test.js',
+      errors: [{
+        messageId: 'textTooLong',
+        data: { length: 72, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("The file at path/to/resource is not found and this message is quite long", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/file\\s+path\\/to\\/resource\\s+found/)' }
+        ]
       }]
     }
 
