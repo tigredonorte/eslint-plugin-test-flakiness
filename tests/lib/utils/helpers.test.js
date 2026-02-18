@@ -1148,9 +1148,39 @@ describe('helpers', () => {
       expect(fixer.insertTextAfter).toHaveBeenCalledWith(lastSpecifier, ', waitFor');
     });
 
-    it('should add new import when no @testing-library import exists', () => {
+    it('should add ESM import fallback when no @testing-library import exists and file has no require calls', () => {
       const fixResult = { type: 'insertTextBefore' };
       const firstNode = { type: 'ExpressionStatement' };
+      const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'someExpression()',
+          ast: { body: [firstNode] }
+        })
+      };
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextBefore).toHaveBeenCalledWith(
+        firstNode,
+        'import { waitFor } from \'@testing-library/react\';\n'
+      );
+    });
+
+    it('should add CJS require fallback when file has require calls but no @testing-library require', () => {
+      const fixResult = { type: 'insertTextBefore' };
+      const firstNode = {
+        type: 'VariableDeclaration',
+        declarations: [{
+          init: {
+            type: 'CallExpression',
+            callee: { name: 'require', type: 'Identifier' },
+            arguments: [{ value: 'foo' }]
+          },
+          id: { type: 'Identifier', name: 'foo' }
+        }]
+      };
       const fixer = { insertTextBefore: jest.fn().mockReturnValue(fixResult) };
       const context = {
         getFilename: () => 'test.test.js',
@@ -1164,8 +1194,40 @@ describe('helpers', () => {
       expect(result).toEqual([fixResult]);
       expect(fixer.insertTextBefore).toHaveBeenCalledWith(
         firstNode,
-        'import { waitFor } from \'@testing-library/react\';\n'
+        'const { waitFor } = require(\'@testing-library/react\');\n'
       );
+    });
+
+    it('should augment existing @testing-library destructured require', () => {
+      const fixResult = { type: 'insertTextAfter' };
+      const lastProp = { type: 'Property', key: { name: 'render', type: 'Identifier' }, value: { name: 'render', type: 'Identifier' } };
+      const fixer = { insertTextAfter: jest.fn().mockReturnValue(fixResult) };
+      const context = {
+        getFilename: () => 'test.test.js',
+        getPhysicalFilename: () => 'test.test.js',
+        getSourceCode: () => ({
+          getText: () => 'const { render } = require(\'@testing-library/react\');',
+          ast: {
+            body: [{
+              type: 'VariableDeclaration',
+              declarations: [{
+                init: {
+                  type: 'CallExpression',
+                  callee: { name: 'require', type: 'Identifier' },
+                  arguments: [{ value: '@testing-library/react' }]
+                },
+                id: {
+                  type: 'ObjectPattern',
+                  properties: [lastProp]
+                }
+              }]
+            }]
+          }
+        })
+      };
+      const result = helpers.addWaitForImport(fixer, context);
+      expect(result).toEqual([fixResult]);
+      expect(fixer.insertTextAfter).toHaveBeenCalledWith(lastProp, ', waitFor');
     });
 
     it('should add new import when only @testing-library/user-event default import exists', () => {
