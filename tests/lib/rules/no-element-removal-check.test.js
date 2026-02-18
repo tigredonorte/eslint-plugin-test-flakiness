@@ -251,6 +251,16 @@ ruleTester.run('no-element-removal-check', rule, {
       output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => expect(screen.getByTestId("modal")).not.toBeVisible())'
     },
 
+    // Nested expression (covers while-loop walk to ExpressionStatement in createWaitForFix)
+    {
+      code: 'void expect(element).not.toBeInTheDocument()',
+      filename: 'VoidAssertion.test.js',
+      errors: [{
+        messageId: 'avoidNotInDocument'
+      }],
+      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => void expect(element).not.toBeInTheDocument())'
+    },
+
     // !document.contains(element) pattern
     {
       code: '!document.contains(element)',
