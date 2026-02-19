@@ -287,7 +287,7 @@ it('test', () => { act(async () => { await doSomething() }) });`,
       {
         name: 'await-async-events with Playwright page methods',
         rule: 'test-flakiness/await-async-events',
-        code: `it('test', () => { page.click("#button") });`,
+        code: 'it(\'test\', () => { page.click("#button") });',
       },
     ];
 
