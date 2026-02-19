@@ -188,13 +188,17 @@ ruleTester.run('no-long-text-match', rule, {
   ],
 
   invalid: [
-    // Long text in getByText
+    // Long text in getByText (string literal - has suggestions)
     {
       code: 'getByText("This is a very long text that should probably be matched by a test ID or a more stable selector instead of the full text content")',
       filename: 'LongText.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 128, maxLength: 50 }
+        data: { length: 128, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This is a very long text that should probably be matched by a test ID or a more stable selector instead of the full text content", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+very\\s+long/)' }
+        ]
       }]
     },
     {
@@ -202,51 +206,71 @@ ruleTester.run('no-long-text-match', rule, {
       filename: 'Lorem.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 78, maxLength: 50 }
+        data: { length: 78, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'screen.getByText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'screen.getByText(/Lorem\\s+ipsum\\s+dolor/)' }
+        ]
       }]
     },
 
-    // Long text in queryByText
+    // Long text in queryByText (string literal - has suggestions)
     {
       code: 'queryByText("This is another very long text that exceeds the recommended length for text queries")',
       filename: 'QueryLong.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 83, maxLength: 50 }
+        data: { length: 83, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'queryByText("This is another very long text that exceeds the recommended length for text queries", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'queryByText(/This\\s+another\\s+very/)' }
+        ]
       }]
     },
 
-    // Long text in findByText
+    // Long text in findByText (string literal - has suggestions)
     {
       code: 'await findByText("This long text will make the test brittle because any change to the wording will break it")',
       filename: 'FindLong.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 89, maxLength: 50 }
+        data: { length: 89, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'await findByText("This long text will make the test brittle because any change to the wording will break it", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'await findByText(/This\\s+long\\s+text/)' }
+        ]
       }]
     },
 
-    // getAllByText with long text
+    // getAllByText with long text (string literal - has suggestions)
     {
       code: 'getAllByText("This is a repeated long text that appears multiple times in the component")',
       filename: 'GetAllLong.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 73, maxLength: 50 }
+        data: { length: 73, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getAllByText("This is a repeated long text that appears multiple times in the component", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getAllByText(/This\\s+repeated\\s+long/)' }
+        ]
       }]
     },
 
-    // Within queries with long text
+    // Within queries with long text (string literal - has suggestions)
     {
       code: 'within(container).getByText("This is a long text within a specific container that should use a better selector")',
       filename: 'WithinLong.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 81, maxLength: 50 }
+        data: { length: 81, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'within(container).getByText("This is a long text within a specific container that should use a better selector", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'within(container).getByText(/This\\s+long\\s+text/)' }
+        ]
       }]
     },
 
-    // Template literals with long content
+    // Template literals with long content (no suggestions - template literal)
     {
       code: 'getByText(`This is a very long template literal that contains way too much text for a reliable test query`)',
       filename: 'TemplateLong.test.js',
@@ -256,14 +280,18 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Custom maxLength violation
+    // Custom maxLength violation (string literal - has suggestions)
     {
       code: 'getByText("Short text")',
       filename: 'CustomShort.test.js',
       options: [{ maxLength: 5 }],
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 10, maxLength: 5 }
+        data: { length: 10, maxLength: 5 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("Short text", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/Short\\s+text/)' }
+        ]
       }]
     },
     {
@@ -272,31 +300,43 @@ ruleTester.run('no-long-text-match', rule, {
       options: [{ maxLength: 20 }],
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 38, maxLength: 20 }
+        data: { length: 38, maxLength: 20 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This text is longer than 20 characters", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+text\\s+longer/)' }
+        ]
       }]
     },
 
-    // Multiline text
+    // Multiline text (string literal - has suggestions)
     {
       code: 'getByText("This is a very long text that spans multiple lines and should definitely use a better selector")',
       filename: 'Multiline.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 94, maxLength: 50 }
+        data: { length: 94, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This is a very long text that spans multiple lines and should definitely use a better selector", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+very\\s+long/)' }
+        ]
       }]
     },
 
-    // With special characters
+    // With special characters (string literal - has suggestions)
     {
       code: 'getByText("This is a long text with special chars: !@#$%^&*() that makes it even longer and more brittle")',
       filename: 'SpecialChars.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 93, maxLength: 50 }
+        data: { length: 93, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This is a long text with special chars: !@#$%^&*() that makes it even longer and more brittle", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+long\\s+text/)' }
+        ]
       }]
     },
 
-    // Multiple violations
+    // Multiple violations (string literals - have suggestions)
     {
       code: `
         getByText("This is the first very long text that should not be used as a query selector");
@@ -305,13 +345,58 @@ ruleTester.run('no-long-text-match', rule, {
       `,
       filename: 'Multiple.test.js',
       errors: [
-        { messageId: 'textTooLong', data: { length: 76, maxLength: 50 } },
-        { messageId: 'textTooLong', data: { length: 76, maxLength: 50 } },
-        { messageId: 'textTooLong', data: { length: 82, maxLength: 50 } }
+        {
+          messageId: 'textTooLong',
+          data: { length: 76, maxLength: 50 },
+          suggestions: [
+            { messageId: 'suggestExactFalse', output: `
+        getByText("This is the first very long text that should not be used as a query selector", { exact: false });
+        queryByText("This is the second very long text that also should not be used as a selector");
+        findByText("And here is the third very long text that makes tests brittle and hard to maintain");
+      ` },
+            { messageId: 'suggestUseRegex', output: `
+        getByText(/This\\s+first\\s+very/);
+        queryByText("This is the second very long text that also should not be used as a selector");
+        findByText("And here is the third very long text that makes tests brittle and hard to maintain");
+      ` }
+          ]
+        },
+        {
+          messageId: 'textTooLong',
+          data: { length: 76, maxLength: 50 },
+          suggestions: [
+            { messageId: 'suggestExactFalse', output: `
+        getByText("This is the first very long text that should not be used as a query selector");
+        queryByText("This is the second very long text that also should not be used as a selector", { exact: false });
+        findByText("And here is the third very long text that makes tests brittle and hard to maintain");
+      ` },
+            { messageId: 'suggestUseRegex', output: `
+        getByText("This is the first very long text that should not be used as a query selector");
+        queryByText(/This\\s+second\\s+very/);
+        findByText("And here is the third very long text that makes tests brittle and hard to maintain");
+      ` }
+          ]
+        },
+        {
+          messageId: 'textTooLong',
+          data: { length: 82, maxLength: 50 },
+          suggestions: [
+            { messageId: 'suggestExactFalse', output: `
+        getByText("This is the first very long text that should not be used as a query selector");
+        queryByText("This is the second very long text that also should not be used as a selector");
+        findByText("And here is the third very long text that makes tests brittle and hard to maintain", { exact: false });
+      ` },
+            { messageId: 'suggestUseRegex', output: `
+        getByText("This is the first very long text that should not be used as a query selector");
+        queryByText("This is the second very long text that also should not be used as a selector");
+        findByText(/here\\s+third\\s+very/);
+      ` }
+          ]
+        }
       ]
     },
 
-    // Cypress patterns
+    // Cypress patterns (no suggestions - Cypress)
     {
       code: 'cy.contains("This is a very long text that should not be used in Cypress contains commands either")',
       filename: 'cypress.cy.js',
@@ -321,7 +406,7 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Playwright patterns
+    // Playwright patterns (no suggestions - Playwright)
     {
       code: 'page.getByText("This is a very long text in Playwright that should also use a better selector strategy")',
       filename: 'playwright.spec.js',
@@ -339,27 +424,35 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // With punctuation
+    // With punctuation (string literal - has suggestions)
     {
       code: 'getByText("Hello, this is a long sentence with punctuation. It should not be used as a selector!")',
       filename: 'Punctuation.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 85, maxLength: 50 }
+        data: { length: 85, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("Hello, this is a long sentence with punctuation. It should not be used as a selector!", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/Hello,\\s+this\\s+long/)' }
+        ]
       }]
     },
 
-    // With numbers
+    // With numbers (dynamic - string literal - has suggestions)
     {
       code: 'getByText("This text has numbers 123456789 and is way too long to be used as a reliable selector")',
       filename: 'Numbers.test.js',
       errors: [{
         messageId: 'avoidExactMatch',
-        data: { length: 89, maxLength: 50 }
+        data: { length: 89, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This text has numbers 123456789 and is way too long to be used as a reliable selector", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+text\\s+numbers/)' }
+        ]
       }]
     },
 
-    // Template literals in within() queries
+    // Template literals in within() queries (no suggestions - template literal)
     {
       code: 'within(container).getByText(`This is a very long template literal in a within query that should be flagged`)',
       filename: 'WithinTemplateLong.test.js',
@@ -369,7 +462,7 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Playwright template literal edge cases
+    // Playwright template literal edge cases (no suggestions - template literal)
     {
       code: 'page.getByText(`This is a very long template literal in Playwright that should trigger the rule`)',
       filename: 'PlaywrightTemplateLong.spec.js',
@@ -379,7 +472,7 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Template literals in test assertions (should still be flagged based on implementation)
+    // Template literals in test assertions (no suggestions - template literal in assertion)
     {
       code: 'expect(element).toHaveTextContent(`This is a very long template literal in an assertion that should be flagged according to the rule`)',
       filename: 'TemplateAssertion.test.js',
@@ -389,17 +482,21 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Screen queries without exact option but with long text
+    // Screen queries without exact option but with long text (string literal - has suggestions)
     {
       code: 'screen.getByText("This is a very long text content without exact option specified")',
       filename: 'ScreenLongNoExact.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 63, maxLength: 50 }
+        data: { length: 63, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'screen.getByText("This is a very long text content without exact option specified", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'screen.getByText(/This\\s+very\\s+long/)' }
+        ]
       }]
     },
 
-    // Template literals in member expressions (lines 199-204)
+    // Template literals in member expressions (no suggestions - template literal)
     {
       code: 'screen.getByText(`This is a very long template literal in member expression that should be flagged`)',
       filename: 'MemberTemplateLong.test.js',
@@ -409,27 +506,35 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Text not in comment (should still be flagged)
+    // Text not in comment (string literal - has suggestions)
     {
       code: '/* comment */ getByText("This is a very long text that should be flagged because it is not actually in comment")',
       filename: 'CommentTest.test.js',
       errors: [{
         messageId: 'textTooLong',
-        data: { length: 85, maxLength: 50 }
+        data: { length: 85, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: '/* comment */ getByText("This is a very long text that should be flagged because it is not actually in comment", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: '/* comment */ getByText(/This\\s+very\\s+long/)' }
+        ]
       }]
     },
 
-    // Force regex pattern length checking by disabling allowPartialMatch
+    // Force regex pattern length checking by disabling allowPartialMatch (dynamic - has suggestions)
     {
       code: 'getByText("This has dynamic content with lots of numbers: 123456789")',
       filename: 'DynamicContent.test.js',
       errors: [{
         messageId: 'avoidExactMatch',
-        data: { length: 65, maxLength: 50 }
+        data: { length: 65, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("This has dynamic content with lots of numbers: 123456789", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/This\\s+dynamic\\s+content/)' }
+        ]
       }]
     },
 
-    // Regex pattern check when allowPartialMatch is false (lines 246-250)
+    // Regex pattern check when allowPartialMatch is false (no suggestions - regex literal)
     {
       code: 'getByText(/This is a very long regex pattern that should be checked for length even with disabled partial matching/)',
       filename: 'RegexPatternCheck.test.js',
@@ -440,7 +545,7 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Member expression regex pattern check (similar lines 190-194)
+    // Member expression regex pattern check (no suggestions - regex literal)
     {
       code: 'screen.getByText(/Another very long regex pattern in member expression when partial matching is disabled/)',
       filename: 'MemberRegexCheck.test.js',
@@ -451,7 +556,7 @@ ruleTester.run('no-long-text-match', rule, {
       }]
     },
 
-    // Regex literal pattern exceeding maxLength with allowPartialMatch=false (lines 246-250)
+    // Regex literal pattern exceeding maxLength with allowPartialMatch=false (no suggestions - regex literal)
     {
       code: 'within(container).getByText(/This is a very long regex pattern that should be checked for pattern length in within expressions/)',
       filename: 'WithinRegexPatternCheck.test.js',
@@ -459,6 +564,20 @@ ruleTester.run('no-long-text-match', rule, {
       errors: [{
         messageId: 'textTooLong',
         data: { length: 97, maxLength: 50 }
+      }]
+    },
+
+    // Text containing forward slashes (string literal - has suggestions with escaped slashes)
+    {
+      code: 'getByText("The file at path/to/resource is not found and this message is quite long")',
+      filename: 'SlashText.test.js',
+      errors: [{
+        messageId: 'textTooLong',
+        data: { length: 72, maxLength: 50 },
+        suggestions: [
+          { messageId: 'suggestExactFalse', output: 'getByText("The file at path/to/resource is not found and this message is quite long", { exact: false })' },
+          { messageId: 'suggestUseRegex', output: 'getByText(/file\\s+path\\/to\\/resource\\s+found/)' }
+        ]
       }]
     }
 
