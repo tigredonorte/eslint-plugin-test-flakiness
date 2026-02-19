@@ -139,82 +139,73 @@ ruleTester.run('no-element-removal-check', rule, {
   ],
 
   invalid: [
-    // .not.toBeInTheDocument() without waitFor
+    // .not.toBeInTheDocument() without waitFor — no evidence → warning only, no autofix
     {
       code: 'expect(element).not.toBeInTheDocument()',
       filename: 'Element.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(element).not.toBeInTheDocument(); });'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
     {
       code: 'expect(screen.queryByText("Loading")).not.toBeInTheDocument()',
       filename: 'Loading.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(screen.queryByText("Loading")).not.toBeInTheDocument(); });'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
     {
       code: 'expect(queryByRole("dialog")).not.toBeInTheDocument()',
       filename: 'Dialog.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByRole("dialog")).not.toBeInTheDocument(); });'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
 
-    // Query methods with null/undefined/falsy checks
+    // Query methods with null/undefined/falsy checks — no evidence → warning only
     {
       code: 'expect(queryByText("Loading")).toBeNull()',
       filename: 'QueryNull.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByText("Loading")).toBeNull(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(screen.queryByRole("alert")).toBeNull()',
       filename: 'AlertNull.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(screen.queryByRole("alert")).toBeNull(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(queryByTestId("spinner")).toBeUndefined()',
       filename: 'SpinnerUndefined.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByTestId("spinner")).toBeUndefined(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(queryByLabelText("Email")).toBeFalsy()',
       filename: 'EmailFalsy.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByLabelText("Email")).toBeFalsy(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
 
-    // expect().not.toBeDefined() patterns
+    // expect().not.toBeDefined() patterns — no evidence → warning only
     {
       code: 'expect(queryByText("Loading")).not.toBeDefined()',
       filename: 'NotDefined.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByText("Loading")).not.toBeDefined(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(screen.queryByRole("alert")).not.toBeDefined()',
       filename: 'ScreenNotDefined.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(screen.queryByRole("alert")).not.toBeDefined(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
 
     // Direct null checks (no autofix - too complex)
@@ -233,35 +224,32 @@ ruleTester.run('no-element-removal-check', rule, {
       }]
     },
 
-    // expect().not.toBeVisible() without waitFor
+    // expect().not.toBeVisible() without waitFor — no evidence → warning only
     {
       code: 'expect(element).not.toBeVisible()',
       filename: 'NotVisible.test.js',
       errors: [{
-        messageId: 'avoidNotVisibleWithoutWaitFor'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(element).not.toBeVisible(); });'
+        messageId: 'avoidNotVisibleNoEvidence'
+      }]
     },
     {
       code: 'expect(screen.getByTestId("modal")).not.toBeVisible()',
       filename: 'ModalNotVisible.test.js',
       errors: [{
-        messageId: 'avoidNotVisibleWithoutWaitFor'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(screen.getByTestId("modal")).not.toBeVisible(); });'
+        messageId: 'avoidNotVisibleNoEvidence'
+      }]
     },
 
-    // Nested expression (covers while-loop walk to ExpressionStatement in createWaitForFix)
+    // Nested expression — no evidence → warning only
     {
       code: 'void expect(element).not.toBeInTheDocument()',
       filename: 'VoidAssertion.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { void expect(element).not.toBeInTheDocument(); });'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
 
-    // !document.contains(element) pattern
+    // !document.contains(element) pattern (unchanged — no evidence check on this pattern)
     {
       code: '!document.contains(element)',
       filename: 'DocumentContains.test.js',
@@ -284,7 +272,7 @@ ruleTester.run('no-element-removal-check', rule, {
       }]
     },
 
-    // Multiple violations
+    // Multiple violations — no evidence → warning only, no autofix
     {
       code: `
         expect(element).not.toBeInTheDocument();
@@ -293,44 +281,35 @@ ruleTester.run('no-element-removal-check', rule, {
       `,
       filename: 'Multiple.test.js',
       errors: [
-        { messageId: 'avoidNotInDocument' },
-        { messageId: 'useWaitForRemoval' },
+        { messageId: 'avoidNotInDocumentNoEvidence' },
+        { messageId: 'useWaitForRemovalNoEvidence' },
         { messageId: 'avoidRemovalCheck' }
-      ],
-      output: `
-        import { waitFor } from '@testing-library/react';
-await waitFor(() => { expect(element).not.toBeInTheDocument(); });
-        expect(queryByText("Loading")).toBeNull();
-        !document.contains(modal);
-      `
+      ]
     },
 
-    // Different test file extensions
+    // Different test file extensions — no evidence → warning only
     {
       code: 'expect(element).not.toBeInTheDocument()',
       filename: 'Component.spec.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(element).not.toBeInTheDocument(); });'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
     {
       code: 'expect(queryByText("Loading")).toBeNull()',
       filename: 'test/loading.test.ts',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryByText("Loading")).toBeNull(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
 
-    // Nested patterns
+    // Nested in it() without evidence — warning only, no autofix
     {
       code: 'it("should remove", () => { expect(element).not.toBeInTheDocument() })',
       filename: 'TestCase.test.js',
       errors: [{
-        messageId: 'avoidNotInDocument'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nit("should remove", async () => { await waitFor(() => { expect(element).not.toBeInTheDocument(); }); })'
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
     },
     {
       code: 'const isRemoved = !document.contains(element)',
@@ -340,47 +319,75 @@ await waitFor(() => { expect(element).not.toBeInTheDocument(); });
       }]
     },
 
-    // Complex query patterns
+    // Complex query patterns — no evidence → warning only
     {
       code: 'expect(container.querySelector(".modal")).toBeNull()',
       filename: 'QuerySelector.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(container.querySelector(".modal")).toBeNull(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(queryAllByRole("listitem")).toBeUndefined()',
       filename: 'QueryAll.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(queryAllByRole("listitem")).toBeUndefined(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
     {
       code: 'expect(within(container).queryByText("text")).toBeFalsy()',
       filename: 'WithinQuery.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
-      }],
-      output: 'import { waitFor } from \'@testing-library/react\';\nawait waitFor(() => { expect(within(container).queryByText("text")).toBeFalsy(); });'
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
     },
 
-    // Coverage: importFixes === null path (incompatible framework — Playwright)
+    // Coverage: incompatible framework (Playwright) — no evidence → warning only
     {
       code: 'import { expect } from \'@playwright/test\';\nexpect(element).not.toBeInTheDocument()',
       filename: 'test.spec.ts',
       errors: [{
-        messageId: 'avoidNotInDocument'
+        messageId: 'avoidNotInDocumentNoEvidence'
       }]
     },
 
-    // Coverage: asyncFixes === null path (inside class getter — cannot be async)
+    // Coverage: inside class getter — no evidence → warning only
     {
       code: 'class Foo { get bar() { expect(element).not.toBeInTheDocument() } }',
       filename: 'GetterCheck.test.js',
       errors: [{
+        messageId: 'avoidNotInDocumentNoEvidence'
+      }]
+    },
+
+    // WITH EVIDENCE: after userEvent + prior getByText → autofix applied
+    {
+      code: `it("removes element after click", async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  expect(queryByText("Hello")).not.toBeInTheDocument();
+})`,
+      filename: 'EvidenceRemoval.test.js',
+      errors: [{
         messageId: 'avoidNotInDocument'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it("removes element after click", async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  await waitFor(() => { expect(queryByText("Hello")).not.toBeInTheDocument(); });
+})`
+    },
+
+    // WITHOUT EVIDENCE: initial render check → warning only, no autofix
+    {
+      code: `it("checks absence on render", () => {
+  render(Component);
+  expect(queryByText("Missing")).not.toBeInTheDocument();
+})`,
+      filename: 'NoEvidenceRender.test.js',
+      errors: [{
+        messageId: 'avoidNotInDocumentNoEvidence'
       }]
     }
   ]
@@ -404,6 +411,9 @@ describe('no-element-removal-check rule internals', () => {
     expect(rule.meta.messages).toHaveProperty('useWaitForRemoval');
     expect(rule.meta.messages).toHaveProperty('avoidNotInDocument');
     expect(rule.meta.messages).toHaveProperty('avoidNotVisibleWithoutWaitFor');
+    expect(rule.meta.messages).toHaveProperty('avoidNotInDocumentNoEvidence');
+    expect(rule.meta.messages).toHaveProperty('useWaitForRemovalNoEvidence');
+    expect(rule.meta.messages).toHaveProperty('avoidNotVisibleNoEvidence');
   });
 
   it('should have correct URL in meta', () => {
@@ -683,7 +693,8 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle Program parent type', () => {
       const context = {
         getFilename: () => 'test.spec.js',
-        report: jest.fn()
+        report: jest.fn(),
+        getSourceCode: () => ({ getText: () => '' })
       };
 
       const visitor = rule.create(context);
@@ -1008,7 +1019,8 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle enhanced screen.queryBy detection', () => {
       const context = {
         getFilename: () => 'test.spec.js',
-        report: jest.fn()
+        report: jest.fn(),
+        getSourceCode: () => ({ getText: () => '' })
       };
 
       const visitor = rule.create(context);
@@ -1029,13 +1041,14 @@ describe('no-element-removal-check rule internals', () => {
               }
             }]
           }
-        }
+        },
+        parent: { type: 'ExpressionStatement' }
       };
 
       visitor.CallExpression(node);
       expect(context.report).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageId: 'useWaitForRemoval'
+          messageId: 'useWaitForRemovalNoEvidence'
         })
       );
     });
@@ -1043,7 +1056,8 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle .not.toBeDefined() pattern', () => {
       const context = {
         getFilename: () => 'test.spec.js',
-        report: jest.fn()
+        report: jest.fn(),
+        getSourceCode: () => ({ getText: () => '' })
       };
 
       const visitor = rule.create(context);
@@ -1064,13 +1078,14 @@ describe('no-element-removal-check rule internals', () => {
               }]
             }
           }
-        }
+        },
+        parent: { type: 'ExpressionStatement' }
       };
 
       visitor.CallExpression(node);
       expect(context.report).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageId: 'useWaitForRemoval'
+          messageId: 'useWaitForRemovalNoEvidence'
         })
       );
     });
@@ -1078,7 +1093,8 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle .not.toBeVisible() pattern', () => {
       const context = {
         getFilename: () => 'test.spec.js',
-        report: jest.fn()
+        report: jest.fn(),
+        getSourceCode: () => ({ getText: () => '' })
       };
 
       const visitor = rule.create(context);
@@ -1098,7 +1114,7 @@ describe('no-element-removal-check rule internals', () => {
       visitor.CallExpression(node);
       expect(context.report).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageId: 'avoidNotVisibleWithoutWaitFor'
+          messageId: 'avoidNotVisibleNoEvidence'
         })
       );
     });

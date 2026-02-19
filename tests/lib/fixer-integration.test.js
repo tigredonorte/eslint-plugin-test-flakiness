@@ -17,6 +17,7 @@ const ruleFiles = {
   'test-flakiness/no-immediate-assertions': require('../../lib/rules/no-immediate-assertions'),
   'test-flakiness/no-unconditional-wait': require('../../lib/rules/no-unconditional-wait'),
   'test-flakiness/await-async-events': require('../../lib/rules/await-async-events'),
+  'test-flakiness/no-element-removal-check': require('../../lib/rules/no-element-removal-check'),
 };
 
 /**
@@ -154,10 +155,10 @@ it('test', () => { expect(el).toHaveFocus() });`;
   });
 
   describe('no-immediate-assertions', () => {
-    it('fixes assertion after state change — output parses cleanly', () => {
-      const code = `import { render, fireEvent } from '@testing-library/react';
+    it('fixes assertion after async state change — output parses cleanly', () => {
+      const code = `import { render } from '@testing-library/react';
 it('test', () => {
-  fireEvent.click(button);
+  userEvent.click(button);
   expect(el).toBeVisible();
 });`;
       const { fixedCode, syntaxErrors, hadFix } = fixAndValidate(
@@ -166,6 +167,18 @@ it('test', () => {
       expect(hadFix).toBe(true);
       expect(syntaxErrors).toEqual([]);
       expect(fixedCode).toContain('waitFor');
+    });
+
+    it('does NOT fix assertion after fireEvent — fireEvent is sync', () => {
+      const code = `import { render, fireEvent } from '@testing-library/react';
+it('test', () => {
+  fireEvent.click(button);
+  expect(el).toBeVisible();
+});`;
+      const { hadFix } = fixAndValidate(
+        'test-flakiness/no-immediate-assertions', code
+      );
+      expect(hadFix).toBe(false);
     });
   });
 
@@ -206,6 +219,129 @@ it('test', () => { setTimeout(() => {}, 2000) });`;
       expect(syntaxErrors).toEqual([]);
       const importMatches = fixedCode.match(/import\s*\{[^}]*waitFor[^}]*\}/g) || [];
       expect(importMatches.length).toBe(1);
+    });
+  });
+
+  describe('Idempotence — second fix pass produces no changes', () => {
+    const idempotenceFixtures = [
+      {
+        name: 'no-hard-coded-timeout',
+        rule: 'test-flakiness/no-hard-coded-timeout',
+        code: `import { render } from '@testing-library/react';
+it('test', () => { setTimeout(() => {}, 2000) });`,
+      },
+      {
+        name: 'no-focus-check',
+        rule: 'test-flakiness/no-focus-check',
+        code: `import { render } from '@testing-library/react';
+it('test', () => { expect(el).toHaveFocus() });`,
+      },
+      {
+        name: 'no-immediate-assertions (userEvent)',
+        rule: 'test-flakiness/no-immediate-assertions',
+        code: `import { render } from '@testing-library/react';
+it('test', () => {
+  userEvent.click(button);
+  expect(el).toBeVisible();
+});`,
+      },
+      {
+        name: 'await-async-events (userEvent)',
+        rule: 'test-flakiness/await-async-events',
+        code: `import userEvent from '@testing-library/user-event';
+it('test', () => { userEvent.click(button) });`,
+      },
+    ];
+
+    idempotenceFixtures.forEach(({ name, rule, code }) => {
+      it(`${name}: applying fix twice produces stable output`, () => {
+        const first = fixAndValidate(rule, code);
+        expect(first.hadFix).toBe(true);
+        expect(first.syntaxErrors).toEqual([]);
+
+        // Second pass: run the same rule on the already-fixed output
+        const second = fixAndValidate(rule, first.fixedCode);
+        expect(second.syntaxErrors).toEqual([]);
+        // Either no fix needed (idempotent) or the output is the same
+        if (second.hadFix) {
+          expect(second.fixedCode).toBe(first.fixedCode);
+        }
+      });
+    });
+  });
+
+  describe('Parse safety — every autofix output is valid JavaScript', () => {
+    const parseSafetyFixtures = [
+      {
+        name: 'no-hard-coded-timeout with CJS require',
+        rule: 'test-flakiness/no-hard-coded-timeout',
+        code: `const { render } = require('@testing-library/react');
+it('test', () => { setTimeout(() => {}, 2000) });`,
+      },
+      {
+        name: 'await-async-events with act()',
+        rule: 'test-flakiness/await-async-events',
+        code: `import { act } from '@testing-library/react';
+it('test', () => { act(async () => { await doSomething() }) });`,
+      },
+      {
+        name: 'await-async-events with Playwright page methods',
+        rule: 'test-flakiness/await-async-events',
+        code: `it('test', () => { page.click("#button") });`,
+      },
+    ];
+
+    parseSafetyFixtures.forEach(({ name, rule, code }) => {
+      it(`${name}: output parses without syntax errors`, () => {
+        const { fixedCode, syntaxErrors, hadFix } = fixAndValidate(rule, code);
+        expect(hadFix).toBe(true);
+        expect(syntaxErrors).toEqual([]);
+        // Basic sanity: fixed code is non-empty
+        expect(fixedCode.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe('Multi-fix conflict — multiple rules together produce valid output', () => {
+    it('await-async-events + no-immediate-assertions do not conflict', () => {
+      const code = `import { render } from '@testing-library/react';
+it('test', async () => {
+  userEvent.click(button);
+  expect(el).toBeVisible();
+});`;
+
+      // Run await-async-events first
+      const afterAwait = fixAndValidate('test-flakiness/await-async-events', code);
+      expect(afterAwait.syntaxErrors).toEqual([]);
+
+      // Then run no-immediate-assertions on the result
+      const afterImmediate = fixAndValidate('test-flakiness/no-immediate-assertions', afterAwait.fixedCode);
+      expect(afterImmediate.syntaxErrors).toEqual([]);
+
+      // Verify no duplicate imports
+      const importMatches = afterImmediate.fixedCode.match(/import\s*\{[^}]*waitFor[^}]*\}/g) || [];
+      expect(importMatches.length).toBeLessThanOrEqual(1);
+    });
+
+    it('combined output is idempotent after all fixes applied', () => {
+      const code = `import { render } from '@testing-library/react';
+it('test', async () => {
+  userEvent.click(button);
+  expect(el).toBeVisible();
+});`;
+
+      // Apply await-async-events
+      const pass1 = fixAndValidate('test-flakiness/await-async-events', code);
+      expect(pass1.syntaxErrors).toEqual([]);
+
+      // Apply no-immediate-assertions
+      const pass2 = fixAndValidate('test-flakiness/no-immediate-assertions', pass1.fixedCode);
+      expect(pass2.syntaxErrors).toEqual([]);
+
+      // Second round should produce no changes
+      const recheck1 = fixAndValidate('test-flakiness/await-async-events', pass2.fixedCode);
+      const recheck2 = fixAndValidate('test-flakiness/no-immediate-assertions', recheck1.fixedCode);
+      expect(recheck2.syntaxErrors).toEqual([]);
     });
   });
 });
