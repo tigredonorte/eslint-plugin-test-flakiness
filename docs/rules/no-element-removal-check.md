@@ -138,7 +138,28 @@ longer than expected.
 
 ## Options
 
-This rule has no configuration options.
+### `reportWithoutEvidence` (default: `true`)
+
+Controls whether the rule reports element absence checks that lack prior
+evidence of the element being present (e.g., no prior `userEvent`
+interaction or positive assertion on the same element).
+
+When `true` (default), the rule reports all absence checks — even those
+that may be intentional initial-render checks like
+`render(<App />); expect(queryByText('X')).not.toBeInTheDocument()`.
+
+When `false`, the rule only reports (and autofixes) absence checks where
+there is evidence the element was previously present and then removed by
+a user action. This is useful for repositories with `--max-warnings 0`
+where unfixable reports would block CI.
+
+```json
+// Only report when there's evidence of removal (suppresses unfixable reports)
+"test-flakiness/no-element-removal-check": ["error", { "reportWithoutEvidence": false }]
+
+// Report all absence checks (default behavior)
+"test-flakiness/no-element-removal-check": "error"
+```
 
 ## When Not To Use It
 
