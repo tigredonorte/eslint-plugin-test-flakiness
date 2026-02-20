@@ -230,6 +230,57 @@ ruleTester.run('no-immediate-assertions', rule, {
       filename: 'ArrowExpression.test.js'
     },
 
+    // fireEvent is synchronous — assertions after it are correct as-is (regression fix)
+    {
+      code: `
+        fireEvent.click(button);
+        expect(screen.getByText('Clicked')).toBeInTheDocument();
+      `,
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: `
+        fireEvent.change(input, { target: { value: 'test' } });
+        expect(input.value).toBe('test');
+      `,
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: `
+        fireEvent.submit(form);
+        expect(screen.getByText('Submitted')).toBeInTheDocument();
+      `,
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: `
+        fireEvent.click(button);
+        expect(result).toBe(true);
+      `,
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: `
+        fireEvent.click(button);
+        expect(mock).toHaveBeenCalled();
+      `,
+      filename: 'FireEventMock.test.js'
+    },
+    {
+      code: `
+        fireEvent.click(button1);
+        expect(result1).toBe(true);
+        fireEvent.click(button2);
+        expect(result2).toBe(true);
+      `,
+      filename: 'FireEventMultiple.test.js'
+    },
+    {
+      code: `
+        (fireEvent.click(button), expect(screen.getByText('Clicked')).toBeInTheDocument());
+      `,
+      filename: 'FireEventInline.test.js'
+    },
 
     // Test await expression with fireEvent
     {
@@ -238,6 +289,15 @@ ruleTester.run('no-immediate-assertions', rule, {
         expect(result).toBe(true);
       }`,
       filename: 'AwaitFireEvent.test.js'
+    },
+
+    // Direct fireEvent() call (not fireEvent.click) — still sync, no warning
+    {
+      code: `
+        fireEvent(button, new MouseEvent('click'));
+        expect(result).toBe(true);
+      `,
+      filename: 'DirectFireEvent.test.js'
     },
 
     // Test waitFor with property access (lines 131-136)
@@ -401,30 +461,30 @@ ruleTester.run('no-immediate-assertions', rule, {
       `,
       filename: 'DispatchDataTestId.test.js',
       options: [{ ignoreDataTestId: true }]
+    },
+
+    // CallExpression handler: this.setState with requireWaitFor false → no error
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(this.state.count).toBe(1);
+      `,
+      filename: 'SetStateCERequireWaitForFalse.test.js',
+      options: [{ requireWaitFor: false }]
+    },
+
+    // CallExpression handler: this.setState with ignoreDataTestId + getByTestId → no error
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(screen.getByTestId('counter')).toHaveTextContent('1');
+      `,
+      filename: 'SetStateCEIgnoreTestId.test.js',
+      options: [{ ignoreDataTestId: true }]
     }
   ],
 
   invalid: [
-    // Basic fireEvent followed by expect
-    {
-      code: `
-        fireEvent.click(button);
-        expect(screen.getByText('Clicked')).toBeInTheDocument();
-      `,
-      filename: 'Button.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-        await waitFor(() => {
-          expect(screen.getByText('Clicked')).toBeInTheDocument();
-        });
-      `
-    },
-
     // userEvent followed by DOM assertion
     {
       code: `
@@ -505,47 +565,6 @@ wrapper.setProps({ value: 42 });
       `
     },
 
-    // Inline sequence expression pattern
-    {
-      code: `
-        (fireEvent.click(button), expect(screen.getByText('Clicked')).toBeInTheDocument());
-      `,
-      filename: 'Button.test.js',
-      errors: [{
-        messageId: 'needsWaitForDom'
-      }]
-    },
-
-    // Multiple fireEvent calls
-    {
-      code: `
-        fireEvent.click(button1);
-        expect(result1).toBe(true);
-        fireEvent.click(button2);
-        expect(result2).toBe(true);
-      `,
-      filename: 'MultiButton.test.js',
-      errors: [
-        {
-          messageId: 'needsWaitFor',
-          data: { action: 'fireEvent.click' }
-        },
-        {
-          messageId: 'needsWaitFor',
-          data: { action: 'fireEvent.click' }
-        }
-      ],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.click(button1);
-        await waitFor(() => {
-          expect(result1).toBe(true);
-        });
-        fireEvent.click(button2);
-        expect(result2).toBe(true);
-      `
-    },
-
     // simulate (Enzyme pattern)
     {
       code: `
@@ -586,66 +605,6 @@ wrapper.trigger('click');
       `
     },
 
-    // Method names containing patterns
-    {
-      code: `
-        fireEvent.click(button);
-        expect(result).toBe(true);
-      `,
-      filename: 'Handler.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-        await waitFor(() => {
-          expect(result).toBe(true);
-        });
-      `
-    },
-
-    // fireEvent with different event types
-    {
-      code: `
-        fireEvent.change(input, { target: { value: 'test' } });
-        expect(input.value).toBe('test');
-      `,
-      filename: 'Input.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.change' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.change(input, { target: { value: 'test' } });
-        await waitFor(() => {
-          expect(input.value).toBe('test');
-        });
-      `
-    },
-
-    // submit event
-    {
-      code: `
-        fireEvent.submit(form);
-        expect(screen.getByText('Submitted')).toBeInTheDocument();
-      `,
-      filename: 'Form.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.submit' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.submit(form);
-        await waitFor(() => {
-          expect(screen.getByText('Submitted')).toBeInTheDocument();
-        });
-      `
-    },
-
     // Even with await, DOM assertions need waitFor
     {
       code: `
@@ -682,89 +641,6 @@ userEvent.click(button);
 store.commit('SET_VALUE', 42);
         await waitFor(() => {
           expect(store.state.value).toBe(42);
-        });
-      `
-    },
-
-    // Different indentation levels
-    {
-      code: `
-    fireEvent.click(button);
-    expect(screen.getByText('Clicked')).toBeInTheDocument();
-      `,
-      filename: 'Indented.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-    import { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-    await waitFor(() => {
-      expect(screen.getByText('Clicked')).toBeInTheDocument();
-    });
-      `
-    },
-
-    // Tab indentation
-    {
-      code: `
-\t\tfireEvent.click(button);
-\t\texpect(screen.getByText('Clicked')).toBeInTheDocument();
-      `,
-      filename: 'TabIndented.test.js',
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-\t\timport { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-\t\tawait waitFor(() => {
-\t\t  expect(screen.getByText('Clicked')).toBeInTheDocument();
-\t\t});
-      `
-    },
-
-    // Configuration: allowedAfterOperations - still errors without the allowed operations
-    {
-      code: `
-        fireEvent.click(button);
-        expect(screen.getByText('Clicked')).toBeInTheDocument();
-      `,
-      filename: 'AllowedOps.test.js',
-      options: [{ allowedAfterOperations: ['render'] }],
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-        await waitFor(() => {
-          expect(screen.getByText('Clicked')).toBeInTheDocument();
-        });
-      `
-    },
-
-
-    // Configuration: ignoreDataTestId false - error for data-testid queries
-    {
-      code: `
-        fireEvent.click(button);
-        expect(screen.getByTestId('result')).toBeVisible();
-      `,
-      filename: 'DataTestIdError.test.js',
-      options: [{ ignoreDataTestId: false }],
-      errors: [{
-        messageId: 'needsWaitFor',
-        data: { action: 'fireEvent.click' }
-      }],
-      output: `
-        import { waitFor } from '@testing-library/react';
-fireEvent.click(button);
-        await waitFor(() => {
-          expect(screen.getByTestId('result')).toBeVisible();
         });
       `
     },
@@ -1013,25 +889,65 @@ wrapper.setProps({ value: 100 });
     // Playwright framework: uses framework-specific message (no fix)
     {
       code: `import { test, expect } from '@playwright/test';
-fireEvent.click(button);
+userEvent.click(button);
 expect(screen.getByText('Clicked')).toBeInTheDocument();`,
       filename: 'PlaywrightImmediate.spec.js',
       errors: [{
         messageId: 'needsWaitForPlaywright',
-        data: { action: 'fireEvent.click' }
+        data: { action: 'userEvent.click' }
       }]
     },
 
     // Cypress framework: uses framework-specific message (no fix)
     {
       code: `import { mount } from 'cypress/react';
-fireEvent.click(button);
+userEvent.click(button);
 expect(screen.getByText('Clicked')).toBeInTheDocument();`,
       filename: 'CypressImmediate.cy.js',
       errors: [{
         messageId: 'needsWaitForCypress',
-        data: { action: 'fireEvent.click' }
+        data: { action: 'userEvent.click' }
       }]
+    },
+
+    // CallExpression handler: this.setState followed by state assertion → needsWaitForState
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(this.state.count).toBe(1);
+      `,
+      filename: 'SetStateCEHandler.test.js',
+      errors: [{
+        messageId: 'needsWaitForState',
+        data: { action: 'action.setState' }
+      }],
+      output: `
+        import { waitFor } from '@testing-library/react';
+this.setState({ count: 1 });
+        await waitFor(() => {
+          expect(this.state.count).toBe(1);
+        });
+      `
+    },
+
+    // CallExpression handler: store.dispatch followed by state assertion → needsWaitForState
+    {
+      code: `
+        store.dispatch(action());
+        expect(store.getState().count).toBe(1);
+      `,
+      filename: 'DispatchCEHandler.test.js',
+      errors: [{
+        messageId: 'needsWaitForState',
+        data: { action: 'store.dispatch' }
+      }],
+      output: `
+        import { waitFor } from '@testing-library/react';
+store.dispatch(action());
+        await waitFor(() => {
+          expect(store.getState().count).toBe(1);
+        });
+      `
     }
 
 

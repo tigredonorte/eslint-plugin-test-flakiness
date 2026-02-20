@@ -298,6 +298,44 @@ ruleTester.run('await-async-events', rule, {
     {
       code: 'const user = getSomeUser(); user.click(button)',
       filename: 'NotUserEvent.test.js'
+    },
+
+    // fireEvent is synchronous — never needs await (regression fix)
+    {
+      code: 'fireEvent.click(button)',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.click(button) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.change(input, { target: { value: "test" } }) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.submit(form) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.focus(input) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.blur(input) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.keyDown(input, { key: "Enter" }) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'async function test() { fireEvent.mouseDown(element) }',
+      filename: 'FireEventSync.test.js'
+    },
+    {
+      code: 'const test = () => { fireEvent.click(button) }',
+      filename: 'FireEventSync.test.js'
     }
   ],
 
@@ -419,107 +457,6 @@ ruleTester.run('await-async-events', rule, {
         data: { method: 'keyboard' }
       }],
       output: 'async function test() { await userEvent.keyboard("[Enter]") }'
-    },
-
-    // fireEvent methods without await
-    {
-      code: 'async function test() { fireEvent.click(button) }',
-      filename: 'Button.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'click' }
-      }],
-      output: 'async function test() { await fireEvent.click(button) }'
-    },
-    {
-      code: 'async function test() { fireEvent.change(input, { target: { value: "test" } }) }',
-      filename: 'Input.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'change' }
-      }],
-      output: 'async function test() { await fireEvent.change(input, { target: { value: "test" } }) }'
-    },
-    {
-      code: 'async function test() { fireEvent.input(input, { target: { value: "test" } }) }',
-      filename: 'Input.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'input' }
-      }],
-      output: 'async function test() { await fireEvent.input(input, { target: { value: "test" } }) }'
-    },
-    {
-      code: 'async function test() { fireEvent.submit(form) }',
-      filename: 'Form.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'submit' }
-      }],
-      output: 'async function test() { await fireEvent.submit(form) }'
-    },
-    {
-      code: 'async function test() { fireEvent.focus(input) }',
-      filename: 'Focus.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'focus' }
-      }],
-      output: 'async function test() { await fireEvent.focus(input) }'
-    },
-    {
-      code: 'async function test() { fireEvent.blur(input) }',
-      filename: 'Blur.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'blur' }
-      }],
-      output: 'async function test() { await fireEvent.blur(input) }'
-    },
-    {
-      code: 'async function test() { fireEvent.keyDown(input, { key: "Enter" }) }',
-      filename: 'Keyboard.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'keyDown' }
-      }],
-      output: 'async function test() { await fireEvent.keyDown(input, { key: "Enter" }) }'
-    },
-    {
-      code: 'async function test() { fireEvent.keyUp(input, { key: "Enter" }) }',
-      filename: 'Keyboard.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'keyUp' }
-      }],
-      output: 'async function test() { await fireEvent.keyUp(input, { key: "Enter" }) }'
-    },
-    {
-      code: 'async function test() { fireEvent.keyPress(input, { key: "a" }) }',
-      filename: 'Keyboard.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'keyPress' }
-      }],
-      output: 'async function test() { await fireEvent.keyPress(input, { key: "a" }) }'
-    },
-    {
-      code: 'async function test() { fireEvent.mouseDown(element) }',
-      filename: 'Mouse.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'mouseDown' }
-      }],
-      output: 'async function test() { await fireEvent.mouseDown(element) }'
-    },
-    {
-      code: 'async function test() { fireEvent.mouseUp(element) }',
-      filename: 'Mouse.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'mouseUp' }
-      }],
-      output: 'async function test() { await fireEvent.mouseUp(element) }'
     },
 
     // act with async callback not awaited
@@ -842,15 +779,6 @@ ruleTester.run('await-async-events', rule, {
       output: 'async function test() { await userEvent.click(button) }'
     },
     {
-      code: 'const test = () => { fireEvent.click(button) }',
-      filename: 'NonAsync.test.js',
-      errors: [{
-        messageId: 'missingAwaitFireEvent',
-        data: { method: 'click' }
-      }],
-      output: 'const test = async () => { await fireEvent.click(button) }'
-    },
-    {
       code: 'function test() { act(async () => { await doSomething() }) }',
       filename: 'NonAsync.test.js',
       errors: [{
@@ -868,7 +796,7 @@ ruleTester.run('await-async-events', rule, {
       output: 'async function test() { await page.click("#button") }'
     },
 
-    // Multiple violations
+    // Multiple violations (fireEvent is excluded — sync)
     {
       code: `async function test() {
         userEvent.click(button1);
@@ -878,12 +806,11 @@ ruleTester.run('await-async-events', rule, {
       filename: 'Multiple.test.js',
       errors: [
         { messageId: 'missingAwaitUserEvent', data: { method: 'click' } },
-        { messageId: 'missingAwaitFireEvent', data: { method: 'submit' } },
         { messageId: 'missingAwaitPage', data: { method: 'goto' } }
       ],
       output: `async function test() {
         await userEvent.click(button1);
-        await fireEvent.submit(form);
+        fireEvent.submit(form);
         await page.goto("https://example.com");
       }`
     },
@@ -943,17 +870,6 @@ await user.type(input, "text");
       errors: [{ messageId: 'missingAwaitUserEvent', data: { method: 'click' } }]
     },
 
-    // fireEvent inside setter — no fix
-    {
-      code: `class MyTest {
-  set value(v) {
-    fireEvent.click(button);
-  }
-}`,
-      filename: 'setter.test.js',
-      errors: [{ messageId: 'missingAwaitFireEvent', data: { method: 'click' } }]
-    },
-
     // act() with async callback inside constructor — no fix
     {
       code: `class MyTest {
@@ -980,7 +896,6 @@ describe('await-async-events rule internals', () => {
     expect(rule.meta.docs.description).toBe('Enforce awaiting async user events and actions');
     expect(rule.meta.fixable).toBe('code');
     expect(rule.meta.messages).toHaveProperty('missingAwait');
-    expect(rule.meta.messages).toHaveProperty('missingAwaitFireEvent');
     expect(rule.meta.messages).toHaveProperty('missingAwaitUserEvent');
     expect(rule.meta.messages).toHaveProperty('missingAwaitAct');
     expect(rule.meta.messages).toHaveProperty('missingAwaitPage');
