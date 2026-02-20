@@ -291,6 +291,15 @@ ruleTester.run('no-immediate-assertions', rule, {
       filename: 'AwaitFireEvent.test.js'
     },
 
+    // Direct fireEvent() call (not fireEvent.click) — still sync, no warning
+    {
+      code: `
+        fireEvent(button, new MouseEvent('click'));
+        expect(result).toBe(true);
+      `,
+      filename: 'DirectFireEvent.test.js'
+    },
+
     // Test waitFor with property access (lines 131-136)
     {
       code: `async () => {
