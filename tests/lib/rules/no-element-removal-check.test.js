@@ -413,6 +413,82 @@ it("removes element after click", async () => {
       errors: [{
         messageId: 'useWaitForRemoval'
       }]
+    },
+
+    // WITH EVIDENCE: queryByRole().toBeNull() after userEvent → autofix applied (covers checkQueryReturnsNull evidence branch)
+    {
+      code: `it("removes alert after dismiss", async () => {
+  expect(getByRole("alert")).toBeInTheDocument();
+  await userEvent.click(dismissBtn);
+  expect(queryByRole("alert")).toBeNull();
+})`,
+      filename: 'QueryNullEvidence.test.js',
+      errors: [{
+        messageId: 'useWaitForRemoval'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it("removes alert after dismiss", async () => {
+  expect(getByRole("alert")).toBeInTheDocument();
+  await userEvent.click(dismissBtn);
+  await waitFor(() => { expect(queryByRole("alert")).toBeNull(); });
+})`
+    },
+
+    // WITH EVIDENCE: .not.toBeDefined() after userEvent → autofix applied (covers checkNotToBeDefined evidence branch)
+    {
+      code: `it("removes text after action", async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  expect(queryByText("Hello")).not.toBeDefined();
+})`,
+      filename: 'NotDefinedEvidence.test.js',
+      errors: [{
+        messageId: 'useWaitForRemoval'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it("removes text after action", async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  await waitFor(() => { expect(queryByText("Hello")).not.toBeDefined(); });
+})`
+    },
+
+    // WITH EVIDENCE: .not.toBeVisible() after userEvent → autofix applied (covers checkVisibilityAfterRemoval evidence branch)
+    {
+      code: `it("hides modal after close", async () => {
+  expect(getByText("Modal")).toBeInTheDocument();
+  await userEvent.click(closeBtn);
+  expect(modal).not.toBeVisible();
+})`,
+      filename: 'NotVisibleEvidence.test.js',
+      errors: [{
+        messageId: 'avoidNotVisibleWithoutWaitFor'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it("hides modal after close", async () => {
+  expect(getByText("Modal")).toBeInTheDocument();
+  await userEvent.click(closeBtn);
+  await waitFor(() => { expect(modal).not.toBeVisible(); });
+})`
+    },
+
+    // WITH EVIDENCE: regex query target + regex matching in statementMatchesTarget
+    {
+      code: `it("removes regex-matched element", async () => {
+  expect(getByText(/loading/i)).toBeInTheDocument();
+  await userEvent.click(button);
+  expect(queryByText(/loading/i)).not.toBeInTheDocument();
+})`,
+      filename: 'RegexEvidence.test.js',
+      errors: [{
+        messageId: 'avoidNotInDocument'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it("removes regex-matched element", async () => {
+  expect(getByText(/loading/i)).toBeInTheDocument();
+  await userEvent.click(button);
+  await waitFor(() => { expect(queryByText(/loading/i)).not.toBeInTheDocument(); });
+})`
     }
   ]
 });
