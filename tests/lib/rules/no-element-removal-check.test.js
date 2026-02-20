@@ -128,6 +128,11 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'NoEvidenceSuppressedVisible.test.js',
       options: [{ reportWithoutEvidence: false }]
     },
+    {
+      code: 'if (queryByTestId("item") === null) {}',
+      filename: 'NoEvidenceSuppressedNullCheck.test.js',
+      options: [{ reportWithoutEvidence: false }]
+    },
 
     // Positive toBeDefined checks are fine
     {
@@ -395,6 +400,26 @@ ruleTester.run('no-element-removal-check', rule, {
       }],
       output: `import { waitFor } from '@testing-library/react';
 it("removes element after click", async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  await waitFor(() => { expect(queryByText("Hello")).not.toBeInTheDocument(); });
+})`
+    },
+
+    // reportWithoutEvidence: false still reports when evidence IS present
+    {
+      code: `it('test', async () => {
+  expect(getByText("Hello")).toBeInTheDocument();
+  await userEvent.click(button);
+  expect(queryByText("Hello")).not.toBeInTheDocument();
+})`,
+      filename: 'EvidenceStillReportsWithOptionFalse.test.js',
+      options: [{ reportWithoutEvidence: false }],
+      errors: [{
+        messageId: 'avoidNotInDocument'
+      }],
+      output: `import { waitFor } from '@testing-library/react';
+it('test', async () => {
   expect(getByText("Hello")).toBeInTheDocument();
   await userEvent.click(button);
   await waitFor(() => { expect(queryByText("Hello")).not.toBeInTheDocument(); });
