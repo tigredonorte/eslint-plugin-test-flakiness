@@ -452,6 +452,26 @@ ruleTester.run('no-immediate-assertions', rule, {
       `,
       filename: 'DispatchDataTestId.test.js',
       options: [{ ignoreDataTestId: true }]
+    },
+
+    // CallExpression handler: this.setState with requireWaitFor false → no error
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(this.state.count).toBe(1);
+      `,
+      filename: 'SetStateCERequireWaitForFalse.test.js',
+      options: [{ requireWaitFor: false }]
+    },
+
+    // CallExpression handler: this.setState with ignoreDataTestId + getByTestId → no error
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(screen.getByTestId('counter')).toHaveTextContent('1');
+      `,
+      filename: 'SetStateCEIgnoreTestId.test.js',
+      options: [{ ignoreDataTestId: true }]
     }
   ],
 
@@ -879,6 +899,46 @@ expect(screen.getByText('Clicked')).toBeInTheDocument();`,
         messageId: 'needsWaitForCypress',
         data: { action: 'userEvent.click' }
       }]
+    },
+
+    // CallExpression handler: this.setState followed by state assertion → needsWaitForState
+    {
+      code: `
+        this.setState({ count: 1 });
+        expect(this.state.count).toBe(1);
+      `,
+      filename: 'SetStateCEHandler.test.js',
+      errors: [{
+        messageId: 'needsWaitForState',
+        data: { action: 'action.setState' }
+      }],
+      output: `
+        import { waitFor } from '@testing-library/react';
+this.setState({ count: 1 });
+        await waitFor(() => {
+          expect(this.state.count).toBe(1);
+        });
+      `
+    },
+
+    // CallExpression handler: store.dispatch followed by state assertion → needsWaitForState
+    {
+      code: `
+        store.dispatch(action());
+        expect(store.getState().count).toBe(1);
+      `,
+      filename: 'DispatchCEHandler.test.js',
+      errors: [{
+        messageId: 'needsWaitForState',
+        data: { action: 'store.dispatch' }
+      }],
+      output: `
+        import { waitFor } from '@testing-library/react';
+store.dispatch(action());
+        await waitFor(() => {
+          expect(store.getState().count).toBe(1);
+        });
+      `
     }
 
 

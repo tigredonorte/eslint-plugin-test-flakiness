@@ -208,19 +208,19 @@ ruleTester.run('no-element-removal-check', rule, {
       }]
     },
 
-    // Direct null checks (no autofix - too complex)
+    // Direct null checks — no evidence → warning only (useWaitForRemovalNoEvidence)
     {
       code: 'if (queryByTestId("element") === null) { /* removed */ }',
       filename: 'DirectNull.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
+        messageId: 'useWaitForRemovalNoEvidence'
       }]
     },
     {
       code: 'const isRemoved = screen.queryByText("Loading") == null',
       filename: 'DirectNullCheck.test.js',
       errors: [{
-        messageId: 'useWaitForRemoval'
+        messageId: 'useWaitForRemovalNoEvidence'
       }]
     },
 
@@ -389,6 +389,30 @@ it("removes element after click", async () => {
       errors: [{
         messageId: 'avoidNotInDocumentNoEvidence'
       }]
+    },
+
+    // Direct null check WITHOUT evidence → useWaitForRemovalNoEvidence
+    {
+      code: `it("checks null on render", () => {
+  render(Component);
+  if (queryByTestId("element") === null) { console.log("gone"); }
+})`,
+      filename: 'DirectNullNoEvidence.test.js',
+      errors: [{
+        messageId: 'useWaitForRemovalNoEvidence'
+      }]
+    },
+
+    // Direct null check WITH evidence (prior userEvent) → useWaitForRemoval
+    {
+      code: `it("checks null after action", async () => {
+  await userEvent.click(button);
+  if (queryByTestId("element") === null) { console.log("gone"); }
+})`,
+      filename: 'DirectNullWithEvidence.test.js',
+      errors: [{
+        messageId: 'useWaitForRemoval'
+      }]
     }
   ]
 });
@@ -527,7 +551,7 @@ describe('no-element-removal-check rule internals', () => {
       visitor.BinaryExpression(node);
       expect(context.report).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageId: 'useWaitForRemoval'
+          messageId: 'useWaitForRemovalNoEvidence'
         })
       );
     });
