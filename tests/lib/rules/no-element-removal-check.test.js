@@ -107,6 +107,28 @@ ruleTester.run('no-element-removal-check', rule, {
       filename: 'Function.test.js'
     },
 
+    // reportWithoutEvidence: false — suppresses no-evidence reports
+    {
+      code: 'expect(queryByText("Gone")).not.toBeInTheDocument()',
+      filename: 'NoEvidenceSuppressed.test.js',
+      options: [{ reportWithoutEvidence: false }]
+    },
+    {
+      code: 'expect(queryByText("Gone")).toBeNull()',
+      filename: 'NoEvidenceSuppressedNull.test.js',
+      options: [{ reportWithoutEvidence: false }]
+    },
+    {
+      code: 'expect(queryByText("Gone")).not.toBeDefined()',
+      filename: 'NoEvidenceSuppressedDefined.test.js',
+      options: [{ reportWithoutEvidence: false }]
+    },
+    {
+      code: 'expect(element).not.toBeVisible()',
+      filename: 'NoEvidenceSuppressedVisible.test.js',
+      options: [{ reportWithoutEvidence: false }]
+    },
+
     // Positive toBeDefined checks are fine
     {
       code: 'expect(queryByText("Loading")).toBeDefined()',
@@ -520,8 +542,17 @@ describe('no-element-removal-check rule internals', () => {
     expect(rule.meta.docs.url).toBe('https://github.com/tigredonorte/eslint-plugin-test-flakiness/blob/main/docs/rules/no-element-removal-check.md');
   });
 
-  it('should have empty schema', () => {
-    expect(rule.meta.schema).toEqual([]);
+  it('should have schema with reportWithoutEvidence option', () => {
+    expect(rule.meta.schema).toEqual([{
+      type: 'object',
+      properties: {
+        reportWithoutEvidence: {
+          type: 'boolean',
+          default: true
+        }
+      },
+      additionalProperties: false
+    }]);
   });
 
   it('should return empty object for non-test files', () => {
@@ -537,6 +568,7 @@ describe('no-element-removal-check rule internals', () => {
   it('should create proper visitor for test files', () => {
     const context = {
       getFilename: () => 'test.spec.js',
+      options: [],
       report: jest.fn(),
       getSourceCode: () => ({
         getText: () => 'code'
@@ -554,6 +586,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle CallExpression without callee name', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({
           getText: () => 'code'
@@ -574,6 +607,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle BinaryExpression with non-query methods', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -592,6 +626,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle BinaryExpression without null literal', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -610,6 +645,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should detect query method in BinaryExpression', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -635,6 +671,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle MemberExpression without property name', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({
           getText: () => 'code'
@@ -658,6 +695,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle expect without arguments', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -682,6 +720,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle UnaryExpression without document.contains', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -702,6 +741,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle UnaryExpression with different operator', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -726,6 +766,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle UnaryExpression without CallExpression argument', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -745,6 +786,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle document.contains without proper structure', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -769,6 +811,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle not document but similar structure', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -793,6 +836,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle Program parent type', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({ getText: () => '' })
       };
@@ -818,6 +862,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle query method without starting with query', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -845,6 +890,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle query method from property', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({
           getText: (_node) => 'screen.queryByTestId("element")'
@@ -880,6 +926,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle timeout with non-numeric value', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -908,6 +955,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should check all parent types for waitFor wrapper', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -946,6 +994,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should check for waitForElementToBeRemoved wrapper', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -978,6 +1027,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle expect object without type MemberExpression', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1000,6 +1050,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle not property missing', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1023,6 +1074,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle expect object not being CallExpression', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1045,6 +1097,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle expect callee not being expect', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1068,6 +1121,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle argument not being CallExpression', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1094,6 +1148,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle properties without key.name', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn()
       };
 
@@ -1119,6 +1174,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle enhanced screen.queryBy detection', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({ getText: () => '' })
       };
@@ -1156,6 +1212,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle .not.toBeDefined() pattern', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({ getText: () => '' })
       };
@@ -1193,6 +1250,7 @@ describe('no-element-removal-check rule internals', () => {
     it('should handle .not.toBeVisible() pattern', () => {
       const context = {
         getFilename: () => 'test.spec.js',
+        options: [],
         report: jest.fn(),
         getSourceCode: () => ({ getText: () => '' })
       };
