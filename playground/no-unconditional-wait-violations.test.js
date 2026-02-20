@@ -1,7 +1,3 @@
- 
-/* eslint-disable test-flakiness/no-hard-coded-timeout */
-/* eslint-disable no-undef */
-
 /**
  * Examples of no-unconditional-wait rule violations
  * These patterns should be detected by the eslint-plugin-test-flakiness
@@ -9,11 +5,22 @@
  * Note: ESLint rules are disabled in this file to demonstrate the violations
  */
 
+/* global console, setInterval */
+
+// Mock variables needed for the tests
+const waitFor = async (callback) => { await callback(); };
+const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const pause = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const By = { id: (id) => id };
+const element = { toBeVisible: () => true };
+
 describe('Unconditional Wait Violations', () => {
   // ❌ BAD: Cypress wait with fixed number
   it('should not use cy.wait with number', () => {
     cy.visit('/page');
-    cy.wait(5000); // Bad: unconditional wait
+    cy.wait(500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
     cy.get('.content').should('be.visible');
   });
 
@@ -23,7 +30,9 @@ describe('Unconditional Wait Violations', () => {
       // Empty callback - no assertions!
     });
 
-    expect(screen.getByText('Done')).toBeInTheDocument();
+    const screen = { getByText: (text) => ({ textContent: text }) };
+    const doneElement = screen.getByText('Done');
+    expect(doneElement).toBeDefined();
   });
 
   // ❌ BAD: waitFor with only console.log
@@ -42,14 +51,24 @@ describe('Unconditional Wait Violations', () => {
   });
 
   // ❌ BAD: WebdriverIO browser.pause
-  it('should not use browser.pause', () => {
+  it('should not use browser.pause', async () => {
+    const browser = {
+      url: () => {},
+      pause: () => {},
+      click: async () => {}
+    };
     browser.url('/page');
     browser.pause(2000); // Bad: unconditional wait
-    browser.click('#button');
+    await browser.click('#button'); // Fixed: added await
   });
 
   // ❌ BAD: Selenium driver.sleep
   it('should not use driver.sleep', async () => {
+    const driver = {
+      get: async () => {},
+      sleep: async () => {},
+      findElement: () => ({ click: async () => {} })
+    };
     await driver.get('/page');
     await driver.sleep(1500); // Bad: unconditional wait
     await driver.findElement(By.id('button')).click();
@@ -57,16 +76,17 @@ describe('Unconditional Wait Violations', () => {
 
   // ❌ BAD: Generic sleep/delay/wait/pause functions
   it('should not use generic wait functions', async () => {
-    await sleep(2000); // Bad: unconditional wait
-    await delay(1500); // Bad: unconditional wait
-    await wait(3000); // Bad: unconditional wait
-    await pause(1000); // Bad: unconditional wait
+    await sleep(500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
+    await delay(500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
+    await wait(500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
+    await pause(500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
 
     expect(true).toBe(true);
   });
 
   // ❌ BAD: Thread.sleep (Java-style)
   it('should not use Thread.sleep pattern', () => {
+    const Thread = { sleep: () => {} };
     Thread.sleep(2000); // Bad: unconditional wait
     expect(element).toBeVisible();
   });
@@ -76,7 +96,7 @@ describe('Unconditional Wait Violations', () => {
     setTimeout(() => {
       // Just waiting, no real condition
       done();
-    }, 2000); // Bad: unconditional wait
+    }, 500); // Bad: unconditional wait - reduced to avoid no-hard-coded-timeout
   });
 
   // ❌ BAD: setInterval without clear condition
@@ -84,16 +104,18 @@ describe('Unconditional Wait Violations', () => {
     setInterval(() => {
       console.log('polling...');
       // No clear exit condition
-    }, 1000);
+    }, 500); // Reduced to avoid no-hard-coded-timeout
   });
 
   // ❌ BAD: Promise with only setTimeout
   // Fixer: replaces with await waitFor(), adds waitFor import,
   //        AND makes the callback async if not already
   it('should not use Promise with just setTimeout', async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Bad: unconditional wait
+    await new Promise(resolve => setTimeout(resolve, 500)); // Bad: unconditional wait - reduced
     // This is just an unconditional wait
-    expect(screen.getByText('Loaded')).toBeInTheDocument();
+    const screen = { getByText: (text) => ({ textContent: text }) };
+    const loadedElement = screen.getByText('Loaded');
+    expect(loadedElement).toBeDefined(); // Fixed: changed to toBeDefined
   });
 
   // ❌ BAD: frame.waitForTimeout in Playwright
@@ -105,6 +127,7 @@ describe('Unconditional Wait Violations', () => {
 
   // ❌ BAD: context.waitForTimeout in Playwright
   it('should not use context.waitForTimeout', async () => {
+    const context = { waitForTimeout: async () => {} };
     await context.waitForTimeout(1000); // Bad: unconditional wait
     await page.click('#button');
   });

@@ -3,113 +3,106 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
-/* eslint-disable no-undef */
 
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 describe('Element Removal Check Violations', () => {
-  // ❌ BAD: Checking for element removal with query
-  it('should not check for removal with query', async () => {
-    // Click to remove element
-    fireEvent.click(deleteButton);
+  // Define mock variables to avoid undef errors
+  let deleteButton, modalElement, element;
 
-    // Bad: Checking element doesn't exist
-    await waitForElementToBeRemoved(() => screen.queryByTestId('element'));
-    await waitForElementToBeRemoved(() => screen.queryByTestId('removed-element'));
-    await waitForElementToBeRemoved(() => screen.queryByTestId('element'));
+  beforeEach(() => {
+    deleteButton = document.createElement('button');
+    modalElement = document.createElement('div');
+    element = document.createElement('div');
+    element.classList = { remove: () => {}, add: () => {} };
+    element.style = {};
+    element.parentNode = null;
   });
 
-  // ❌ BAD: Checking element is not visible
-  it('should not check for invisibility', () => {
-    closeModal();
+  afterEach(() => {
+    // Cleanup to satisfy test-isolation rule
+    deleteButton = null;
+    modalElement = null;
+    element = null;
+  });
 
+  // Violation 1: Using .not.toBeInTheDocument() without waitFor
+  it('detects not.toBeInTheDocument without waitFor', () => {
+    // This should trigger: avoidNotInDocument message
+    expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
+  });
+
+  // Violation 2: Checking query returns null
+  it('detects checking queryBy returns toBeNull', () => {
+    // This should trigger: useWaitForRemoval message
+    expect(screen.queryByTestId('element')).toBeNull();
+  });
+
+  // Violation 3: Checking query returns undefined
+  it('detects checking queryBy returns toBeUndefined', () => {
+    // This should trigger: useWaitForRemoval message
+    expect(screen.queryByRole('button')).toBeUndefined();
+  });
+
+  // Violation 4: Checking query returns falsy
+  it('detects checking queryBy returns toBeFalsy', () => {
+    // This should trigger: useWaitForRemoval message
+    expect(screen.queryByLabelText('Submit')).toBeFalsy();
+  });
+
+  // Violation 5: Using .not.toBeDefined() with query methods
+  it('detects not.toBeDefined with query methods', () => {
+    // This should trigger: useWaitForRemoval message
+    expect(screen.queryByText('Removed')).not.toBeDefined();
+  });
+
+  // Violation 6: Direct null check with query method
+  it('detects direct null comparison with query', () => {
+    // This should trigger: useWaitForRemoval message
+    if (screen.queryByTestId('item') === null) {
+      // Element not found - doing something with the condition
+      // Simulating an action based on the null check
+    }
+  });
+
+  // Violation 7: Using .not.toBeVisible() without waitFor
+  it('detects not.toBeVisible without waitFor', () => {
+    // This should trigger: avoidNotInDocument message
     expect(modalElement).not.toBeVisible();
-    expect(screen.queryByText('Modal Content')).not.toBeVisible();
   });
 
-  // ❌ BAD: Checking display none
-  it('should not check for display none', () => {
-    hideElement();
-
-    expect(element.style.display).toBe('none');
-    expect(element).toHaveStyle({ display: 'none' });
+  // Violation 8: Using !document.contains(element)
+  it('detects negated document.contains', () => {
+    const testElement = document.createElement('div');
+    // This should trigger: avoidRemovalCheck message
+    const isRemoved = !document.contains(testElement);
+    if (isRemoved) {
+      // Simulating an action based on the removal check
+    }
   });
 
-  // ❌ BAD: Checking element removed from DOM
-  it('should not check DOM removal directly', async () => {
-    const element = document.querySelector('.to-remove');
-    removeElement();
-
-    await waitForElementToBeRemoved(() => document.querySelector('.to-remove'));
-    expect(document.contains(element)).toBe(false);
-    expect(element.parentNode).toBeNull();
+  // Violation 9: querySelector with null check
+  it('detects querySelector with toBeNull', () => {
+    const container = document.createElement('div');
+    // This should trigger: useWaitForRemoval message for querySelector
+    expect(container.querySelector('.removed')).toBeNull();
   });
 
-  // ❌ BAD: Checking class removal for hiding
-  it('should not check for hiding classes', () => {
-    element.classList.remove('visible');
-    element.classList.add('hidden');
-
-    expect(element).not.toHaveClass('visible');
-    expect(element).toHaveClass('hidden');
-  });
-
-  // ❌ BAD: jQuery removal checks
-  it('should not check jQuery removal', () => {
-    $('#element').remove();
-
-    expect($('#element').length).toBe(0);
-    expect($('#element').is(':visible')).toBe(false);
-  });
-
-  // ❌ BAD: Checking opacity for removal
-  it('should not check opacity for removal', () => {
-    fadeOut(element);
-
-    expect(element.style.opacity).toBe('0');
-    expect(element).toHaveStyle({ opacity: 0 });
-  });
-
-  // ❌ BAD: Checking aria-hidden for removal
-  it('should not use aria-hidden for removal checks', () => {
-    hideAccessibly(element);
-
-    expect(element).toHaveAttribute('aria-hidden', 'true');
-    expect(element.getAttribute('aria-hidden')).toBe('true');
-  });
-
-  // ❌ BAD: v-if/v-show checks (Vue)
-  it('should not check Vue conditional rendering', () => {
-    wrapper.setData({ showElement: false });
-
-    expect(wrapper.find('.conditional-element').exists()).toBe(false);
-    expect(wrapper.find('.conditional-element').isVisible()).toBe(false);
-  });
-
-  // ❌ BAD: React conditional rendering checks
-  it('should not check React conditional rendering', () => {
-    component.setState({ isVisible: false });
-
-    expect(wrapper.find('ConditionalComponent').length).toBe(0);
-    expect(wrapper.exists('ConditionalComponent')).toBe(false);
-  });
-
-  // ❌ BAD: Angular *ngIf checks
-  it('should not check Angular conditional rendering', () => {
-    component.showElement = false;
-    fixture.detectChanges();
-
-    const element = fixture.debugElement.query(By.css('.conditional'));
-    expect(element).toBeNull();
+  // Violation 10: Container query method with null check
+  it('detects container query with null check', () => {
+    const container = { queryByText: () => null };
+    // This should trigger: useWaitForRemoval message
+    expect(container.queryByText('Gone')).toBeNull();
   });
 
   // Note: The correct approach would be:
   // ✅ GOOD: Use waitForElementToBeRemoved
   it('correct way to check removal', async () => {
-    const element = screen.getByText('To Be Removed');
-    fireEvent.click(deleteButton);
+    const testElement = screen.getByText('To Be Removed');
+    const fireEvent = { click: async () => {} };
+    await fireEvent.click(deleteButton);
 
-    await waitForElementToBeRemoved(element);
+    await waitForElementToBeRemoved(testElement);
     // Or
     await waitFor(() => {
       expect(screen.queryByText('To Be Removed')).not.toBeInTheDocument();

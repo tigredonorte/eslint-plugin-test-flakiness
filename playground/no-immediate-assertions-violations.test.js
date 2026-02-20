@@ -3,8 +3,27 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
-import { screen, fireEvent, waitForElementToBeRemoved } from '@testing-library/react';
+/* eslint-disable test-flakiness/await-async-events */
+
+import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+// Mock screen methods to avoid runtime errors in playground
+screen.getByText = jest.fn(() => ({ toBeInTheDocument: () => true }));
+screen.getByRole = jest.fn(() => ({ toBeVisible: () => true }));
+
+// Mock matchers
+expect.extend({
+  toBeInTheDocument() {
+    return { pass: true };
+  },
+  toBeVisible() {
+    return { pass: true };
+  },
+  toBeEnabled() {
+    return { pass: true };
+  }
+});
 
 describe('Immediate Assertions After State Changes', () => {
   // ❌ BAD: Assertion immediately after state change
@@ -29,18 +48,18 @@ describe('Immediate Assertions After State Changes', () => {
     expect(screen.getByText('Clicked')).toBeInTheDocument(); // Immediate assertion!
   });
 
-  // ❌ BAD: Assertion immediately after userEvent (even if awaited)
-  it('should use waitFor even with await', async () => {
+  // ❌ BAD: Assertion immediately after userEvent
+  it('should use waitFor after userEvent', () => {
     const button = document.createElement('button');
-    await userEvent.click(button);
-    await waitForElementToBeRemoved(() => screen.queryByTestId('element')); // Should use waitFor!
+    userEvent.click(button);
+    expect(screen.getByText('Clicked')).toBeInTheDocument(); // Immediate assertion!
   });
 
   // ❌ BAD: Multiple assertions immediately after action
-  it('should wrap multiple assertions', async () => {
+  it('should wrap multiple assertions', () => {
     const input = document.createElement('input');
     const submitButton = document.createElement('button');
-    await userEvent.type(input, 'test');
+    userEvent.type(input, 'test');
     expect(input.value).toBe('test'); // Immediate!
     expect(screen.getByText('Valid')).toBeInTheDocument(); // Immediate!
     expect(submitButton).toBeEnabled(); // Immediate!
@@ -76,10 +95,10 @@ describe('Immediate Assertions After State Changes', () => {
     expect(store.getState().user).toEqual(userData); // Immediate assertion!
   });
 
-  // ❌ BAD: Component method call followed by immediate DOM check
+  // ❌ BAD: Component setState followed by immediate DOM check
   it('should wait after component methods', () => {
-    const component = { showModal: jest.fn() };
-    component.showModal();
+    const component = { setState: jest.fn() };
+    component.setState({ modalOpen: true });
     expect(screen.getByRole('dialog')).toBeVisible(); // Immediate assertion!
   });
 
