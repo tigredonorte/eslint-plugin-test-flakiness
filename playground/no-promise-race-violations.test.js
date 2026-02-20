@@ -3,7 +3,39 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
+// Mock functions and utilities to avoid no-undef errors
+const waitFor = (fn, options) => new Promise((resolve) => {
+  setTimeout(() => resolve(fn()), options?.timeout || 1000);
+});
+const fetchData = () => Promise.resolve({ data: 'test-data' });
+const doSomething = () => Promise.resolve('done');
+const waitForElement = (selector) => Promise.resolve({
+  selector,
+  toBeVisible: () => true
+});
+const loadFromCache = () => Promise.resolve('cached-data');
+const loadFromNetwork = () => Promise.resolve('network-data');
+const loadFromLocalStorage = () => Promise.resolve('local-data');
+
+// Custom matchers for testing
+expect.extend({
+  toBeVisible(received) {
+    return {
+      pass: received?.toBeVisible?.() === true,
+      message: () => 'Expected element to be visible'
+    };
+  }
+});
+
 describe('Promise.race Violations', () => {
+  // Mock fetch for all tests in this describe block
+  beforeEach(() => {
+    global.fetch = jest.fn(() => Promise.resolve({ status: 200 }));
+  });
+
+  afterEach(() => {
+    delete global.fetch;
+  });
   // ❌ BAD: Using Promise.race in tests
   it('should not use Promise.race', async () => {
     const result = await Promise.race([

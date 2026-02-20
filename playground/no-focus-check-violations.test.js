@@ -3,6 +3,30 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
+/* eslint-disable test-flakiness/await-async-events */
+/* eslint-disable test-flakiness/no-immediate-assertions */
+/* eslint test-flakiness/no-focus-check: "error" */
+/* global React render userEvent */
+// Note: $ (jQuery) is mocked locally to avoid global conflicts
+
+// Mock variables to avoid no-undef errors
+const input = {
+  focus: () => {},
+  blur: () => {},
+  addEventListener: () => {}
+};
+const button = { focus: () => {} };
+const modal = { open: () => {}, close: () => {} };
+const modalInput = { focus: () => {} };
+const wrapper = { vm: { $refs: { input: { focus: () => {} } } } };
+
+// Mock jQuery $ locally to avoid global conflicts
+const $ = (_selector) => ({
+  focus: () => {},
+  is: () => true,
+  attr: () => 'input'
+});
+
 describe('Focus Check Violations', () => {
   // ❌ BAD: Checking document.activeElement
   // Fixer: wraps focus() in await act(), wraps assertions in await waitFor(),
@@ -59,8 +83,8 @@ describe('Focus Check Violations', () => {
 
   // ❌ BAD: Testing focus trap
   it('should not test focus trap implementation', () => {
-    const modal = document.querySelector('.modal');
-    const focusableElements = modal.querySelectorAll('button, input, select, textarea');
+    const modalElement = document.querySelector('.modal');
+    const focusableElements = modalElement.querySelectorAll('button, input, select, textarea');
 
     focusableElements[0].focus();
     expect(document.activeElement).toBe(focusableElements[0]);
@@ -72,11 +96,11 @@ describe('Focus Check Violations', () => {
 
   // ❌ BAD: Testing autofocus attribute
   it('should not test autofocus behavior', () => {
-    const input = document.createElement('input');
-    input.setAttribute('autofocus', 'true');
-    document.body.appendChild(input);
+    const autoFocusInput = document.createElement('input');
+    autoFocusInput.setAttribute('autofocus', 'true');
+    document.body.appendChild(autoFocusInput);
 
-    expect(document.activeElement).toBe(input);
+    expect(document.activeElement).toBe(autoFocusInput);
   });
 
   // ❌ BAD: Testing tabindex focus
@@ -95,8 +119,10 @@ describe('Focus Check Violations', () => {
   // ❌ BAD: React focus testing
   it('should not test React ref focus', () => {
     const inputRef = React.createRef();
+    inputRef.current = { focus: () => {} };
 
-    render(<input ref={inputRef} />);
+    // Mock render call without JSX
+    render(inputRef);
     inputRef.current.focus();
 
     expect(document.activeElement).toBe(inputRef.current);
@@ -111,9 +137,9 @@ describe('Focus Check Violations', () => {
   // ❌ BAD: Focus within checks
   it('should not check focus-within', () => {
     const container = document.querySelector('.form-container');
-    const input = container.querySelector('input');
+    const formInput = container.querySelector('input');
 
-    input.focus();
+    formInput.focus();
     expect(container.matches(':focus-within')).toBe(true);
   });
 

@@ -1,4 +1,4 @@
-/* eslint-disable test-flakiness/no-hard-coded-timeout */
+/* eslint-disable test-flakiness/no-unconditional-wait */
 /**
  * Examples of no-hard-coded-timeout rule violations
  * These patterns should be detected by the eslint-plugin-test-flakiness
@@ -23,14 +23,19 @@ describe('Hard-coded Timeout Violations', () => {
 
   // ❌ BAD: Promise-based timeout
   it('should wait with promise timeout', async () => {
+    // Mock screen object for demonstration
+    const screen = {
+      getByText: () => ({ textContent: 'Loaded' })
+    };
     await new Promise(resolve => setTimeout(resolve, 5000));
-    expect(screen.getByText('Loaded')).toBeInTheDocument();
+    const element = screen.getByText('Loaded');
+    expect(element).toBeTruthy();
   });
 
   // ❌ BAD: Using setInterval
   it('should not use setInterval', () => {
     const interval = setInterval(() => {
-      console.log('checking...');
+      // Interval callback
     }, 1000);
 
     // cleanup would happen here
@@ -46,6 +51,12 @@ describe('Hard-coded Timeout Violations', () => {
 
   // ❌ BAD: Cypress fixed wait
   it('should not use cy.wait with number', () => {
+    // Mock cy object for demonstration
+    const cy = {
+      visit: () => cy,
+      wait: () => cy,
+      get: () => ({ should: () => {} })
+    };
     cy.visit('/page');
     cy.wait(5000); // Bad: fixed delay
     cy.get('.content').should('be.visible');

@@ -3,6 +3,13 @@
  * These patterns should be detected by the eslint-plugin-test-flakiness
  */
 
+/* global XMLHttpRequest, WebSocket, EventSource */
+
+// Mock axios and request to avoid no-undef errors
+const axios = { get: () => Promise.resolve({ data: {} }) };
+const request = () => {};
+import fetch from 'node-fetch';
+
 describe('Unmocked Network Violations', () => {
   // ❌ BAD: Direct fetch without mocking
   it('should not use unmocked fetch', async () => {
@@ -30,6 +37,7 @@ describe('Unmocked Network Violations', () => {
 
   // ❌ BAD: jQuery AJAX without mocking
   it('should not use unmocked jQuery.ajax', (done) => {
+    const $ = { ajax: () => {} }; // Local jQuery mock
     $.ajax({
       url: 'https://api.example.com/data',
       success: (data) => {
