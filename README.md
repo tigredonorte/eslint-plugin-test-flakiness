@@ -56,7 +56,7 @@ pnpm add -D eslint-plugin-test-flakiness
 For projects where adding dev dependencies is not possible, install globally:
 
 ```bash
-npm install -g --ignore-scripts eslint @typescript-eslint/parser eslint-plugin-test-flakiness
+npm install -g --ignore-scripts eslint@9 @typescript-eslint/parser eslint-plugin-test-flakiness
 ```
 
 **Run with the `lint-flaky` CLI:**
