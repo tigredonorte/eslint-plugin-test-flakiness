@@ -113,10 +113,22 @@ async function runWithNodeAPI() {
       overrideConfig.languageOptions = { parser };
     }
 
+    // Resolve cwd to the common parent of all file patterns so ESLint
+    // doesn't reject files as "outside of base path"
+    const resolvedPatterns = filePatterns.map(p => path.resolve(p));
+    const commonDir = resolvedPatterns.reduce((dir, p) => {
+      const d = path.dirname(p);
+      while (!d.startsWith(dir)) {
+        dir = path.dirname(dir);
+      }
+      return dir;
+    }, path.dirname(resolvedPatterns[0]));
+
     const eslint = new ESLint({
       overrideConfigFile: true,
       overrideConfig,
       fix,
+      cwd: commonDir,
     });
 
     const results = await eslint.lintFiles(filePatterns);
