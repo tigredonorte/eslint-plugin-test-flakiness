@@ -6,6 +6,10 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+// lint-flaky CLI requires ESLint 9+ (uses flat config Node API)
+const eslintMajor = parseInt(require('eslint/package.json').version.split('.')[0], 10);
+const describeIfEslint9 = eslintMajor >= 9 ? describe : describe.skip;
+
 const BIN_PATH = path.join(__dirname, '..', '..', 'bin', 'lint-flaky.js');
 const FIXTURES_DIR = path.join(os.tmpdir(), 'lint-flaky-test-fixtures');
 
@@ -54,7 +58,7 @@ afterAll(() => {
   fs.rmSync(FIXTURES_DIR, { recursive: true, force: true });
 });
 
-describe('lint-flaky CLI', () => {
+describeIfEslint9('lint-flaky CLI', () => {
   describe('help and usage', () => {
     it('shows help with --help flag', async () => {
       const { stdout, exitCode } = await run(['--help']);

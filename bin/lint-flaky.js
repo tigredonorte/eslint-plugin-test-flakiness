@@ -79,16 +79,6 @@ const ruleConfig = rules.reduce((acc, rule) => {
   return acc;
 }, {});
 
-// Detect ESLint version to use the right approach
-let eslintMajor;
-try {
-  const eslintPkg = require('eslint/package.json');
-  eslintMajor = parseInt(eslintPkg.version.split('.')[0], 10);
-} catch (_e) {
-  console.error('Error: ESLint not found. Install it with: npm i -g eslint');
-  process.exit(1);
-}
-
 // Resolve cwd to the common parent of all file patterns so ESLint
 // doesn't reject files as "outside of base path"
 function resolveCommonDir(patterns) {
@@ -102,27 +92,9 @@ function resolveCommonDir(patterns) {
   }, path.dirname(resolved[0]));
 }
 
-async function formatAndExit(eslint, results) {
-  if (fix) {
-    const ESLintClass = eslint.constructor;
-    await ESLintClass.outputFixes(results);
-  }
-
-  const formatter = await eslint.loadFormatter(format);
-  const output = formatter.format
-    ? formatter.format(results)
-    : await formatter.format(results);
-  if (output) {
-    console.log(output);
-  }
-
-  const hasErrors = results.some(r => r.errorCount > 0);
-  if (hasErrors) process.exit(1);
-}
-
-async function runWithNodeAPI() {
-  const plugin = require(path.join(__dirname, '..', 'lib', 'index.js'));
+async function run() {
   const { ESLint } = require('eslint');
+  const plugin = require(path.join(__dirname, '..', 'lib', 'index.js'));
 
   let parser;
   try {
@@ -131,51 +103,39 @@ async function runWithNodeAPI() {
     parser = undefined;
   }
 
-  const commonDir = resolveCommonDir(filePatterns);
-  let eslint;
+  const overrideConfig = {
+    plugins: { 'test-flakiness': plugin },
+    rules: ruleConfig,
+  };
 
-  if (eslintMajor >= 9) {
-    // ESLint v9+ flat config via Node API
-    const overrideConfig = {
-      plugins: { 'test-flakiness': plugin },
-      rules: ruleConfig,
-    };
-
-    if (parser) {
-      overrideConfig.languageOptions = { parser };
-    }
-
-    eslint = new ESLint({
-      overrideConfigFile: true,
-      overrideConfig,
-      fix,
-      cwd: commonDir,
-    });
-  } else {
-    // ESLint v7/v8 Node API
-    const overrideConfig = {
-      plugins: ['test-flakiness'],
-      rules: ruleConfig,
-    };
-
-    if (parser) {
-      overrideConfig.parser = require.resolve('@typescript-eslint/parser');
-    }
-
-    eslint = new ESLint({
-      useEslintrc: false,
-      overrideConfig,
-      fix,
-      cwd: commonDir,
-      plugins: { 'test-flakiness': plugin },
-    });
+  if (parser) {
+    overrideConfig.languageOptions = { parser };
   }
 
+  const eslint = new ESLint({
+    overrideConfigFile: true,
+    overrideConfig,
+    fix,
+    cwd: resolveCommonDir(filePatterns),
+  });
+
   const results = await eslint.lintFiles(filePatterns);
-  await formatAndExit(eslint, results);
+
+  if (fix) {
+    await ESLint.outputFixes(results);
+  }
+
+  const formatter = await eslint.loadFormatter(format);
+  const output = formatter.format(results);
+  if (output) {
+    console.log(output);
+  }
+
+  const hasErrors = results.some(r => r.errorCount > 0);
+  if (hasErrors) process.exit(1);
 }
 
-runWithNodeAPI().catch((err) => {
+run().catch((err) => {
   console.error('Error:', err.message);
   process.exit(1);
 });
