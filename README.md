@@ -79,7 +79,7 @@ lint-flaky --help
 ```
 
 > **How it works:** The `lint-flaky` command is installed automatically during `npm install -g`.
-> It runs ESLint with all flaky-test rules enabled, using the Node API for ESLint 9+ and the legacy CLI for ESLint 7/8.
+> It runs ESLint 9+ with all flaky-test rules enabled via the Node API.
 > No project configuration changes are needed.
 
 ### Flat Config (ESLint 9+)
