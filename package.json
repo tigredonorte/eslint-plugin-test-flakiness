@@ -40,9 +40,13 @@
     "commit": "cz",
     "semantic-release": "semantic-release"
   },
+  "bin": {
+    "lint-flaky": "./bin/lint-flaky.js"
+  },
   "files": [
     "lib/**/*.js",
     "lib/**/*.d.ts",
+    "bin/**/*.js",
     "package.json",
     "README.md",
     "LICENSE"
