@@ -53,7 +53,7 @@ pnpm add -D eslint-plugin-test-flakiness
 
 ### Global Installation (No Project Changes)
 
-For projects where you can't add dev dependencies (e.g., org-controlled repos), install globally and run without touching the project:
+For projects where dev dependencies cannot be added, install globally:
 
 ```bash
 # Install globally (--ignore-scripts bypasses preinstall hooks like "only-allow pnpm")
@@ -88,7 +88,8 @@ alias lint-flaky='NODE_PATH=$(npm root -g) eslint --no-eslintrc --parser @typesc
 
 Then: `lint-flaky 'tests/**/*.spec.ts'`
 
-> **How it works:** `NODE_PATH` tells Node.js where to find globally installed modules. `--no-eslintrc` prevents ESLint from reading the project's config. No files in the project are modified.
+> **How it works:** `NODE_PATH` tells Node.js where to find globally installed modules. `--no-eslintrc` prevents
+> ESLint from reading the project's config and skips project modification.
 
 ### Flat Config (ESLint 9+)
 
