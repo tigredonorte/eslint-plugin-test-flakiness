@@ -56,40 +56,31 @@ pnpm add -D eslint-plugin-test-flakiness
 For projects where dev dependencies cannot be added, install globally:
 
 ```bash
-# Install globally (--ignore-scripts bypasses preinstall hooks like "only-allow pnpm")
-npm install -g --ignore-scripts eslint@8 @typescript-eslint/parser@7 eslint-plugin-test-flakiness
+npm install -g --ignore-scripts eslint @typescript-eslint/parser eslint-plugin-test-flakiness
 ```
 
-**Run with all rules:**
+**Run with the `lint-flaky` CLI:**
 
 ```bash
-NODE_PATH=$(npm root -g) eslint --no-eslintrc \
-  --parser @typescript-eslint/parser \
-  --plugin test-flakiness \
-  --rule '{"test-flakiness/await-async-events":"warn","test-flakiness/no-animation-wait":"warn","test-flakiness/no-database-operations":"warn","test-flakiness/no-element-removal-check":"warn","test-flakiness/no-focus-check":"warn","test-flakiness/no-global-state-mutation":"warn","test-flakiness/no-hard-coded-timeout":"warn","test-flakiness/no-immediate-assertions":"warn","test-flakiness/no-index-queries":"warn","test-flakiness/no-long-text-match":"warn","test-flakiness/no-promise-race":"warn","test-flakiness/no-random-data":"warn","test-flakiness/no-test-focus":"warn","test-flakiness/no-test-isolation":"warn","test-flakiness/no-unconditional-wait":"warn","test-flakiness/no-unmocked-fs":"warn","test-flakiness/no-unmocked-network":"warn","test-flakiness/no-viewport-dependent":"warn"}' \
-  'tests/**/*.spec.ts'
+# Lint all test files with all rules (default severity: warn)
+lint-flaky 'tests/**/*.spec.ts'
+
+# Treat violations as errors (non-zero exit code)
+lint-flaky --severity error 'app/e2e/specs/**/*.spec.ts'
+
+# Auto-fix where possible
+lint-flaky --fix 'tests/**/*.test.ts'
+
+# Use a specific ESLint formatter
+lint-flaky --format json 'tests/**/*.spec.ts'
+
+# Show all available rules and options
+lint-flaky --help
 ```
 
-**Run on a single file:**
-
-```bash
-NODE_PATH=$(npm root -g) eslint --no-eslintrc \
-  --parser @typescript-eslint/parser \
-  --plugin test-flakiness \
-  --rule '{"test-flakiness/no-hard-coded-timeout":"warn","test-flakiness/no-element-removal-check":"warn","test-flakiness/no-index-queries":"warn"}' \
-  'path/to/my-test.spec.ts'
-```
-
-**Optional shell alias** (add to `~/.bashrc` or `~/.zshrc`):
-
-```bash
-alias lint-flaky='NODE_PATH=$(npm root -g) eslint --no-eslintrc --parser @typescript-eslint/parser --plugin test-flakiness --rule '"'"'{"test-flakiness/await-async-events":"warn","test-flakiness/no-animation-wait":"warn","test-flakiness/no-database-operations":"warn","test-flakiness/no-element-removal-check":"warn","test-flakiness/no-focus-check":"warn","test-flakiness/no-global-state-mutation":"warn","test-flakiness/no-hard-coded-timeout":"warn","test-flakiness/no-immediate-assertions":"warn","test-flakiness/no-index-queries":"warn","test-flakiness/no-long-text-match":"warn","test-flakiness/no-promise-race":"warn","test-flakiness/no-random-data":"warn","test-flakiness/no-test-focus":"warn","test-flakiness/no-test-isolation":"warn","test-flakiness/no-unconditional-wait":"warn","test-flakiness/no-unmocked-fs":"warn","test-flakiness/no-unmocked-network":"warn","test-flakiness/no-viewport-dependent":"warn"}'"'"
-```
-
-Then: `lint-flaky 'tests/**/*.spec.ts'`
-
-> **How it works:** `NODE_PATH` tells Node.js where to find globally installed modules. `--no-eslintrc` prevents
-> ESLint from reading the project's config and skips project modification.
+> **How it works:** The `lint-flaky` command is installed automatically during `npm install -g`.
+> It runs ESLint with all flaky-test rules enabled, using the Node API for ESLint 9+ and the legacy CLI for ESLint 7/8.
+> No project configuration changes are needed.
 
 ### Flat Config (ESLint 9+)
 
