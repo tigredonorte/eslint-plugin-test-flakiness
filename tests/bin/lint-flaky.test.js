@@ -193,4 +193,40 @@ describeIfEslint9('lint-flaky CLI', () => {
       expect(messages.length).toBe(0);
     });
   });
+
+  describe('when the optional ESLint peer is absent', () => {
+    // Resolution is patched in the child rather than the install being altered, so this exercises
+    // the CLI's own guard and leaves the suite's own ESLint untouched.
+    const HIDE_ESLINT = path.join(__dirname, 'hide-eslint.js');
+
+    function runWithoutEslint(args = []) {
+      return new Promise((resolve) => {
+        execFile(
+          process.execPath,
+          ['--require', HIDE_ESLINT, BIN_PATH, ...args],
+          { timeout: 30000 },
+          (error, stdout, stderr) => {
+            resolve({
+              exitCode: error ? error.code : 0,
+              stdout: stdout.toString(),
+              stderr: stderr.toString(),
+            });
+          }
+        );
+      });
+    }
+
+    it('explains what to install rather than reporting a missing module', async () => {
+      const { exitCode, stderr } = await runWithoutEslint([
+        path.join(FIXTURES_DIR, 'clean.test.js'),
+      ]);
+
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain('lint-flaky needs ESLint');
+      expect(stderr).toContain('npm install --save-dev eslint');
+      // The bare resolution error is what the guard exists to replace; it names a package the
+      // caller never asked for and says nothing about how to proceed.
+      expect(stderr).not.toContain('MODULE_NOT_FOUND');
+    });
+  });
 });

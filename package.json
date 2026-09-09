@@ -54,6 +54,11 @@
   "peerDependencies": {
     "eslint": "^7.0.0 || ^8.0.0 || ^9.0.0"
   },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    }
+  },
   "exports": {
     ".": {
       "require": "./lib/index.js",

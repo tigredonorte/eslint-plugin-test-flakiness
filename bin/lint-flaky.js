@@ -93,7 +93,23 @@ function resolveCommonDir(patterns) {
 }
 
 async function run() {
-  const { ESLint } = require('eslint');
+  // ESLint is an optional peer: the rules are plain visitor objects and never reach for it, so a
+  // consumer running them under another linter has no reason to install it. This CLI is the one
+  // part of the package that genuinely needs it, and it is the only place that can say so
+  // usefully — a bare module-not-found here names a package the caller never asked for.
+  let ESLint;
+  try {
+    ({ ESLint } = require('eslint'));
+  } catch (_e) {
+    console.error(
+      'lint-flaky needs ESLint, which is an optional peer of this package.\n' +
+        'Install it alongside the plugin:\n\n' +
+        '  npm install --save-dev eslint\n\n' +
+        'The rules themselves do not require it — only this command does.'
+    );
+    process.exitCode = 1;
+    return;
+  }
   const plugin = require(path.join(__dirname, '..', 'lib', 'index.js'));
 
   let parser;
